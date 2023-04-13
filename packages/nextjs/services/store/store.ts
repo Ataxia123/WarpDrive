@@ -14,7 +14,17 @@ type TAppStore = {
   setEthPrice: (newEthPriceState: number) => void;
 };
 
+type ImageStoreState = {
+  imageUrl: string | null;
+  setImageUrl: (imageUrl: string) => void;
+};
+
 export const useAppStore = create<TAppStore>(set => ({
   ethPrice: 0,
   setEthPrice: (newValue: number): void => set(() => ({ ethPrice: newValue })),
+}));
+
+export const useImageStore = create<ImageStoreState>(set => ({
+  imageUrl: null,
+  setImageUrl: (imageUrl: string) => set({ imageUrl }),
 }));

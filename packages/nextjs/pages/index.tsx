@@ -1,59 +1,91 @@
-import Head from "next/head";
-import Link from "next/link";
-import type { NextPage } from "next";
-import { BugAntIcon, SparklesIcon } from "@heroicons/react/24/outline";
+// index.tsx
+import { useState } from "react";
+import axios from "axios";
 
-const Home: NextPage = () => {
+export default function Home() {
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [response, setResponse] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [waitingForWebhook, setWaitingForWebhook] = useState(false);
+
+  const handleClick = async () => {
+    console.log(`Submitting my prompt: ${text}`);
+    setLoading(true);
+
+    if (waitingForWebhook) {
+      console.log("Already waiting for webhook, please wait for response.");
+      return;
+    }
+
+    setWaitingForWebhook(true);
+
+    try {
+      const r = await axios.post("/api/apiHandler", { text });
+
+      console.log("response", r.data);
+      setResponse(JSON.stringify(r.data, null, 2));
+      console.log("messageID", r.data.messageId);
+
+      // Start waiting for webhook
+      console.log("Waiting for webhook to be received...");
+
+      // Poll the server to fetch the image URL from the cache
+      let imageUrl;
+      while (!imageUrl) {
+        try {
+          const fetchResponse = await axios.get(`/api/fetchImageUrl?messageId=${r.data.messageId}`);
+          imageUrl = fetchResponse.data.imageUrl;
+        } catch (error: any) {
+          if (error.response.status !== 404) {
+            throw error;
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
+        }
+      }
+
+      setImageUrl(imageUrl);
+    } catch (e: any) {
+      console.log(e);
+      setError(e.message);
+    }
+
+    setLoading(false);
+    setWaitingForWebhook(false);
+  };
+
   return (
-    <>
-      <Head>
-        <title>Scaffold-eth App</title>
-        <meta name="description" content="Created with 🏗 scaffold-eth" />
-      </Head>
-
-      <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center mb-8">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">scaffold-eth 2</span>
-          </h1>
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold">packages/nextjs/pages/index.tsx</code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract <code className="italic bg-base-300 text-base font-bold">YourContract.sol</code> in{" "}
-            <code className="italic bg-base-300 text-base font-bold">packages/hardhat/contracts</code>
-          </p>
-        </div>
-
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contract
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <SparklesIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Experiment with{" "}
-                <Link href="/example-ui" passHref className="link">
-                  Example UI
-                </Link>{" "}
-                to build your own UI.
-              </p>
-            </div>
+    <div className="container mx-auto h-screen flex flex-col items-center justify-center ">
+      <div className="w-full mx-auto px-20">
+        <div>
+          {/* tailwindui.com */}
+          <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+            Prompt
+          </label>
+          {imageUrl && <img src={imageUrl} className="w-full" alt="nothing" />}
+          <div className="mt-2 flex space-x-2">
+            <input
+              value={text}
+              onChange={e => setText(e.target.value)}
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              placeholder="Enter your prompt here"
+            />
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={async () => {
+                handleClick();
+              }}
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </button>
           </div>
+          <div>ImageUrl: {imageUrl}</div>
+          <pre>Response Message: {response}</pre>
+          Error: {error}
         </div>
       </div>
-    </>
+    </div>
   );
-};
-
-export default Home;
+}
