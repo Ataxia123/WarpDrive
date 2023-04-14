@@ -23,6 +23,8 @@ export default function Home() {
   const [alignment2, setAlignment2] = useState("");
   const [side, setSide] = useState("");
   const [buttonMessageId, setButtonMessageId] = useState("");
+  const [nijiFlag, setNijiFlag] = useState(false);
+  const [vFlag, setVFlag] = useState(false);
 
   const handleButtonClick = async (button: string) => {
     try {
@@ -164,10 +166,16 @@ export default function Home() {
       power2: string,
       alignment1: string,
       alignment2: string,
-      side: string,
       selectedDescription: string,
+      nijiFlag: boolean,
+      vFlag: boolean,
+      side = "",
+      power3 = "",
+      power4 = "",
     ): string {
-      return `${srcURL} ${level} ${power1} ${power2} ${alignment1} ${alignment2} ${side} ${selectedDescription}`;
+      const niji = nijiFlag ? "--niji 5" : "";
+      const v = vFlag ? "--v 5" : "";
+      return `${srcURL} ${level} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${side} ${selectedDescription} ${niji} ${v}`.trim();
     }
 
     const prompt = generatePrompt(
@@ -177,11 +185,26 @@ export default function Home() {
       power2,
       alignment1,
       alignment2,
-      side,
       description[selectedDescriptionIndex],
+      nijiFlag, // Set this according to your checkbox state
+      vFlag, // Set this according to your checkbox state
+      side,
     );
     setText(prompt);
-  }, [srcUrl, level, power1, power2, power3, alignment1, alignment2, side, selectedDescriptionIndex, description]);
+  }, [
+    srcUrl,
+    level,
+    power1,
+    power2,
+    power3,
+    alignment1,
+    alignment2,
+    side,
+    selectedDescriptionIndex,
+    description,
+    nijiFlag,
+    vFlag,
+  ]);
 
   const AvailableButtons = () => {
     const buttons = ["U1", "U2", "U3", "U4", "🔄", "V1", "V2", "V3", "V4"];
@@ -285,6 +308,15 @@ export default function Home() {
         {imageUrl && <img src={imageUrl} className="w-full rounded shadow-md mb-4" alt="nothing" />}
         <AvailableButtons />
         <div className="flex space-x-2">
+          {/* ... other component JSX */}
+          <label>
+            <input type="checkbox" checked={nijiFlag} onChange={() => setNijiFlag(!nijiFlag)} />
+            --niji 5
+          </label>
+          <label>
+            <input type="checkbox" checked={vFlag} onChange={() => setVFlag(!vFlag)} />
+            --v 5
+          </label>
           <input
             value={text}
             onChange={e => setText(e.target.value)}
