@@ -1,10 +1,22 @@
-import { useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { BigNumber, ethers } from "ethers";
 import { useAccount, useProvider } from "wagmi";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth/useScaffoldEventHistory";
 
-export default function ReadAIU() {
+interface ReadAIUProps {
+  onSelectedTokenIdRecieved: (selectedTokenId: string) => void;
+  onMetadataReceived: (metadata: any) => void; // Add this line
+  onImageSrcReceived: (imageSrc: string) => void; // Add this line
+  onTokenIdsReceived: (tokenIds: string[]) => void;
+}
+
+export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
+  onSelectedTokenIdRecieved,
+  onMetadataReceived, // Add this line
+  onImageSrcReceived, // Add this line
+  onTokenIdsReceived,
+}) => {
   const { address } = useAccount();
   const { data: deployedContract } = useDeployedContractInfo("WarpDrive");
   const [tokenIds, setTokenIds] = useState<string[]>([]);
@@ -13,6 +25,7 @@ export default function ReadAIU() {
   const [tokenURI, setTokenURI] = useState<string>();
   const provider = useProvider();
   const [metadata, setMetadata] = useState<any>(null);
+  const [imageSrc, setImageSrc] = useState<string>();
 
   const { data: transferEvents } = useScaffoldEventHistory({
     contractName: "WarpDrive",
@@ -33,6 +46,7 @@ export default function ReadAIU() {
         if (transferEvents) {
           const ownedTokenIds = transferEvents.map(event => event.args.tokenId.toString());
           setTokenIds(ownedTokenIds);
+          onTokenIdsReceived(ownedTokenIds); // Add this line
         }
       }
     };
@@ -59,6 +73,7 @@ export default function ReadAIU() {
           const response = await fetch(tokenURI);
           const json = await response.json();
           setMetadata(json);
+          onMetadataReceived(json); // Add this line
         } catch (error) {
           console.error("Error fetching metadata:", error);
         }
@@ -67,9 +82,21 @@ export default function ReadAIU() {
 
     fetchMetadata();
   }, [tokenURI]);
+
   const handleTokenIdChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedTokenId(e.target.value);
+    onSelectedTokenIdRecieved(e.target.value); // Add this line
   };
+
+  useEffect(() => {
+    if (metadata && metadata.image) {
+      const ipfsGateway = "https://ipfs.io"; // Choose a gateway
+      const imageUrl = metadata.image.replace("ipfs://", `${ipfsGateway}/ipfs/`);
+      setImageSrc(imageUrl);
+      onImageSrcReceived(imageUrl); // Add this line
+      console.log("Image URL:", imageUrl);
+    }
+  }, [metadata]);
 
   return (
     <div>
@@ -95,6 +122,7 @@ export default function ReadAIU() {
           {/* Display other variables here */}
         </div>
       )}
+
       {metadata && (
         <div>
           <h3>Metadata:</h3>
@@ -112,6 +140,33 @@ export default function ReadAIU() {
           </ul>
         </div>
       )}
+      <div
+        style={{
+          width: "300px",
+          height: "400px",
+          backgroundColor: "#fff",
+          borderRadius: "10px",
+          boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
+          padding: "20px",
+        }}
+      >
+        {imageSrc && (
+          <div>
+            <h3>Image:</h3>
+            <img
+              src={imageSrc}
+              alt={metadata?.name}
+              style={{
+                maxWidth: "100%",
+                height: "auto",
+                borderRadius: "5px",
+              }}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
-}
+};
+
+export default ReadAIU;

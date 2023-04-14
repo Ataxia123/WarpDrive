@@ -1,8 +1,9 @@
 // services/cache.ts
-interface CacheData {
+export type CacheData = {
   messageId: string;
-  imageUrl: string;
-}
+  imageUrl?: string;
+  description?: string;
+};
 
 const cache = new Map<string, CacheData>();
 
