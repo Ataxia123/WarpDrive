@@ -1,5 +1,5 @@
 // index.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReadAIU from "../components/ReadAIU";
 import axios from "axios";
 
@@ -10,9 +10,17 @@ export default function Home() {
   const [response, setResponse] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [waitingForWebhook, setWaitingForWebhook] = useState(false);
-  const [description, setDescription] = useState<string>();
+  const [description, setDescription] = useState<string[]>([]);
+  const [selectedDescriptionIndex, setSelectedDescriptionIndex] = useState<number>(0);
   const [selectedTokenId, setSelectedTokenId] = useState<string>();
   const [srcUrl, setSrcUrl] = useState<string>();
+  const [level, setLevel] = useState("");
+  const [power1, setPower1] = useState("");
+  const [power2, setPower2] = useState("");
+  const [power3, setPower3] = useState("");
+  const [alignment1, setAlignment1] = useState("");
+  const [alignment2, setAlignment2] = useState("");
+  const [side, setSide] = useState("");
 
   const handleDescribeClick = async () => {
     console.log(`Submitting image URL: ${srcUrl}`);
@@ -103,9 +111,51 @@ export default function Home() {
     setLoading(false);
     setWaitingForWebhook(false);
   };
+
+  useEffect(() => {
+    function generatePrompt(
+      srcURL: string | undefined,
+      level: string,
+      power1: string,
+      power2: string,
+      alignment1: string,
+      alignment2: string,
+      side: string,
+      selectedDescription: string,
+    ): string {
+      return `${srcURL} ${level} ${power1} ${power2} ${alignment1} ${alignment2} ${side} ${selectedDescription}`;
+    }
+
+    const prompt = generatePrompt(
+      srcUrl,
+      level,
+      power1,
+      power2,
+      alignment1,
+      alignment2,
+      side,
+      description[selectedDescriptionIndex],
+    );
+    setText(prompt);
+  }, [srcUrl, level, power1, power2, power3, alignment1, alignment2, side, selectedDescriptionIndex, description]);
+
   const handleMetadataReceived = (metadata: any) => {
     console.log("Metadata received in the parent component:", metadata);
-    // Handle the metadata here, e.g., update the state or call another function
+
+    // Extract the attributes from the metadata
+    const attributes = metadata.attributes.reduce((acc: any, attr: any) => {
+      acc[attr.trait_type] = attr.value;
+      return acc;
+    }, {});
+
+    // Update the state variables
+    setLevel(attributes.Level);
+    setPower1(attributes["Power 1"]);
+    setPower2(attributes["Power 2"]);
+    setPower3(attributes["Power 3"]); // Assuming there is a Power 3 attribute in the metadata
+    setAlignment1(attributes["Alignment 1"]);
+    setAlignment2(attributes["Alignment 2"]);
+    setSide(attributes.Side);
   };
 
   const handleImageSrcReceived = (imageSrc: string) => {
@@ -123,40 +173,31 @@ export default function Home() {
     console.log("Token IDs received in the parent component:", tokenIds);
     // Handle the token IDs here, e.g., update the state or call another function
   };
+  console.log(description);
 
   return (
-    <div className="container mx-auto h-screen flex flex-col items-center justify-center ">
-      <div className="w-full mx-auto px-20">
+    <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
+      <div className="w-full px-8">
         <ReadAIU
           onSelectedTokenIdRecieved={handleSelectedTokenIdRecieved}
-          onMetadataReceived={handleMetadataReceived} // Add this line
+          onMetadataReceived={handleMetadataReceived}
           onImageSrcReceived={handleImageSrcReceived}
           onTokenIdsReceived={handleTokenIdsReceived}
         />
-        <div>
-          {selectedTokenId && (
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded"
-              onClick={handleDescribeClick}
-            >
-              Describe
-            </button>
-          )}
-        </div>
-        {description && (
-          <div>
-            <h3>Description:</h3>
-            <p>{description}</p>
-          </div>
+        {selectedTokenId && (
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded"
+            onClick={handleDescribeClick}
+          >
+            Describe
+          </button>
         )}
       </div>
-      <div>
-        {/* tailwindui.com */}
-        <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-          Prompt
-        </label>
-        {imageUrl && <img src={imageUrl} className="w-full" alt="nothing" />}
-        <div className="mt-2 flex space-x-2">
+
+      <div className="w-full px-8">
+        <h2 className="text-xl font-bold mb-2">Prompt</h2>
+        {imageUrl && <img src={imageUrl} className="w-full rounded shadow-md mb-4" alt="nothing" />}
+        <div className="flex space-x-2">
           <input
             value={text}
             onChange={e => setText(e.target.value)}
@@ -173,10 +214,37 @@ export default function Home() {
             {loading ? "Submitting..." : "Submit"}
           </button>
         </div>
-        <div>ImageUrl: {imageUrl}</div>
-        <pre>Response Message: {response}</pre>
-        Error: {error}
+        <div className="mt-4">
+          <p className="font-semibold">ImageUrl:</p>
+          <p>{imageUrl}</p>
+        </div>
+        <div className="mt-4">
+          <p className="font-semibold">Response Message:</p>
+          <pre>{response}</pre>
+        </div>
+        <div className="mt-4 text-red-600">
+          <p className="font-semibold">Error:</p>
+          <p>{error}</p>
+        </div>
       </div>
+
+      {description && (
+        <div className="w-full px-8">
+          <h3 className="text-xl font-bold mb-2">Description:</h3>
+          <p>{description[selectedDescriptionIndex]}</p>
+          <select
+            value={selectedDescriptionIndex}
+            onChange={e => setSelectedDescriptionIndex(Number(e.target.value))}
+            className="block w-full mt-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          >
+            {description.map((desc, index) => (
+              <option key={index} value={index}>
+                {desc}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
     </div>
   );
 }

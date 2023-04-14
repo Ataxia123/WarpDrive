@@ -13,7 +13,6 @@
 //     "type": "describe",
 //     "responseAt": "2023-04-04T13:06:01.927Z"
 // }
-//pages/api/webhook.ts
 // webhook.ts
 import cache from "../../services/cache";
 import { NextApiRequest, NextApiResponse } from "next";

@@ -1,4 +1,4 @@
-// pages/api/fetchDescription.ts
+// pages/api/postDescription.ts
 import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -26,12 +26,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     );
 
     console.log("response", response.data);
-    console.log("messageID", response.data.messageld);
+    console.log("messageID", response.data.messageId);
 
     // Start waiting for webhook
     console.log("Waiting for webhook to be received...");
 
-    res.status(200).json({ message: "success" });
+    res.status(200).json(response.data);
   } catch (error: any) {
     console.error(error);
     res.status(error.response.status || 500).json({ message: error.message });
