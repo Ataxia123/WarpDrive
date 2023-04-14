@@ -8424,6 +8424,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"install@npm:^0.13.0":
+  version: 0.13.0
+  resolution: "install@npm:0.13.0"
+  checksum: 645bad1253115309c64d791c901caa8acd61a4012731015e3ee5eef88baaca026f3a48dc15a73a2827f7f5b05609804968ea1e3c6525dc0b3a21241837b9cf59
+  languageName: node
+  linkType: hard
+
 "internal-slot@npm:^1.0.3":
   version: 1.0.3
   resolution: "internal-slot@npm:1.0.3"
@@ -11846,7 +11853,9 @@ __metadata:
   resolution: "se-2@workspace:."
   dependencies:
     "@types/uuid": ^9
+    grapheme-splitter: ^1.0.4
     husky: ^8.0.1
+    install: ^0.13.0
     lint-staged: ^13.0.3
     uuid: ^9.0.0
   languageName: unknown

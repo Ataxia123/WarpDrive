@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import ReadAIU from "../components/ReadAIU";
 import axios from "axios";
+import GraphemeSplitter from "grapheme-splitter";
 
 export default function Home() {
   const [text, setText] = useState("");
@@ -57,7 +58,14 @@ export default function Home() {
         }
       }
 
-      setDescription(description);
+      // Remove the first grapheme (emoji) from each string in the description array
+      const splitter = new GraphemeSplitter();
+      const cleanedDescription = description.map((desc: string) => {
+        const graphemes = splitter.splitGraphemes(desc);
+        return graphemes.slice(1).join("");
+      });
+
+      setDescription(cleanedDescription);
     } catch (e: any) {
       console.log(e);
       setError(e.message);
@@ -192,6 +200,23 @@ export default function Home() {
             Describe
           </button>
         )}
+        {description && (
+          <div className="w-full px-8">
+            <h3 className="text-xl font-bold mb-2">Description:</h3>
+            <p>{description[selectedDescriptionIndex]}</p>
+            <select
+              value={selectedDescriptionIndex}
+              onChange={e => setSelectedDescriptionIndex(Number(e.target.value))}
+              className="block w-full mt-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            >
+              {description.map((desc, index) => (
+                <option key={index} value={index}>
+                  {desc}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       <div className="w-full px-8">
@@ -227,24 +252,6 @@ export default function Home() {
           <p>{error}</p>
         </div>
       </div>
-
-      {description && (
-        <div className="w-full px-8">
-          <h3 className="text-xl font-bold mb-2">Description:</h3>
-          <p>{description[selectedDescriptionIndex]}</p>
-          <select
-            value={selectedDescriptionIndex}
-            onChange={e => setSelectedDescriptionIndex(Number(e.target.value))}
-            className="block w-full mt-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-          >
-            {description.map((desc, index) => (
-              <option key={index} value={index}>
-                {desc}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
     </div>
   );
 }
