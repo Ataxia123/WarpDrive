@@ -1,5 +1,6 @@
 // index.tsx
 import { useState } from "react";
+import ReadAIU from "../components/ReadAIU";
 import axios from "axios";
 
 export default function Home() {
@@ -85,6 +86,7 @@ export default function Home() {
           <pre>Response Message: {response}</pre>
           Error: {error}
         </div>
+        <ReadAIU />
       </div>
     </div>
   );
