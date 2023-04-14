@@ -7,8 +7,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   console.log("messageId", messageId);
   if (messageId && cache.has(messageId)) {
     const imageUrl = cache.get(messageId)?.imageUrl;
+    const buttonMessageId = cache.get(messageId)?.buttonMessageId;
     cache.delete(messageId); // Remove the image URL from the cache
-    res.status(200).json({ imageUrl });
+    res.status(200).json({ imageUrl, buttonMessageId });
   } else {
     res.status(404).json({ message: "Image not found" });
   }

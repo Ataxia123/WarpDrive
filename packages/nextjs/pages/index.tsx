@@ -22,6 +22,39 @@ export default function Home() {
   const [alignment1, setAlignment1] = useState("");
   const [alignment2, setAlignment2] = useState("");
   const [side, setSide] = useState("");
+  const [buttonMessageId, setButtonMessageId] = useState("");
+
+  const handleButtonClick = async (button: string) => {
+    try {
+      const r = await axios.post("/api/postButtonCommand", { button, buttonMessageId });
+
+      console.log("response", r.data);
+
+      // Poll the server to fetch the response from the cache
+      let buttonCommandResponse, buttonId, imageUrl;
+      while (!buttonCommandResponse) {
+        try {
+          const fetchResponse = await axios.get(
+            `/api/fetchButtonCommandResponse?originatingMessageId=${r.data.messageId}`,
+          );
+          buttonCommandResponse = fetchResponse.data;
+          buttonId = buttonCommandResponse.buttonMessageId;
+          imageUrl = buttonCommandResponse.imageUrl;
+        } catch (error: any) {
+          if (error.response.status !== 404) {
+            throw error;
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
+        }
+      }
+      setImageUrl(imageUrl);
+      setButtonMessageId(buttonId);
+      console.log("Button Command Response:", buttonCommandResponse);
+    } catch (e: any) {
+      console.log(e);
+      setError(e.message);
+    }
+  };
 
   const handleDescribeClick = async () => {
     console.log(`Submitting image URL: ${srcUrl}`);
@@ -97,11 +130,13 @@ export default function Home() {
       console.log("Waiting for webhook to be received...");
 
       // Poll the server to fetch the image URL from the cache
-      let imageUrl;
-      while (!imageUrl) {
+      let imageUrl, buttonId, ImagineCommandResponse;
+      while (!ImagineCommandResponse) {
         try {
           const fetchResponse = await axios.get(`/api/fetchImageUrl?messageId=${r.data.messageId}`);
+          ImagineCommandResponse = fetchResponse.data;
           imageUrl = fetchResponse.data.imageUrl;
+          buttonId = fetchResponse.data.buttonMessageId;
         } catch (error: any) {
           if (error.response.status !== 404) {
             throw error;
@@ -111,6 +146,7 @@ export default function Home() {
       }
 
       setImageUrl(imageUrl);
+      setButtonMessageId(buttonId);
     } catch (e: any) {
       console.log(e);
       setError(e.message);
@@ -146,6 +182,19 @@ export default function Home() {
     );
     setText(prompt);
   }, [srcUrl, level, power1, power2, power3, alignment1, alignment2, side, selectedDescriptionIndex, description]);
+
+  const AvailableButtons = () => {
+    const buttons = ["U1", "U2", "U3", "U4", "🔄", "V1", "V2", "V3", "V4"];
+    return (
+      <div>
+        {buttons.map(button => (
+          <button key={button} onClick={() => handleButtonClick(button)}>
+            {button}
+          </button>
+        ))}
+      </div>
+    );
+  };
 
   const handleMetadataReceived = (metadata: any) => {
     console.log("Metadata received in the parent component:", metadata);
@@ -186,6 +235,18 @@ export default function Home() {
   return (
     <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
       <div className="w-full px-8">
+        {!srcUrl && (
+          <div className="w-full px-8">
+            <h3 className="text-xl font-bold mb-2">This App reads your AI-Universe Character Balance:</h3>
+            <h4> Mint a character at </h4>
+            <a href="https://ai-universe.com/" target="_blank" rel="noreferrer">
+              <h4 className="text-blue-500">https://ai-universe.com/</h4>
+            </a>
+
+            <h3 className="text-xl font-bold mb-2">Select a token:</h3>
+            <p>Click on a token to select it.</p>
+          </div>
+        )}
         <ReadAIU
           onSelectedTokenIdRecieved={handleSelectedTokenIdRecieved}
           onMetadataReceived={handleMetadataReceived}
@@ -222,6 +283,7 @@ export default function Home() {
       <div className="w-full px-8">
         <h2 className="text-xl font-bold mb-2">Prompt</h2>
         {imageUrl && <img src={imageUrl} className="w-full rounded shadow-md mb-4" alt="nothing" />}
+        <AvailableButtons />
         <div className="flex space-x-2">
           <input
             value={text}
@@ -229,15 +291,21 @@ export default function Home() {
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             placeholder="Enter your prompt here"
           />
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={async () => {
-              handleClick();
-            }}
-            disabled={loading}
-          >
-            {loading ? "Submitting..." : "Submit"}
-          </button>
+          {srcUrl ? (
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={async () => {
+                handleClick();
+              }}
+              disabled={loading || !srcUrl}
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </button>
+          ) : (
+            <div>
+              <p>Get AIU</p>
+            </div>
+          )}
         </div>
         <div className="mt-4">
           <p className="font-semibold">ImageUrl:</p>
