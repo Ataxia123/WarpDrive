@@ -5,7 +5,6 @@ import axios from "axios";
 import GraphemeSplitter from "grapheme-splitter";
 
 export default function Home() {
-  const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [response, setResponse] = useState("");
@@ -19,14 +18,95 @@ export default function Home() {
   const [power1, setPower1] = useState("");
   const [power2, setPower2] = useState("");
   const [power3, setPower3] = useState("");
+  const [power4, setPower4] = useState("");
   const [alignment1, setAlignment1] = useState("");
   const [alignment2, setAlignment2] = useState("");
   const [side, setSide] = useState("");
   const [buttonMessageId, setButtonMessageId] = useState("");
   const [nijiFlag, setNijiFlag] = useState(false);
   const [vFlag, setVFlag] = useState(false);
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
+  const [tempUrl, setTempUrl] = useState("");
 
-  const handleButtonClick = async (button: string) => {
+  function generatePrompt(
+    type: "character" | "background",
+    srcURL: string | undefined,
+    level: string,
+    power1: string,
+    power2: string,
+    power3: string | "",
+    power4: string | "",
+    alignment1: string,
+    alignment2: string,
+    selectedDescription: string,
+    nijiFlag: boolean,
+    vFlag: boolean,
+    side: string | "",
+  ): string {
+    const niji = nijiFlag ? "--niji 5" : "";
+    const v = vFlag ? "--v 5" : "";
+    const keyword = type === "background" ? "Abstract Barren Landscape" : "";
+    if (type === "background")
+      return `${srcURL} ${keyword} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${selectedDescription} ${niji} ${v}`.trim();
+
+    return `${srcURL} ${keyword} ${level} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${side} ${selectedDescription} ${niji} ${v}`.trim();
+  }
+
+  const submitPrompt = async (type: "character" | "background") => {
+    const prompt = generatePrompt(
+      type,
+      srcUrl,
+      level,
+      power1,
+      power2,
+      power3,
+      power4,
+      alignment1,
+      alignment2,
+      description[selectedDescriptionIndex],
+      nijiFlag,
+      vFlag,
+      side,
+    );
+
+    try {
+      const r = await axios.post("/api/apiHandler", { text: prompt });
+
+      console.log("response", r.data);
+      setResponse(JSON.stringify(r.data, null, 2));
+      console.log("messageID", r.data.messageId);
+
+      // Poll the server to fetch the image URL from the cache
+      let imageUrl, ImagineCommandResponse, bmessageId;
+      while (!ImagineCommandResponse) {
+        try {
+          const fetchResponse = await axios.get(`/api/fetchImageUrl?messageId=${r.data.messageId}`);
+          ImagineCommandResponse = fetchResponse.data;
+          imageUrl = fetchResponse.data.imageUrl;
+          bmessageId = fetchResponse.data.buttonMessageId;
+        } catch (error: any) {
+          if (error.response.status !== 404) {
+            throw error;
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
+        }
+      }
+
+      // Set the appropriate state based on the type
+      if (type === "character") {
+        setImageUrl(imageUrl);
+        setButtonMessageId(bmessageId);
+      } else {
+        setTempUrl(imageUrl);
+        setButtonMessageId(bmessageId);
+      }
+    } catch (e: any) {
+      console.log(e);
+      setError(e.message);
+    }
+  };
+
+  const handleButtonClick = async (button: string, type: "character" | "background") => {
     try {
       const r = await axios.post("/api/postButtonCommand", { button, buttonMessageId });
 
@@ -49,7 +129,9 @@ export default function Home() {
           await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
         }
       }
-      setImageUrl(imageUrl);
+      if (type === "character") setImageUrl(imageUrl);
+      else setBackgroundImageUrl(imageUrl);
+
       setButtonMessageId(buttonId);
       console.log("Button Command Response:", buttonCommandResponse);
     } catch (e: any) {
@@ -110,114 +192,24 @@ export default function Home() {
     setWaitingForWebhook(false);
   };
 
-  const handleClick = async () => {
-    console.log(`Submitting my prompt: ${text}`);
-    setLoading(true);
-
-    if (waitingForWebhook) {
-      console.log("Already waiting for webhook, please wait for response.");
-      return;
-    }
-
-    setWaitingForWebhook(true);
-
-    try {
-      const r = await axios.post("/api/apiHandler", { text });
-
-      console.log("response", r.data);
-      setResponse(JSON.stringify(r.data, null, 2));
-      console.log("messageID", r.data.messageId);
-
-      // Start waiting for webhook
-      console.log("Waiting for webhook to be received...");
-
-      // Poll the server to fetch the image URL from the cache
-      let imageUrl, buttonId, ImagineCommandResponse;
-      while (!ImagineCommandResponse) {
-        try {
-          const fetchResponse = await axios.get(`/api/fetchImageUrl?messageId=${r.data.messageId}`);
-          ImagineCommandResponse = fetchResponse.data;
-          imageUrl = fetchResponse.data.imageUrl;
-          buttonId = fetchResponse.data.buttonMessageId;
-        } catch (error: any) {
-          if (error.response.status !== 404) {
-            throw error;
-          }
-          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
-        }
-      }
-
-      setImageUrl(imageUrl);
-      setButtonMessageId(buttonId);
-    } catch (e: any) {
-      console.log(e);
-      setError(e.message);
-    }
-
-    setLoading(false);
-    setWaitingForWebhook(false);
-  };
-
-  useEffect(() => {
-    function generatePrompt(
-      srcURL: string | undefined,
-      level: string,
-      power1: string,
-      power2: string,
-      alignment1: string,
-      alignment2: string,
-      selectedDescription: string,
-      nijiFlag: boolean,
-      vFlag: boolean,
-      side = "",
-      power3 = "",
-      power4 = "",
-    ): string {
-      const niji = nijiFlag ? "--niji 5" : "";
-      const v = vFlag ? "--v 5" : "";
-      return `${srcURL} ${level} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${side} ${selectedDescription} ${niji} ${v}`.trim();
-    }
-
-    const prompt = generatePrompt(
-      srcUrl,
-      level,
-      power1,
-      power2,
-      alignment1,
-      alignment2,
-      description[selectedDescriptionIndex],
-      nijiFlag, // Set this according to your checkbox state
-      vFlag, // Set this according to your checkbox state
-      side,
-    );
-    setText(prompt);
-  }, [
-    srcUrl,
-    level,
-    power1,
-    power2,
-    power3,
-    alignment1,
-    alignment2,
-    side,
-    selectedDescriptionIndex,
-    description,
-    nijiFlag,
-    vFlag,
-  ]);
-
   const AvailableButtons = () => {
     const buttons = ["U1", "U2", "U3", "U4", "🔄", "V1", "V2", "V3", "V4"];
     return (
       <div>
         {buttons.map(button => (
-          <button key={button} onClick={() => handleButtonClick(button)}>
+          <button key={button} onClick={() => handleButtonClick(button, "character")}>
             {button}
           </button>
         ))}
       </div>
     );
   };
+
+  useEffect(() => {
+    if (tempUrl && tempUrl !== "") {
+      handleButtonClick("U1", "background");
+    }
+  }, [tempUrl]);
 
   const handleMetadataReceived = (metadata: any) => {
     console.log("Metadata received in the parent component:", metadata);
@@ -233,6 +225,7 @@ export default function Home() {
     setPower1(attributes["Power 1"]);
     setPower2(attributes["Power 2"]);
     setPower3(attributes["Power 3"]); // Assuming there is a Power 3 attribute in the metadata
+    setPower4(attributes["Power 4"]); // Assuming there is a Power 4 attribute in the metadata
     setAlignment1(attributes["Alignment 1"]);
     setAlignment2(attributes["Alignment 2"]);
     setSide(attributes.Side);
@@ -241,6 +234,7 @@ export default function Home() {
   const handleImageSrcReceived = (imageSrc: string) => {
     console.log("Image URL received in the parent component:", imageSrc);
     setSrcUrl(imageSrc);
+    submitPrompt("background");
     console.log(srcUrl);
     // Handle the imageSrc here, e.g., update the state or call another function
   };
@@ -256,100 +250,103 @@ export default function Home() {
   console.log(description);
 
   return (
-    <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
-      <div className="w-full px-8">
-        {!srcUrl && (
-          <div className="w-full px-8">
-            <h3 className="text-xl font-bold mb-2">This App reads your AI-Universe Character Balance:</h3>
-            <h4> Mint a character at </h4>
-            <a href="https://ai-universe.com/" target="_blank" rel="noreferrer">
-              <h4 className="text-blue-500">https://ai-universe.com/</h4>
-            </a>
+    <div
+      className="background-container"
+      style={{
+        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
+        <div className="w-full px-8">
+          {!srcUrl && (
+            <div className="w-full px-8">
+              <h3 className="text-xl font-bold mb-2">This App reads your AI-Universe Character Balance:</h3>
+              <h4> Mint a character at </h4>
+              <a href="https://ai-universe.com/" target="_blank" rel="noreferrer">
+                <h4 className="text-blue-500">https://ai-universe.com/</h4>
+              </a>
 
-            <h3 className="text-xl font-bold mb-2">Select a token:</h3>
-            <p>Click on a token to select it.</p>
-          </div>
-        )}
-        <ReadAIU
-          onSelectedTokenIdRecieved={handleSelectedTokenIdRecieved}
-          onMetadataReceived={handleMetadataReceived}
-          onImageSrcReceived={handleImageSrcReceived}
-          onTokenIdsReceived={handleTokenIdsReceived}
-        />
-        {selectedTokenId && (
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded"
-            onClick={handleDescribeClick}
-          >
-            Describe
-          </button>
-        )}
-        {description && (
-          <div className="w-full px-8">
-            <h3 className="text-xl font-bold mb-2">Description:</h3>
-            <p>{description[selectedDescriptionIndex]}</p>
-            <select
-              value={selectedDescriptionIndex}
-              onChange={e => setSelectedDescriptionIndex(Number(e.target.value))}
-              className="block w-full mt-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            >
-              {description.map((desc, index) => (
-                <option key={index} value={index}>
-                  {desc}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-      </div>
-
-      <div className="w-full px-8">
-        <h2 className="text-xl font-bold mb-2">Prompt</h2>
-        {imageUrl && <img src={imageUrl} className="w-full rounded shadow-md mb-4" alt="nothing" />}
-        <AvailableButtons />
-        <div className="flex space-x-2">
-          {/* ... other component JSX */}
-          <label>
-            <input type="checkbox" checked={nijiFlag} onChange={() => setNijiFlag(!nijiFlag)} />
-            --niji 5
-          </label>
-          <label>
-            <input type="checkbox" checked={vFlag} onChange={() => setVFlag(!vFlag)} />
-            --v 5
-          </label>
-          <input
-            value={text}
-            onChange={e => setText(e.target.value)}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            placeholder="Enter your prompt here"
+              <h3 className="text-xl font-bold mb-2">Select a token:</h3>
+              <p>Click on a token to select it.</p>
+            </div>
+          )}
+          <ReadAIU
+            onSelectedTokenIdRecieved={handleSelectedTokenIdRecieved}
+            onMetadataReceived={handleMetadataReceived}
+            onImageSrcReceived={handleImageSrcReceived}
+            onTokenIdsReceived={handleTokenIdsReceived}
           />
-          {srcUrl ? (
+          {selectedTokenId && (
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={async () => {
-                handleClick();
-              }}
-              disabled={loading || !srcUrl}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded"
+              onClick={handleDescribeClick}
             >
-              {loading ? "Submitting..." : "Submit"}
+              Describe
             </button>
-          ) : (
-            <div>
-              <p>Get AIU</p>
+          )}
+          {description && (
+            <div className="w-full px-8">
+              <h3 className="text-xl font-bold mb-2">Description:</h3>
+              <p>{description[selectedDescriptionIndex]}</p>
+              <select
+                value={selectedDescriptionIndex}
+                onChange={e => setSelectedDescriptionIndex(Number(e.target.value))}
+                className="block w-full mt-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              >
+                {description.map((desc, index) => (
+                  <option key={index} value={index}>
+                    {desc}
+                  </option>
+                ))}
+              </select>
             </div>
           )}
         </div>
-        <div className="mt-4">
-          <p className="font-semibold">ImageUrl:</p>
-          <p>{imageUrl}</p>
-        </div>
-        <div className="mt-4">
-          <p className="font-semibold">Response Message:</p>
-          <pre>{response}</pre>
-        </div>
-        <div className="mt-4 text-red-600">
-          <p className="font-semibold">Error:</p>
-          <p>{error}</p>
+
+        <div className="w-full px-8">
+          <h2 className="text-xl font-bold mb-2">Prompt</h2>
+          {imageUrl && <img src={imageUrl} className="w-full rounded shadow-md mb-4" alt="nothing" />}
+          <AvailableButtons />
+          <div className="flex space-x-2">
+            {/* ... other component JSX */}
+            <label>
+              <input type="checkbox" checked={nijiFlag} onChange={() => setNijiFlag(!nijiFlag)} />
+              --niji 5
+            </label>
+            <label>
+              <input type="checkbox" checked={vFlag} onChange={() => setVFlag(!vFlag)} />
+              --v 5
+            </label>
+            {srcUrl ? (
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={async () => {
+                  submitPrompt("character");
+                }}
+                disabled={loading || !srcUrl}
+              >
+                {loading ? "Submitting..." : "Submit"}
+              </button>
+            ) : (
+              <div>
+                <p>Get AIU</p>
+              </div>
+            )}
+          </div>
+          <div className="mt-4">
+            <p className="font-semibold">ImageUrl:</p>
+            <p>{imageUrl}</p>
+          </div>
+          <div className="mt-4">
+            <p className="font-semibold">Response Message:</p>
+            <pre>{response}</pre>
+          </div>
+          <div className="mt-4 text-red-600">
+            <p className="font-semibold">Error:</p>
+            <p>{error}</p>
+          </div>
         </div>
       </div>
     </div>
