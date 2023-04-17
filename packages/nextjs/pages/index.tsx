@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Background from "../components/Background";
 import Dashboard from "../components/Dashboard";
-import ReadAIU from "../components/ReadAIU";
+import AcquiringTarget from "../components/panels/AcquiringTarget";
 import DescriptionPanel from "../components/panels/DescriptionPanel";
 import PromptPanel from "../components/panels/PromptPanel";
 import TokenSelectionPanel from "../components/panels/TokenSelectionPanel";
@@ -32,6 +32,18 @@ export default function Home() {
   const [tempUrl, setTempUrl] = useState("");
   const [nijiFlag, setNijiFlag] = useState(false);
   const [vFlag, setVFlag] = useState(false);
+  const [travelStatus, setTravelStatus] = useState<"NoTarget" | "AcquiringTarget" | "TargetAcquired">("NoTarget");
+
+  type Metadata = {
+    Level: string;
+    Power1: string;
+    Power2: string;
+    Power3: string;
+    Power4: string;
+    Alignment1: string;
+    Alignment2: string;
+    Side: string;
+  };
 
   function generatePrompt(
     type: "character" | "background",
@@ -51,8 +63,10 @@ export default function Home() {
     const niji = nijiFlag ? "--niji 5" : "";
     const v = vFlag ? "--v 5" : "";
     const keyword = type === "background" ? "The Planet Of" : "";
+    const randomPlanet =
+      "https://discovery.sndimg.com/content/dam/images/discovery/fullset/2022/9/alien%20planet%20GettyImages-913058614.jpg.rend.hgtvcom.406.406.suffix/1664497398007.jpeg";
     if (type === "background")
-      return `${srcURL} ${keyword} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${selectedDescription} ${niji} ${v}`.trim();
+      return `${randomPlanet} ${keyword} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${selectedDescription} ${niji} ${v} viewed from space`.trim();
 
     return `${srcURL} ${keyword} ${level} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${side} ${selectedDescription} ${niji} ${v}`.trim();
   }
@@ -73,7 +87,9 @@ export default function Home() {
       vFlag,
       side,
     );
-
+    if (type === "background") {
+      setTravelStatus("AcquiringTarget");
+    }
     try {
       const r = await axios.post("/api/apiHandler", { text: prompt });
 
@@ -116,6 +132,9 @@ export default function Home() {
       const r = await axios.post("/api/postButtonCommand", { button, buttonMessageId });
 
       console.log("response", r.data);
+      if (travelStatus === "AcquiringTarget") {
+        setTravelStatus("TargetAcquired");
+      }
 
       // Poll the server to fetch the response from the cache
       let buttonCommandResponse, buttonId, imageUrl;
@@ -136,6 +155,7 @@ export default function Home() {
       }
       if (type === "character") setImageUrl(imageUrl);
       else setBackgroundImageUrl(imageUrl);
+      setTravelStatus("NoTarget");
 
       setButtonMessageId(buttonId);
       console.log("Button Command Response:", buttonCommandResponse);
@@ -223,6 +243,18 @@ export default function Home() {
     setSide(attributes.Side);
   };
 
+  // make an array out of the metadata attributes
+  const metadata: Metadata = {
+    Level: level,
+    Power1: power1,
+    Power2: power2,
+    Power3: power3,
+    Power4: power4,
+    Alignment1: alignment1,
+    Alignment2: alignment2,
+    Side: side,
+  };
+
   const handleImageSrcReceived = (imageSrc: string) => {
     console.log("Image URL received in the parent component:", imageSrc);
     setSrcUrl(imageSrc);
@@ -243,9 +275,16 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <link rel="preconnect" href="https://fonts.gstatic.com" />
+      <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
       <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
         <Dashboard>
-          <Background dynamicImageUrl={backgroundImageUrl} fixedImageUrl="assets/view.png" />
+          <AcquiringTarget travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
+          <Background
+            travelStatus={travelStatus}
+            dynamicImageUrl={backgroundImageUrl}
+            fixedImageUrl="assets/view.png"
+          />
           <TokenSelectionPanel
             onMetadataReceived={handleMetadataReceived}
             onImageSrcReceived={handleImageSrcReceived}
@@ -257,7 +296,7 @@ export default function Home() {
             description={description}
             onDescriptionIndexChange={setSelectedDescriptionIndex}
             selectedDescriptionIndex={selectedDescriptionIndex}
-            handleDercribeClick={handleDescribeClick}
+            handleDescribeClick={handleDescribeClick}
           />
           <PromptPanel
             imageUrl={imageUrl}
@@ -266,6 +305,7 @@ export default function Home() {
             onSubmit={submitPrompt}
             handleButtonClick={handleButtonClick}
             loading={loading}
+            metadata={metadata}
           />
         </Dashboard>
       </div>

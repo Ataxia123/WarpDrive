@@ -22,8 +22,8 @@ p {
 
 .unfocused {
   position: fixed;
-  top: 50%; /* Add top property */
-  left: 0;
+  top: 60%; /* Add top property */
+  bottom: 10%;
   transform: translateY(-50%) perspective(1000px) rotateY(45deg) scale(0.8); /* Add translateY */
   transform-origin: left center;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
@@ -32,13 +32,16 @@ p {
 
 .unfocused-right {
   position: fixed;
-  top: 50%; /* Add top property */
-  right: 0;
-  transform: translateY(-50%) perspective(1000px) rotateY(-45deg) scale(0.8); /* Add translateY */
+   /* Add top property */
+  top: 75%;
+  right:10%;
+  left: 75%;
+  transform: translateY(-41%) perspective(1000px) rotateY(-46deg) rotateZ(9deg) scale(0.8); /* Add translateY */
   transform-origin: right center;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
   z-index: 10;
 }
+
 
 .focused {
   position: static;
@@ -78,14 +81,22 @@ z-index: -1;
   overflow: hidden;
 }
 
-.fixedImage,
+.fixedImage {
+  z-index: -2;
+  position: 
+  fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
 .dynamicImage {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
+  z-index: -4;
   object-fit: cover;
 }
 
@@ -182,11 +193,7 @@ z-index: -1;
 }
 
 /* Prompt Pannel CSS*/
-.button-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
+
 
 .spaceship-button {
   background-color: #2d2d2d;
@@ -210,11 +217,11 @@ z-index: -1;
 
 .prompt-panel {
   position: fixed;
-  bottom: 40px;
-  left: 550px;
+  bottom: 20%;
+  left: 5%;
   width: 20%;
   z-index: 30;
-  transform: perspective(1000px) rotateX(20deg) rotateY(
+  transform: perspective(1000px) rotateX(33deg) rotateY(
     19deg) rotateZ(-27deg)scale(0.8);
   transform-origin: left bottom;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 16px 0px;
@@ -225,6 +232,189 @@ z-index: -1;
   z-index: 50;
 }
 
-.trapezoid {
-  clip-path: polygon(0 0, 100% 10%, 90% 100%, 0% 100%);
+
+
+.description-text {
+  white-space: pre-wrap;
+  overflow: hidden;
+  border-right: 0.15em solid;
+  animation: typing 1.5s steps(40, end),
+             blink-caret 0.75s step-end infinite alternate;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink-caret {
+  50% {
+    border-color: transparent;
+  }
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink-caret {
+  50% {
+    border-color: transparent;
+  }
+}
+
+.spaceship-panel {
+  font-family: "Orbitron", sans-serif;
+  background-color: #101010;
+  color: #00ff00;
+  border: 2px solid #00ff00;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.focused-right {
+  position: fixed;
+  top: 70%;
+  right: 10%;
+  left: 70%;
+  transform: translate(0%, -50%);
+  z-index: 100;
+}
+
+.warpSpeedEffect {
+  position: absolute;
+  z-index: -3;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+.warpSpeedActive {
+  opacity: 1;
+}
+
+
+.warpImage {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background-image: url("https://i.pinimg.com/originals/0d/a9/a5/0da9a5f9054b0ec2297269a44809257d.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+@keyframes zoomIn {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(2);
+  }
+}
+
+.warpImage1 {
+  animation: zoomIn 5s infinite linear;
+}
+
+.warpImage2 {
+  animation: zoomIn 5s infinite linear 0.5s;
+}
+
+.acquiring-target-card {
+  position: absolute;
+  top: 56%;
+  left: 28.5%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  color: #32CD32;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.acquiring-target-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin: 0 auto 10px auto;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.yellow {
+  animation: blink 1s infinite;
+}
+
+.prompt-panel {
+  background-color: rgba(10, 10, 10, 0.8);
+  color: #32CD32;
+  font-family: 'Courier New', Courier, monospace;
+  border: 1px solid #32CD32;
+  box-shadow: 0 0 10px #32CD32;
+  transition: all 0.3s ease-in-out;
+}
+
+.description-text {
+  font-size: 16px;
+  margin: 10px 0;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.spaceship-button {
+  background-color: rgba(50, 205, 50, 0.5);
+  color: #32CD32;
+  border: 1px solid #32CD32;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.spaceship-button:hover {
+  background-color: rgba(50, 205, 50, 0.8);
+}
+
+.spaceship-button.active {
+  background-color: rgba(50, 205, 50, 0.8);
+}
+
+input[type='checkbox'] {
+  margin-right: 5px;
 }

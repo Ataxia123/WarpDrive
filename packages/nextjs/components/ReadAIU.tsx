@@ -134,12 +134,12 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
             {metadata && (
               <div>
                 <h3>Metadata:</h3>
-                <p>ID: {metadata.ID}</p>
-                <p>Name: {metadata.name}</p>
-                <p>Description: {metadata.description}</p>
+                <p className="description-text">ID: {metadata.ID}</p>
+                <p className="description-text">Name: {metadata.name}</p>
+                <p className="description-text">Description: {metadata.description}</p>
                 <p>Image: {metadata.image}</p>
                 <p>Attributes:</p>
-                <ul>
+                <ul className="description-text">
                   {metadata.attributes.map((attribute: any, index: number) => (
                     <li key={index}>
                       {attribute.trait_type}: {attribute.value}
