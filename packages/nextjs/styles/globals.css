@@ -3,9 +3,6 @@
 @import "tailwindcss/utilities";
 
 :root,
-[data-theme] {
-  background: hsl(var(--b2));
-}
 
 body {
   min-height: 100vh;
@@ -23,10 +20,33 @@ p {
   margin: 1rem 0;
 }
 
-.btn {
-  @apply shadow-md;
+.unfocused {
+  position: fixed;
+  left: 0;
+  transform: perspective(1000px) rotateY(45deg) scale(0.8);
+  transform-origin: left center;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
 }
 
-.btn.btn-ghost {
-  @apply shadow-none;
+.focused {
+  position: static;
+  transform: none;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 16px 0px;
 }
+
+.unfocused-right {
+  position: fixed;
+  right: 0;
+  transform: perspective(1000px) rotateY(-45deg) scale(0.8);
+  transform-origin: right center;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
+}
+
+.unfocused-bottom {
+  position: fixed;
+  bottom: 0;
+  transform: perspective(1000px) rotateX(45deg) scale(0.8);
+  transform-origin: center bottom;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px -2px 8px 0px;
+}
+

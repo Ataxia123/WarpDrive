@@ -1,6 +1,11 @@
 // index.tsx
 import { useEffect, useState } from "react";
+import Background from "../components/Background";
+import Dashboard from "../components/Dashboard";
 import ReadAIU from "../components/ReadAIU";
+import DescriptionPanel from "../components/panels/DescriptionPanel";
+import PromptPanel from "../components/panels/PromptPanel";
+import TokenSelectionPanel from "../components/panels/TokenSelectionPanel";
 import axios from "axios";
 import GraphemeSplitter from "grapheme-splitter";
 
@@ -23,10 +28,10 @@ export default function Home() {
   const [alignment2, setAlignment2] = useState("");
   const [side, setSide] = useState("");
   const [buttonMessageId, setButtonMessageId] = useState("");
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState("assets/background.png");
+  const [tempUrl, setTempUrl] = useState("");
   const [nijiFlag, setNijiFlag] = useState(false);
   const [vFlag, setVFlag] = useState(false);
-  const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
-  const [tempUrl, setTempUrl] = useState("");
 
   function generatePrompt(
     type: "character" | "background",
@@ -45,7 +50,7 @@ export default function Home() {
   ): string {
     const niji = nijiFlag ? "--niji 5" : "";
     const v = vFlag ? "--v 5" : "";
-    const keyword = type === "background" ? "Abstract Barren Landscape" : "";
+    const keyword = type === "background" ? "The Planet Of" : "";
     if (type === "background")
       return `${srcURL} ${keyword} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${selectedDescription} ${niji} ${v}`.trim();
 
@@ -192,19 +197,6 @@ export default function Home() {
     setWaitingForWebhook(false);
   };
 
-  const AvailableButtons = () => {
-    const buttons = ["U1", "U2", "U3", "U4", "🔄", "V1", "V2", "V3", "V4"];
-    return (
-      <div>
-        {buttons.map(button => (
-          <button key={button} onClick={() => handleButtonClick(button, "character")}>
-            {button}
-          </button>
-        ))}
-      </div>
-    );
-  };
-
   useEffect(() => {
     if (tempUrl && tempUrl !== "") {
       handleButtonClick("U1", "background");
@@ -250,104 +242,32 @@ export default function Home() {
   console.log(description);
 
   return (
-    <div
-      className="background-container"
-      style={{
-        backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
-        <div className="w-full px-8">
-          {!srcUrl && (
-            <div className="w-full px-8">
-              <h3 className="text-xl font-bold mb-2">This App reads your AI-Universe Character Balance:</h3>
-              <h4> Mint a character at </h4>
-              <a href="https://ai-universe.com/" target="_blank" rel="noreferrer">
-                <h4 className="text-blue-500">https://ai-universe.com/</h4>
-              </a>
-
-              <h3 className="text-xl font-bold mb-2">Select a token:</h3>
-              <p>Click on a token to select it.</p>
-            </div>
-          )}
-          <ReadAIU
-            onSelectedTokenIdRecieved={handleSelectedTokenIdRecieved}
+        <Dashboard>
+          <Background dynamicImageUrl={backgroundImageUrl} fixedImageUrl="assets/view.png" />
+          <TokenSelectionPanel
             onMetadataReceived={handleMetadataReceived}
             onImageSrcReceived={handleImageSrcReceived}
             onTokenIdsReceived={handleTokenIdsReceived}
+            onSelectedTokenIdRecieved={handleSelectedTokenIdRecieved}
           />
-          {selectedTokenId && (
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded"
-              onClick={handleDescribeClick}
-            >
-              Describe
-            </button>
-          )}
-          {description && (
-            <div className="w-full px-8">
-              <h3 className="text-xl font-bold mb-2">Description:</h3>
-              <p>{description[selectedDescriptionIndex]}</p>
-              <select
-                value={selectedDescriptionIndex}
-                onChange={e => setSelectedDescriptionIndex(Number(e.target.value))}
-                className="block w-full mt-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              >
-                {description.map((desc, index) => (
-                  <option key={index} value={index}>
-                    {desc}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-        </div>
-
-        <div className="w-full px-8">
-          <h2 className="text-xl font-bold mb-2">Prompt</h2>
-          {imageUrl && <img src={imageUrl} className="w-full rounded shadow-md mb-4" alt="nothing" />}
-          <AvailableButtons />
-          <div className="flex space-x-2">
-            {/* ... other component JSX */}
-            <label>
-              <input type="checkbox" checked={nijiFlag} onChange={() => setNijiFlag(!nijiFlag)} />
-              --niji 5
-            </label>
-            <label>
-              <input type="checkbox" checked={vFlag} onChange={() => setVFlag(!vFlag)} />
-              --v 5
-            </label>
-            {srcUrl ? (
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={async () => {
-                  submitPrompt("character");
-                }}
-                disabled={loading || !srcUrl}
-              >
-                {loading ? "Submitting..." : "Submit"}
-              </button>
-            ) : (
-              <div>
-                <p>Get AIU</p>
-              </div>
-            )}
-          </div>
-          <div className="mt-4">
-            <p className="font-semibold">ImageUrl:</p>
-            <p>{imageUrl}</p>
-          </div>
-          <div className="mt-4">
-            <p className="font-semibold">Response Message:</p>
-            <pre>{response}</pre>
-          </div>
-          <div className="mt-4 text-red-600">
-            <p className="font-semibold">Error:</p>
-            <p>{error}</p>
-          </div>
-        </div>
+          <DescriptionPanel
+            selectedTokenId={selectedTokenId}
+            description={description}
+            onDescriptionIndexChange={setSelectedDescriptionIndex}
+            selectedDescriptionIndex={selectedDescriptionIndex}
+            handleDercribeClick={handleDescribeClick}
+          />
+          <PromptPanel
+            imageUrl={imageUrl}
+            srcUrl={srcUrl}
+            onSubmitPrompt={submitPrompt}
+            onSubmit={submitPrompt}
+            handleButtonClick={handleButtonClick}
+            loading={loading}
+          />
+        </Dashboard>
       </div>
     </div>
   );
