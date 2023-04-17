@@ -22,31 +22,209 @@ p {
 
 .unfocused {
   position: fixed;
+  top: 50%; /* Add top property */
   left: 0;
-  transform: perspective(1000px) rotateY(45deg) scale(0.8);
+  transform: translateY(-50%) perspective(1000px) rotateY(45deg) scale(0.8); /* Add translateY */
   transform-origin: left center;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
+  z-index: 10;
+}
+
+.unfocused-right {
+  position: fixed;
+  top: 50%; /* Add top property */
+  right: 0;
+  transform: translateY(-50%) perspective(1000px) rotateY(-45deg) scale(0.8); /* Add translateY */
+  transform-origin: right center;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
+  z-index: 10;
 }
 
 .focused {
   position: static;
   transform: none;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 16px 0px;
+  z-index: 20; /* Add a higher z-index value */
 }
 
-.unfocused-right {
-  position: fixed;
-  right: 0;
-  transform: perspective(1000px) rotateY(-45deg) scale(0.8);
-  transform-origin: right center;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
+.panel-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 0.5rem;
+  color: #fff;
+  font-family: "Courier New", Courier, monospace;
 }
 
 .unfocused-bottom {
   position: fixed;
-  bottom: 0;
-  transform: perspective(1000px) rotateX(45deg) scale(0.8);
+  bottom: 40px;
+  transform: perspective(1000px) rotateX(10deg) scale(0.3);
   transform-origin: center bottom;
   box-shadow: rgba(0, 0, 0, 0.1) 0px -2px 8px 0px;
 }
 
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+z-index: -1;
+  overflow: hidden;
+}
+
+.fixedImage,
+.dynamicImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  object-fit: cover;
+}
+
+.dynamicImage {
+  transition: transform 0.1s linear;
+}
+
+.dashboard {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 10;
+}
+
+.dashboard-container {
+  background-color: rgba(17, 2, 2, 0.623); 
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.holographic {
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  color: #32CD32; /* Green console-like font color */
+  font-family: "Courier New", Courier, monospace;
+}
+
+.dropdown {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.dropdown select {
+  background-color: transparent;
+  color: #32CD32;
+  font-family: "Courier New", Courier, monospace;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid #32CD32;
+  cursor: pointer;
+}
+
+.token-selection-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dropdown-container {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  padding: 1rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.dropdown label {
+  font-weight: bold;
+  color: #fff;
+}
+
+.dropdown select {
+  background-color: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  border-radius: 5px;
+}
+
+.toggle-minimize-button {
+  background-color: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.toggle-minimize-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Prompt Pannel CSS*/
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.spaceship-button {
+  background-color: #2d2d2d;
+  border: 1px solid #32CD32;
+  color: #32CD32;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  text-transform: uppercase;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.spaceship-button:hover,
+.spaceship-button.active {
+  background-color: #32CD32;
+  color: #2d2d2d;
+  border-color: #2d2d2d;
+}
+
+.prompt-panel {
+  position: fixed;
+  bottom: 40px;
+  left: 550px;
+  width: 20%;
+  z-index: 30;
+  transform: perspective(1000px) rotateX(20deg) rotateY(
+    19deg) rotateZ(-27deg)scale(0.8);
+  transform-origin: left bottom;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 16px 0px;
+}
+
+.zoomed {
+  transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1);
+  z-index: 50;
+}
+
+.trapezoid {
+  clip-path: polygon(0 0, 100% 10%, 90% 100%, 0% 100%);
+}

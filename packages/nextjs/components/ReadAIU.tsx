@@ -6,16 +6,20 @@ import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth/useScaffoldEventH
 
 interface ReadAIUProps {
   onSelectedTokenIdRecieved: (selectedTokenId: string) => void;
-  onMetadataReceived: (metadata: any) => void; // Add this line
-  onImageSrcReceived: (imageSrc: string) => void; // Add this line
+  onMetadataReceived: (metadata: any) => void;
+  onImageSrcReceived: (imageSrc: string) => void;
   onTokenIdsReceived: (tokenIds: string[]) => void;
+  isFocused: boolean; // Add this prop
+  onToggleMinimize: () => void; // Add this prop
 }
 
 export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   onSelectedTokenIdRecieved,
-  onMetadataReceived, // Add this line
-  onImageSrcReceived, // Add this line
+  onMetadataReceived,
+  onImageSrcReceived,
   onTokenIdsReceived,
+  isFocused, // Destructure the isMinimized prop
+  onToggleMinimize, // Destructure the onToggleMinimize prop
 }) => {
   const { address } = useAccount();
   const { data: deployedContract } = useDeployedContractInfo("WarpDrive");
@@ -99,13 +103,8 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   }, [metadata]);
 
   return (
-    <div>
-      <h2>Read AIU</h2>
-      <div>
-        <p>Token IDs: {balance.toString()}</p>
-      </div>
-      <p>Token IDs: {tokenIds.length > 0 ? tokenIds.join(", ") : "Loading..."}</p>
-      <div>
+    <div className={`holographic ${!isFocused ? "minimized" : ""}`}>
+      <div className="dropdown">
         <label htmlFor="tokenId">Select a Token ID:</label>
         <select id="tokenId" value={selectedTokenId} onChange={handleTokenIdChange}>
           <option value="">--Select Token ID--</option>
@@ -116,43 +115,71 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
           ))}
         </select>
       </div>
-      {tokenURI && (
-        <div>
-          <p>Token URI: {tokenURI}</p>
-          {/* Display other variables here */}
-        </div>
+
+      {isFocused && (
+        <>
+          <div>
+            <h2>Read AIU</h2>
+            <div>
+              <p>Token IDs: {balance.toString()}</p>
+            </div>
+            <p>Token IDs: {tokenIds.length > 0 ? tokenIds.join(", ") : "Loading..."}</p>
+            {tokenURI && (
+              <div>
+                <p>Token URI: {tokenURI}</p>
+                {/* Display other variables here */}
+              </div>
+            )}
+
+            {metadata && (
+              <div>
+                <h3>Metadata:</h3>
+                <p>ID: {metadata.ID}</p>
+                <p>Name: {metadata.name}</p>
+                <p>Description: {metadata.description}</p>
+                <p>Image: {metadata.image}</p>
+                <p>Attributes:</p>
+                <ul>
+                  {metadata.attributes.map((attribute: any, index: number) => (
+                    <li key={index}>
+                      {attribute.trait_type}: {attribute.value}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div
+              style={{
+                width: "300px",
+                height: "400px",
+                borderRadius: "10px",
+                boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                padding: "20px",
+              }}
+            >
+              {imageSrc && (
+                <div>
+                  <h3>Image:</h3>
+                  <img
+                    src={imageSrc}
+                    alt={metadata?.name}
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto",
+                      borderRadius: "5px",
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </>
       )}
 
-      {metadata && (
+      {!isFocused && (
         <div>
-          <h3>Metadata:</h3>
-          <p>ID: {metadata.ID}</p>
-          <p>Name: {metadata.name}</p>
-          <p>Description: {metadata.description}</p>
-          <p>Image: {metadata.image}</p>
-          <p>Attributes:</p>
-          <ul>
-            {metadata.attributes.map((attribute: any, index: number) => (
-              <li key={index}>
-                {attribute.trait_type}: {attribute.value}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-      <div
-        style={{
-          width: "300px",
-          height: "400px",
-          backgroundColor: "#fff",
-          borderRadius: "10px",
-          boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
-          padding: "20px",
-        }}
-      >
-        {imageSrc && (
-          <div>
-            <h3>Image:</h3>
+          <h3>{metadata?.name}</h3>
+          {imageSrc && (
             <img
               src={imageSrc}
               alt={metadata?.name}
@@ -162,9 +189,9 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                 borderRadius: "5px",
               }}
             />
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

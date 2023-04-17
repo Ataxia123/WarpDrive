@@ -13,6 +13,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({ imageUrl, loading, src
   const [nijiFlag, setNijiFlag] = useState(false);
   const [vFlag, setVFlag] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [isZoomed, setIsZoomed] = useState(false);
 
   const onNijiFlagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNijiFlag(event.target.checked);
@@ -24,14 +25,18 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({ imageUrl, loading, src
 
   const handleClick = () => {
     setIsFocused(!isFocused);
+    setIsZoomed(!isZoomed); // Add this line
   };
-
   const AvailableButtons = () => {
     const buttons = ["U1", "U2", "U3", "U4", "🔄", "V1", "V2", "V3", "V4"];
     return (
-      <div>
+      <div className="button-container">
         {buttons.map(button => (
-          <button key={button} onClick={() => handleButtonClick(button, "character")}>
+          <button
+            key={button}
+            className={`spaceship-button ${isFocused ? "active" : ""}`}
+            onClick={() => handleButtonClick(button, "character")}
+          >
             {button}
           </button>
         ))}
@@ -41,9 +46,9 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({ imageUrl, loading, src
 
   return (
     <div
-      className={`${
-        isFocused ? "focused" : "unfocused"
-      } transition-all duration-300 transform w-full px-8 rounded-md bg-white`}
+      className={`${isFocused ? "focused" : "unfocused"} ${
+        !isZoomed ? "zoomed" : ""
+      } prompt-panel bg-black rounded shadow-md p-4`}
       onClick={handleClick}
     >
       <h2 className="text-xl font-bold mb-2">Prompt</h2>

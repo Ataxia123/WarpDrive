@@ -22,7 +22,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
 
   return (
     <div
-      className={`${focused ? "focused scale-110" : "unfocused-bottom scale-100"} transition-all duration-300`}
+      className={`${focused ? "focused scale-110" : "unfocused-right scale-100"} transition-all duration-300`}
       onClick={handleClick}
     >
       <div className="w-full px-8">

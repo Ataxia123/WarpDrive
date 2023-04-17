@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import styles from "./Background.module.css";
 
 interface BackgroundProps {
   dynamicImageUrl: string;
@@ -22,16 +21,16 @@ const Background: React.FC<BackgroundProps> = ({ dynamicImageUrl, fixedImageUrl 
   }, []);
 
   return (
-    <div className={styles.background}>
+    <div className="background">
       <img
-        className={styles.dynamicImage}
+        className="dynamicImage"
         src={dynamicImageUrl}
         alt="Dynamic Image"
         style={{
           transform: `translate(${bgPosition.x}px, ${bgPosition.y}px)`,
         }}
       />
-      <img className={styles.fixedImage} src={fixedImageUrl} alt="Fixed Image" />
+      <img className="fixedImage" src={fixedImageUrl} alt="Fixed Image" />
     </div>
   );
 };

@@ -19,20 +19,21 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
   const handleClick = () => {
     setIsFocused(!isFocused);
   };
-
   return (
-    <div
-      className={`${
-        isFocused ? "focused" : "unfocused-right"
-      } transition-all duration-300 transform w-full px-8 rounded-md bg-white`}
-      onClick={handleClick}
-    >
-      <ReadAIU
-        onMetadataReceived={onMetadataReceived}
-        onImageSrcReceived={onImageSrcReceived}
-        onTokenIdsReceived={onTokenIdsReceived}
-        onSelectedTokenIdRecieved={onSelectedTokenIdRecieved}
-      />
+    <div className="token-selection-panel">
+      <div className="dropdown-container">
+        <ReadAIU
+          onMetadataReceived={onMetadataReceived}
+          onImageSrcReceived={onImageSrcReceived}
+          onTokenIdsReceived={onTokenIdsReceived}
+          onSelectedTokenIdRecieved={onSelectedTokenIdRecieved}
+          isFocused={isFocused} // Pass isMinimized as a prop
+          onToggleMinimize={handleClick} // Pass handleClick as a prop
+        />
+      </div>
+      <button className="toggle-minimize-button" onClick={handleClick}>
+        {!isFocused ? "Expand" : "Minimize"}
+      </button>
     </div>
   );
 };
