@@ -84,7 +84,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
         ) : (
           <>
             <div>
-              <h1 className="description-text font-bold">AI-U ASSISTANCE REQUESTS</h1>
+              <h1 className="description-text font-bold">INCOMING AI-U ASSISTANCE REQUESTS</h1>
               {interplanetaryStatusReport ? (
                 <div>
                   {focused && (

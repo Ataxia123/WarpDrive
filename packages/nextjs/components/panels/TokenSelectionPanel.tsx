@@ -25,28 +25,30 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
   }, [interplanetaryStatusReport]);
 
   const handleClick = () => {
-    if (!isMinimized) {
+    if (isMinimized === false) {
+      console.log("minimized");
       setIsMinimized(true);
+      return;
     }
     setIsMinimized(false);
+    console.log("unminimized");
   };
+  //det focus handling
   return (
-    <div className="token-selection-panel">
-      <div className="dropdown-container">
-        <ReadAIU
-          isMinimized={isMinimized} // Pass isMinimized as a prop
-          onMetadataReceived={onMetadataReceived}
-          onImageSrcReceived={onImageSrcReceived}
-          onTokenIdsReceived={onTokenIdsReceived}
-          onSelectedTokenIdRecieved={onSelectedTokenIdRecieved}
-          isFocused={isFocused} // Pass isMinimized as a prop
-          onToggleMinimize={handleClick} // Pass handleClick as a prop
-        />
-      </div>
+    <>
+      <ReadAIU
+        isMinimized={isMinimized} // Pass isMinimized as a prop
+        onMetadataReceived={onMetadataReceived}
+        onImageSrcReceived={onImageSrcReceived}
+        onTokenIdsReceived={onTokenIdsReceived}
+        onSelectedTokenIdRecieved={onSelectedTokenIdRecieved}
+        isFocused={isFocused} // Pass isMinimized as a prop
+        onToggleMinimize={handleClick} // Pass handleClick as a prop
+      />
       <button className="toggle-minimize-button" onClick={handleClick}>
-        {"Minimize"}
+        {"close"}
       </button>
-    </div>
+    </>
   );
 };
 

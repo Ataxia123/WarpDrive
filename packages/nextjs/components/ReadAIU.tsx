@@ -105,68 +105,57 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   }, [metadata]);
 
   return (
-    <div className="token-selection-panel">
-      <div className="dropdown-container">
-        <div className={`holographic ${!isFocused ? "minimized" : ""}`}>
-          <div className="dropdown">
-            <select id="tokenId" value={selectedTokenId} onChange={handleTokenIdChange} className="dropdown-select">
-              <option value="">incoming transmisionID--</option>
-              {tokenIds.map(tokenId => (
-                <option key={tokenId} value={tokenId} className="">
-                  {tokenId}
-                </option>
-              ))}
-            </select>
-          </div>
+    <>
+      <div className={`token-selection-panel${isMinimized ? "-focused" : ""}`}>
+        <div className={`dropdown-container${isMinimized ? "-focused" : ""}`}>
+          <select id="tokenId" value={selectedTokenId} onChange={handleTokenIdChange} className="dropdown-select">
+            <option value="">incoming transmisionID--</option>
+            {tokenIds.map(tokenId => (
+              <option key={tokenId} value={tokenId} className="">
+                {tokenId}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {isFocused && (
+        {isMinimized ? (
           <>
-            <div>
-              <h2>Read AIU</h2>
-              <div>
-                <p>Incoming Transmissions: {balance.toString()}</p>
-              </div>
-            </div>
+            {imageSrc && <img className="focused-image-display" src={imageSrc} alt={metadata?.name} />}
+
             {metadata && (
-              <div className="metadata-content">
-                <div className="attributes">
-                  <h3>Attributes:</h3>
-                  <ul className="description-text">
-                    {metadata.attributes.map((attribute: any, index: number) => (
-                      <li key={index}>
-                        {attribute.trait_type}: {attribute.value}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="description">
-                  <h3>Description:</h3>
-                  <p className="description-text">{metadata.description}</p>
-                </div>
-              </div>
-            )}
-            {isFocused && (
-              <div className="minimized-image-container">
-                {imageSrc && (
-                  <img
-                    src={imageSrc}
-                    alt={metadata?.name}
-                    style={{
-                      maxWidth: "100%",
-                      height: "auto",
-                      borderRadius: "5px",
-                    }}
-                  />
-                )}
+              <div className="data-display">
+                <h3>Description:</h3>
+                <p>{metadata.description}</p>
+                <h3>Attributes:</h3>
+                <ul>
+                  {metadata.attributes.map((attribute: any, index: number) => (
+                    <li key={index}>
+                      {attribute.trait_type}: {attribute.value}
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
           </>
+        ) : (
+          <div className="aiu-content">
+            {imageSrc && (
+              <img
+                className="image-display"
+                src={imageSrc}
+                alt={metadata?.name}
+                style={{
+                  maxWidth: "100%",
+                  height: "auto",
+                  borderRadius: "5px",
+                }}
+              />
+            )}
+          </div>
         )}
       </div>
-    </div>
+    </>
   );
 };
 
 export default ReadAIU;
-// ~/components/ReadAIU.tsx
