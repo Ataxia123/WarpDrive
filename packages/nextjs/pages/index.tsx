@@ -41,7 +41,7 @@ export default function Home() {
   const [alignment2, setAlignment2] = useState("");
   const [side, setSide] = useState("");
   const [buttonMessageId, setButtonMessageId] = useState("");
-  const [bgButtonMessageId, setBgButtonMessageId] = useState("");
+
   const [backgroundImageUrl, setBackgroundImageUrl] = useState("assets/background.png");
   const [tempUrl, setTempUrl] = useState("");
   const [nijiFlag, setNijiFlag] = useState(false);
@@ -121,9 +121,12 @@ export default function Home() {
       vFlag,
       side,
     );
-    if (type === "background") {
-      setTravelStatus("AcquiringTarget");
+    if (waitingForWebhook) {
+      console.log("Already waiting for webhook, please wait for response.");
+      return;
     }
+    setWaitingForWebhook(true);
+
     try {
       const r = await axios.post("/api/apiHandler", { text: prompt });
 
@@ -132,13 +135,13 @@ export default function Home() {
       console.log("messageID", r.data.messageId);
 
       // Poll the server to fetch the image URL from the cache
-      let imageUrl, ImagineCommandResponse, bmessageId;
+      let imageUrl, ImagineCommandResponse, messageId;
       while (!ImagineCommandResponse) {
         try {
           const fetchResponse = await axios.get(`/api/fetchImageUrl?messageId=${r.data.messageId}`);
           ImagineCommandResponse = fetchResponse.data;
           imageUrl = fetchResponse.data.imageUrl;
-          bmessageId = fetchResponse.data.buttonMessageId;
+          messageId = fetchResponse.data.buttonMessageId;
         } catch (error: any) {
           if (error.response.status !== 404) {
             throw error;
@@ -150,21 +153,27 @@ export default function Home() {
       // Set the appropriate state based on the type
       if (type === "character") {
         setImageUrl(imageUrl);
-        setButtonMessageId(bmessageId);
+        setButtonMessageId(messageId);
       } else {
         setTempUrl(imageUrl);
-        setButtonMessageId(bmessageId);
+        setButtonMessageId(messageId);
       }
     } catch (e: any) {
       console.log(e);
       setError(e.message);
     }
+    setWaitingForWebhook(false);
   };
 
   const handleButtonClick = async (button: string, type: "character" | "background") => {
+    if (waitingForWebhook) {
+      console.log("Already waiting for webhook, please wait for response.");
+      return;
+    }
+    setWaitingForWebhook(true);
+
     try {
       if (type === "background") {
-        setButtonMessageId(bgButtonMessageId);
         console.log("buttonMessageId", buttonMessageId);
       }
       const r = await axios.post("/api/postButtonCommand", { button, buttonMessageId });
@@ -197,12 +206,13 @@ export default function Home() {
       } else setBackgroundImageUrl(imageUrl);
       setTravelStatus("NoTarget");
 
-      setBgButtonMessageId(buttonId);
+      setButtonMessageId(buttonId);
       console.log("Button Command Response:", buttonCommandResponse);
     } catch (e: any) {
       console.log(e);
       setError(e.message);
     }
+    setWaitingForWebhook(false);
   };
 
   const handleDescribeClick = async () => {
@@ -212,6 +222,9 @@ export default function Home() {
     if (waitingForWebhook) {
       console.log("Already waiting for webhook, please wait for response.");
       return;
+    }
+    if (travelStatus === "NoTarget") {
+      setTravelStatus("AcquiringTarget");
     }
 
     setWaitingForWebhook(true);
@@ -258,10 +271,22 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (travelStatus === "AcquiringTarget") {
-      console.log("Button Message ID:", bgButtonMessageId);
+    if (travelStatus === "AcquiringTarget" && srcUrl !== "") {
+      //await 5 seconds
+      setTimeout(() => {
+        submitPrompt("background");
+      }, 10000);
+
+      console.log("waiting for 10 seconds");
+    }
+    return console.log("Tried to Generate new background but", { travelStatus, srcUrl });
+  }, [selectedDescriptionIndex]);
+
+  useEffect(() => {
+    if (travelStatus == "AcquiringTarget" && tempUrl !== "") {
       handleButtonClick("U1", "background");
     }
+    return console.log("Tried to Upscale new background but", { travelStatus, tempUrl });
   }, [tempUrl]);
 
   const handleMetadataReceived = (metadata: any) => {
@@ -299,7 +324,6 @@ export default function Home() {
   const handleImageSrcReceived = (imageSrc: string) => {
     console.log("Image URL received in the parent component:", imageSrc);
     setSrcUrl(imageSrc);
-    submitPrompt("background");
     console.log(srcUrl);
     // Handle the imageSrc here, e.g., update the state or call another function
   };
@@ -321,7 +345,7 @@ export default function Home() {
       <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
         <Dashboard>
           <SpaceshipInterface />
-          <AcquiringTarget travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
+          <AcquiringTarget loading={loading} travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
           <Background
             travelStatus={travelStatus}
             dynamicImageUrl={backgroundImageUrl}

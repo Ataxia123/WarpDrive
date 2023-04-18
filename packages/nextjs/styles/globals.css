@@ -339,8 +339,8 @@ z-index: -1;
 
 .acquiring-target-card {
   position: absolute;
-  top: 60%;
-  left: 28.5%;
+  top: 50%;
+  left: 28.1%;
   transform: translate(-50%, -50%);
   background-color: rgba(0, 0, 0, 0);
   border-radius: 5px;

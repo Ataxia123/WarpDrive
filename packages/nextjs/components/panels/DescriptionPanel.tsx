@@ -15,9 +15,17 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
   selectedDescriptionIndex,
   handleDescribeClick,
   onDescriptionIndexChange,
+  selectedTokenId,
 }) => {
   const [focused, setFocused] = useState(false);
   const [scanning, setScanning] = useState(false);
+  const [descriptionIndex, setDescriptionIndex] = useState<number>(0);
+
+  useEffect(() => {
+    if (selectedDescriptionIndex !== descriptionIndex) {
+      onDescriptionIndexChange(descriptionIndex);
+    }
+  }, [descriptionIndex]);
 
   const handleClick = () => {
     setFocused(!focused);
@@ -28,63 +36,90 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
     handleDescribeClick();
   };
 
+  const handleFocus = () => {
+    if (!focused) setFocused(true);
+  };
+
   useEffect(() => {
     if (description.length > 0) {
       setScanning(false);
     }
   }, [description]);
 
+  const handleButtonClick = () => {
+    setDescriptionIndex(prevIndex => (prevIndex + 1) % description.length);
+    console.log("descriptionIndex", descriptionIndex);
+    console.log("selectedDescriptionIndex", selectedDescriptionIndex);
+  };
+
   return (
     <div
       className={`${
         focused ? "focused-right " : "unfocused-right scale-100"
       } transition-all duration-300 spaceship-panel`}
-      onClick={handleClick}
+      onClick={handleFocus}
     >
       <div className="w-full px-8">
-        <h3 className="description-text text-xl font-bold mb-2">MESSAGE LOG</h3>
-        {description.length === 0 && !scanning ? (
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={e => {
-              e.stopPropagation();
-              handleScanClick();
-            }}
-          >
-            SCAN
-          </button>
+        <h3 className="description-text text-xl font-bold mb-2">INTERGALACTIC COMMUNICATIONS</h3>
+
+        {description.length === 0 && !scanning && selectedTokenId ? (
+          <div>
+            <button
+              className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
+              onClick={e => {
+                e.stopPropagation();
+                handleScanClick();
+              }}
+            >
+              {}
+              SCAN
+            </button>
+            {" ||"}
+            <button className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"} onClick={handleClick}>
+              CLOSE
+            </button>
+          </div>
         ) : scanning ? (
           <p className="description-text">Scanning...</p>
         ) : (
           <>
             <div>
-              <h1 className="description-text font-bold">Interplanetary Status Report</h1>
+              <h1 className="description-text font-bold">AI-U ASSISTANCE REQUESTS</h1>
               {interplanetaryStatusReport ? (
                 <div>
                   {focused && (
                     <div>
-                      <h2>Report Message:</h2>
+                      <h2>MESSAGE:</h2>
                       <p>{interplanetaryStatusReport}</p>
+                      <button
+                        className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
+                        onClick={handleButtonClick}
+                      >
+                        NEXT MESSAGE
+                      </button>
+                      {" ||"}
+                      <button
+                        className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
+                        onClick={handleClick}
+                      >
+                        CLOSE
+                      </button>
                     </div>
                   )}
-                  :
                 </div>
+              ) : !selectedTokenId ? (
+                <p>Select a transmission ID to scan</p>
               ) : (
-                <p>Loading report...</p>
+                <p>
+                  <button
+                    className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
+                    onClick={handleButtonClick}
+                  >
+                    SET COORDINATES
+                  </button>
+                </p>
               )}
             </div>
-
-            <select
-              value={selectedDescriptionIndex}
-              onChange={e => onDescriptionIndexChange(Number(e.target.value))}
-              className="block w-full mt-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            >
-              {description.map((desc, index) => (
-                <option key={index} value={index}>
-                  {desc}
-                </option>
-              ))}
-            </select>
           </>
         )}
       </div>

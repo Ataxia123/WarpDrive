@@ -112,93 +112,61 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
             <select id="tokenId" value={selectedTokenId} onChange={handleTokenIdChange} className="dropdown-select">
               <option value="">incoming transmisionID--</option>
               {tokenIds.map(tokenId => (
-                <option key={tokenId} value={tokenId} className="dropdown-option">
+                <option key={tokenId} value={tokenId} className="">
                   {tokenId}
                 </option>
               ))}
             </select>
           </div>
+        </div>
 
-          {isFocused && (
-            <>
+        {isFocused && (
+          <>
+            <div>
+              <h2>Read AIU</h2>
               <div>
-                <h2>Read AIU</h2>
-                <div>
-                  <p>Token IDs: {balance.toString()}</p>
+                <p>Incoming Transmissions: {balance.toString()}</p>
+              </div>
+            </div>
+            {metadata && (
+              <div className="metadata-content">
+                <div className="attributes">
+                  <h3>Attributes:</h3>
+                  <ul className="description-text">
+                    {metadata.attributes.map((attribute: any, index: number) => (
+                      <li key={index}>
+                        {attribute.trait_type}: {attribute.value}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <p>Token IDs: {tokenIds.length > 0 ? tokenIds.join(", ") : "Loading..."}</p>
-                {tokenURI && (
-                  <div>
-                    <p>Token URI: {tokenURI}</p>
-                    {/* Display other variables here */}
-                  </div>
-                )}
-
-                {metadata && (
-                  <div>
-                    <h3>Metadata:</h3>
-                    <p className="description-text">ID: {metadata.ID}</p>
-                    <p className="description-text">Name: {metadata.name}</p>
-                    <p className="description-text">Description: {metadata.description}</p>
-                    <p>Image: {metadata.image}</p>
-                    <p>Attributes:</p>
-                    <ul className="description-text">
-                      {metadata.attributes.map((attribute: any, index: number) => (
-                        <li key={index}>
-                          {attribute.trait_type}: {attribute.value}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                <div
-                  style={{
-                    width: "300px",
-                    height: "400px",
-                    borderRadius: "10px",
-                    boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
-                    padding: "20px",
-                  }}
-                >
-                  {!isMinimized && (
-                    <div>
-                      <h3>Image:</h3>
-                      <img
-                        src={imageSrc}
-                        alt={metadata?.name}
-                        style={{
-                          maxWidth: "100%",
-                          height: "auto",
-                          borderRadius: "5px",
-                        }}
-                      />
-                    </div>
-                  )}
+                <div className="description">
+                  <h3>Description:</h3>
+                  <p className="description-text">{metadata.description}</p>
                 </div>
               </div>
-            </>
-          )}
-
-          {!isFocused && (
-            <div>
-              <h3>{metadata?.name}</h3>
-              {imageSrc && (
-                <img
-                  src={imageSrc}
-                  alt={metadata?.name}
-                  style={{
-                    maxWidth: "100%",
-                    height: "auto",
-                    borderRadius: "5px",
-                  }}
-                />
-              )}
-            </div>
-          )}
-        </div>
+            )}
+            {isFocused && (
+              <div className="minimized-image-container">
+                {imageSrc && (
+                  <img
+                    src={imageSrc}
+                    alt={metadata?.name}
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto",
+                      borderRadius: "5px",
+                    }}
+                  />
+                )}
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
 };
 
 export default ReadAIU;
+// ~/components/ReadAIU.tsx
