@@ -120,39 +120,41 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
 
         {isMinimized ? (
           <>
-            {imageSrc && <img className="focused-image-display" src={imageSrc} alt={metadata?.name} />}
-
             {metadata && (
-              <div className="data-display">
-                <h3>Description:</h3>
-                <p>{metadata.description}</p>
-                <h3>Attributes:</h3>
-                <ul>
-                  {metadata.attributes.map((attribute: any, index: number) => (
-                    <li key={index}>
-                      {attribute.trait_type}: {attribute.value}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <>
+                <div className="content-container spaceship-display-screen focused-spaceship-display-screen">
+                  {imageSrc && (
+                    <div className="image-column">
+                      <img className="image-component " src={imageSrc} alt={metadata?.name} />
+                    </div>
+                  )}
+
+                  <div className="text-response text-column">
+                    <h3>Description:</h3>
+                    <p>{metadata.description}</p>
+                    <h3>Attributes:</h3>
+                    <ul>
+                      {metadata.attributes.map((attribute: any, index: number) => (
+                        <li key={index}>
+                          {attribute.trait_type}: {attribute.value}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </>
             )}
           </>
         ) : (
-          <div className="aiu-content">
-            {imageSrc && (
-              <img
-                className="image-display"
-                src={imageSrc}
-                alt={metadata?.name}
-                style={{
-                  maxWidth: "100%",
-                  height: "auto",
-                  borderRadius: "5px",
-                }}
-              />
-            )}
+          <div className="spaceship-display-screen">
+            {imageSrc && <img className="image-display" src={imageSrc} alt={metadata?.name} />}
           </div>
         )}
+        <div>
+          <button className="toggle-minimize-button" onClick={onToggleMinimize}>
+            {"^|v"}
+          </button>
+        </div>
       </div>
     </>
   );

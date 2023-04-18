@@ -45,9 +45,6 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
         isFocused={isFocused} // Pass isMinimized as a prop
         onToggleMinimize={handleClick} // Pass handleClick as a prop
       />
-      <button className="toggle-minimize-button" onClick={handleClick}>
-        {"close"}
-      </button>
     </>
   );
 };
