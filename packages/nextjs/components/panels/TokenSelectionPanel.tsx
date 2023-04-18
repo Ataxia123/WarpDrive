@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReadAIU from "../ReadAIU";
 
 interface TokenSelectionPanelProps {
@@ -6,6 +6,7 @@ interface TokenSelectionPanelProps {
   onImageSrcReceived: (imageSrc: string) => void;
   onTokenIdsReceived: (tokenIds: string[]) => void;
   onSelectedTokenIdRecieved: (selectedTokenId: string) => void;
+  interplanetaryStatusReport: string;
 }
 
 const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
@@ -13,16 +14,27 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
   onImageSrcReceived,
   onTokenIdsReceived,
   onSelectedTokenIdRecieved,
+  interplanetaryStatusReport,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  useEffect(() => {
+    if (interplanetaryStatusReport !== "") {
+      setIsFocused(true);
+    }
+  }, [interplanetaryStatusReport]);
 
   const handleClick = () => {
-    setIsFocused(!isFocused);
+    if (!isMinimized) {
+      setIsMinimized(true);
+    }
+    setIsMinimized(false);
   };
   return (
     <div className="token-selection-panel">
       <div className="dropdown-container">
         <ReadAIU
+          isMinimized={isMinimized} // Pass isMinimized as a prop
           onMetadataReceived={onMetadataReceived}
           onImageSrcReceived={onImageSrcReceived}
           onTokenIdsReceived={onTokenIdsReceived}
@@ -32,7 +44,7 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
         />
       </div>
       <button className="toggle-minimize-button" onClick={handleClick}>
-        {!isFocused ? "Expand" : "Minimize"}
+        {"Minimize"}
       </button>
     </div>
   );

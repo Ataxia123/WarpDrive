@@ -148,10 +148,11 @@ z-index: -1;
 }
 
 .token-selection-panel {
-  display: flex;
+  display: absolute;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  margin-right: 15%;
 }
 
 .dropdown-container {
@@ -160,6 +161,7 @@ z-index: -1;
   padding: 1rem;
   width: 100%;
   max-width: 400px;
+
 }
 
 .dropdown label {
@@ -337,7 +339,7 @@ z-index: -1;
 
 .acquiring-target-card {
   position: absolute;
-  top: 56%;
+  top: 60%;
   left: 28.5%;
   transform: translate(-50%, -50%);
   background-color: rgba(0, 0, 0, 0);
@@ -417,4 +419,42 @@ z-index: -1;
 
 input[type='checkbox'] {
   margin-right: 5px;
+}
+
+.spaceship-interface {
+  display: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  margin-bottom: 180%;
+  margin-left: -160%;
+
+  background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(14,14,44,1) 100%);
+}
+
+.unfocused-synthboy {
+  transform: translateY(-43%) perspective(1500px) rotateY(45deg) rotateZ(5deg) scale(1); /* Add translateY */
+  transform-origin: left center;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
+  z-index: 10;
+}
+
+.dropdown-select {
+  /* MAKE IT TRANSPARENT HOLOGRAPHIC LOOKING*/
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #32CD32;
+  font-family: 'Courier New', Courier, monospace;
+  border: 1px solid #32CD32;
+  box-shadow: 0 0 10px #32CD32;
+  transition: all 0.3s ease-in-out;
+  
+}
+
+.dropdown-option {
+  background-color: rgba(0, 0, 0, 0.733);
+  color: #32CD32;
+  font-family: 'Courier New', Courier, monospace;
+  border: 1px solid #32CD32;
+  box-shadow: 0 0 10px #32CD32;
+  transition: all 0.3s ease-in-out;
 }

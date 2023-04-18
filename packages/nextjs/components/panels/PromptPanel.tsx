@@ -12,6 +12,7 @@ type Metadata = {
 };
 
 interface PromptPanelProps {
+  buttonMessageId: string | "";
   imageUrl: string;
   srcUrl: string | undefined;
   loading: boolean;
@@ -28,6 +29,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
   onSubmit,
   handleButtonClick,
   metadata,
+  buttonMessageId,
 }) => {
   const [nijiFlag, setNijiFlag] = useState(false);
   const [vFlag, setVFlag] = useState(false);
@@ -73,11 +75,11 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
       {!isZoomed && (
         <div>
           <h2 className="description-text">
-            INCOMING TRANSMISSION FROM:
+            ESTABLISHING CONNECTION WITH:
             <br />
-            <h2 className="description-text">
+            <p className="description-text">
               {metadata.Level} {metadata.Power1} {metadata.Power2} {metadata.Power3} {metadata.Power4}{" "}
-            </h2>
+            </p>
           </h2>
           {imageUrl && <img src={imageUrl} className="w-full rounded shadow-md mb-4" alt="nothing" />}
         </div>
@@ -85,10 +87,10 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
 
       {isFocused && (
         <>
-          <h1 className="description-text">INCOMING TRANSMISSION FROM:</h1>
+          <h1 className="description-text">ESTABLISHED CONNECTION WITH:</h1>
           <br />
 
-          <h1 className="description-text">
+          <h1>
             {metadata.Level} {metadata.Power1} {metadata.Power2} {metadata.Power3}
             {metadata.Power4}{" "}
           </h1>
@@ -99,10 +101,27 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
             --niji 5
           </label>
           <label>
+            <input type="checkbox" checked={nijiFlag} onChange={onNijiFlagChange} />
+            --useDescription
+          </label>
+          <label>
+            <input type="checkbox" checked={nijiFlag} onChange={onNijiFlagChange} />
+            --useIncomingMessage
+          </label>
+          <label>
+            <input type="checkbox" checked={nijiFlag} onChange={onNijiFlagChange} />
+            --useOutgoingMessage
+          </label>
+          <label>
+            <input type="checkbox" checked={vFlag} onChange={onVFlagChange} />
+            --useOutgoingMessageResponse
+          </label>
+
+          <label>
             <input type="checkbox" checked={vFlag} onChange={onVFlagChange} />
             --v 5
           </label>
-          {srcUrl ? (
+          {imageUrl ? (
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               onClick={() => onSubmit("character")}
@@ -115,7 +134,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
               <p>Get AIU</p>
             </div>
           )}
-          <AvailableButtons />
+          {buttonMessageId !== "" ? <AvailableButtons /> : <div></div>}
         </>
       )}
     </div>

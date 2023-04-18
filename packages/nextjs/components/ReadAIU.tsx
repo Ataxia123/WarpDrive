@@ -10,6 +10,7 @@ interface ReadAIUProps {
   onImageSrcReceived: (imageSrc: string) => void;
   onTokenIdsReceived: (tokenIds: string[]) => void;
   isFocused: boolean; // Add this prop
+  isMinimized: boolean; // Add this prop
   onToggleMinimize: () => void; // Add this prop
 }
 
@@ -19,6 +20,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   onImageSrcReceived,
   onTokenIdsReceived,
   isFocused, // Destructure the isMinimized prop
+  isMinimized,
   onToggleMinimize, // Destructure the onToggleMinimize prop
 }) => {
   const { address } = useAccount();
@@ -103,95 +105,98 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   }, [metadata]);
 
   return (
-    <div className={`holographic ${!isFocused ? "minimized" : ""}`}>
-      <div className="dropdown">
-        <label htmlFor="tokenId">Select a Token ID:</label>
-        <select id="tokenId" value={selectedTokenId} onChange={handleTokenIdChange}>
-          <option value="">--Select Token ID--</option>
-          {tokenIds.map(tokenId => (
-            <option key={tokenId} value={tokenId}>
-              {tokenId}
-            </option>
-          ))}
-        </select>
-      </div>
+    <div className="token-selection-panel">
+      <div className="dropdown-container">
+        <div className={`holographic ${!isFocused ? "minimized" : ""}`}>
+          <div className="dropdown">
+            <select id="tokenId" value={selectedTokenId} onChange={handleTokenIdChange} className="dropdown-select">
+              <option value="">incoming transmisionID--</option>
+              {tokenIds.map(tokenId => (
+                <option key={tokenId} value={tokenId} className="dropdown-option">
+                  {tokenId}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      {isFocused && (
-        <>
-          <div>
-            <h2>Read AIU</h2>
-            <div>
-              <p>Token IDs: {balance.toString()}</p>
-            </div>
-            <p>Token IDs: {tokenIds.length > 0 ? tokenIds.join(", ") : "Loading..."}</p>
-            {tokenURI && (
+          {isFocused && (
+            <>
               <div>
-                <p>Token URI: {tokenURI}</p>
-                {/* Display other variables here */}
-              </div>
-            )}
-
-            {metadata && (
-              <div>
-                <h3>Metadata:</h3>
-                <p className="description-text">ID: {metadata.ID}</p>
-                <p className="description-text">Name: {metadata.name}</p>
-                <p className="description-text">Description: {metadata.description}</p>
-                <p>Image: {metadata.image}</p>
-                <p>Attributes:</p>
-                <ul className="description-text">
-                  {metadata.attributes.map((attribute: any, index: number) => (
-                    <li key={index}>
-                      {attribute.trait_type}: {attribute.value}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <div
-              style={{
-                width: "300px",
-                height: "400px",
-                borderRadius: "10px",
-                boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
-                padding: "20px",
-              }}
-            >
-              {imageSrc && (
+                <h2>Read AIU</h2>
                 <div>
-                  <h3>Image:</h3>
-                  <img
-                    src={imageSrc}
-                    alt={metadata?.name}
-                    style={{
-                      maxWidth: "100%",
-                      height: "auto",
-                      borderRadius: "5px",
-                    }}
-                  />
+                  <p>Token IDs: {balance.toString()}</p>
                 </div>
+                <p>Token IDs: {tokenIds.length > 0 ? tokenIds.join(", ") : "Loading..."}</p>
+                {tokenURI && (
+                  <div>
+                    <p>Token URI: {tokenURI}</p>
+                    {/* Display other variables here */}
+                  </div>
+                )}
+
+                {metadata && (
+                  <div>
+                    <h3>Metadata:</h3>
+                    <p className="description-text">ID: {metadata.ID}</p>
+                    <p className="description-text">Name: {metadata.name}</p>
+                    <p className="description-text">Description: {metadata.description}</p>
+                    <p>Image: {metadata.image}</p>
+                    <p>Attributes:</p>
+                    <ul className="description-text">
+                      {metadata.attributes.map((attribute: any, index: number) => (
+                        <li key={index}>
+                          {attribute.trait_type}: {attribute.value}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <div
+                  style={{
+                    width: "300px",
+                    height: "400px",
+                    borderRadius: "10px",
+                    boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                    padding: "20px",
+                  }}
+                >
+                  {!isMinimized && (
+                    <div>
+                      <h3>Image:</h3>
+                      <img
+                        src={imageSrc}
+                        alt={metadata?.name}
+                        style={{
+                          maxWidth: "100%",
+                          height: "auto",
+                          borderRadius: "5px",
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+
+          {!isFocused && (
+            <div>
+              <h3>{metadata?.name}</h3>
+              {imageSrc && (
+                <img
+                  src={imageSrc}
+                  alt={metadata?.name}
+                  style={{
+                    maxWidth: "100%",
+                    height: "auto",
+                    borderRadius: "5px",
+                  }}
+                />
               )}
             </div>
-          </div>
-        </>
-      )}
-
-      {!isFocused && (
-        <div>
-          <h3>{metadata?.name}</h3>
-          {imageSrc && (
-            <img
-              src={imageSrc}
-              alt={metadata?.name}
-              style={{
-                maxWidth: "100%",
-                height: "auto",
-                borderRadius: "5px",
-              }}
-            />
           )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

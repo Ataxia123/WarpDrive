@@ -5,9 +5,22 @@ import Dashboard from "../components/Dashboard";
 import AcquiringTarget from "../components/panels/AcquiringTarget";
 import DescriptionPanel from "../components/panels/DescriptionPanel";
 import PromptPanel from "../components/panels/PromptPanel";
+import SpaceshipInterface from "../components/panels/SpaceshipInterface";
 import TokenSelectionPanel from "../components/panels/TokenSelectionPanel";
 import axios from "axios";
 import GraphemeSplitter from "grapheme-splitter";
+import { Configuration, OpenAIApi } from "openai";
+
+type Metadata = {
+  Level: string;
+  Power1: string;
+  Power2: string;
+  Power3: string;
+  Power4: string;
+  Alignment1: string;
+  Alignment2: string;
+  Side: string;
+};
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -28,22 +41,24 @@ export default function Home() {
   const [alignment2, setAlignment2] = useState("");
   const [side, setSide] = useState("");
   const [buttonMessageId, setButtonMessageId] = useState("");
+  const [bgButtonMessageId, setBgButtonMessageId] = useState("");
   const [backgroundImageUrl, setBackgroundImageUrl] = useState("assets/background.png");
   const [tempUrl, setTempUrl] = useState("");
   const [nijiFlag, setNijiFlag] = useState(false);
   const [vFlag, setVFlag] = useState(false);
   const [travelStatus, setTravelStatus] = useState<"NoTarget" | "AcquiringTarget" | "TargetAcquired">("NoTarget");
+  const [interplanetaryStatusReport, setInterplanetaryStatusReport] = useState("");
+  const [selectedDescription, setSelectedDescription] = useState(description[selectedDescriptionIndex]);
 
-  type Metadata = {
-    Level: string;
-    Power1: string;
-    Power2: string;
-    Power3: string;
-    Power4: string;
-    Alignment1: string;
-    Alignment2: string;
-    Side: string;
-  };
+  useEffect(() => {
+    setSelectedDescription(description[selectedDescriptionIndex]);
+  }, [selectedDescriptionIndex]);
+
+  const configuration = new Configuration({
+    organization: "org-7cmuqricUOtf3dACGKD9Va7f",
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+  const openai = new OpenAIApi(configuration);
 
   function generatePrompt(
     type: "character" | "background",
@@ -70,6 +85,25 @@ export default function Home() {
 
     return `${srcURL} ${keyword} ${level} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${side} ${selectedDescription} ${niji} ${v}`.trim();
   }
+
+  useEffect(() => {
+    if (selectedDescription !== undefined) {
+      // Step 2: Call your new API route to generate the report
+      const fetchInterplanetaryStatusReport = async () => {
+        try {
+          const response = await axios.post("/api/generate_report", {
+            selectedDescription,
+            metadata,
+          });
+          setInterplanetaryStatusReport(response.data.report);
+        } catch (error) {
+          console.error("Error fetching interplanetary status report:", error);
+        }
+      };
+
+      fetchInterplanetaryStatusReport();
+    }
+  }, [selectedDescription]);
 
   const submitPrompt = async (type: "character" | "background") => {
     const prompt = generatePrompt(
@@ -129,6 +163,10 @@ export default function Home() {
 
   const handleButtonClick = async (button: string, type: "character" | "background") => {
     try {
+      if (type === "background") {
+        setButtonMessageId(bgButtonMessageId);
+        console.log("buttonMessageId", buttonMessageId);
+      }
       const r = await axios.post("/api/postButtonCommand", { button, buttonMessageId });
 
       console.log("response", r.data);
@@ -153,11 +191,13 @@ export default function Home() {
           await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
         }
       }
-      if (type === "character") setImageUrl(imageUrl);
-      else setBackgroundImageUrl(imageUrl);
+      if (type === "character") {
+        setImageUrl(imageUrl);
+        setButtonMessageId(buttonId);
+      } else setBackgroundImageUrl(imageUrl);
       setTravelStatus("NoTarget");
 
-      setButtonMessageId(buttonId);
+      setBgButtonMessageId(buttonId);
       console.log("Button Command Response:", buttonCommandResponse);
     } catch (e: any) {
       console.log(e);
@@ -218,7 +258,8 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (tempUrl && tempUrl !== "") {
+    if (travelStatus === "AcquiringTarget") {
+      console.log("Button Message ID:", bgButtonMessageId);
       handleButtonClick("U1", "background");
     }
   }, [tempUrl]);
@@ -279,6 +320,7 @@ export default function Home() {
       <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
       <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
         <Dashboard>
+          <SpaceshipInterface />
           <AcquiringTarget travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
           <Background
             travelStatus={travelStatus}
@@ -290,8 +332,10 @@ export default function Home() {
             onImageSrcReceived={handleImageSrcReceived}
             onTokenIdsReceived={handleTokenIdsReceived}
             onSelectedTokenIdRecieved={handleSelectedTokenIdRecieved}
+            interplanetaryStatusReport={interplanetaryStatusReport}
           />
           <DescriptionPanel
+            interplanetaryStatusReport={interplanetaryStatusReport}
             selectedTokenId={selectedTokenId}
             description={description}
             onDescriptionIndexChange={setSelectedDescriptionIndex}
@@ -306,6 +350,7 @@ export default function Home() {
             handleButtonClick={handleButtonClick}
             loading={loading}
             metadata={metadata}
+            buttonMessageId={buttonMessageId}
           />
         </Dashboard>
       </div>

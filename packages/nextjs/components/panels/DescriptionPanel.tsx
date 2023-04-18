@@ -6,18 +6,11 @@ interface DescriptionPanelProps {
   onDescriptionIndexChange: (index: number) => void;
   selectedTokenId: string | undefined;
   handleDescribeClick: () => void;
-}
-
-interface DescriptionPanelProps {
-  description: string[];
-  selectedDescriptionIndex: number;
-  onDescriptionIndexChange: (index: number) => void;
-  selectedTokenId: string | undefined;
-  handleDescribeClick: () => void;
+  interplanetaryStatusReport: string;
 }
 
 export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
-  selectedTokenId,
+  interplanetaryStatusReport,
   description,
   selectedDescriptionIndex,
   handleDescribeClick,
@@ -49,7 +42,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
       onClick={handleClick}
     >
       <div className="w-full px-8">
-        <h3 className="description-text text-xl font-bold mb-2">Description:</h3>
+        <h3 className="description-text text-xl font-bold mb-2">MESSAGE LOG</h3>
         {description.length === 0 && !scanning ? (
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -64,7 +57,23 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
           <p className="description-text">Scanning...</p>
         ) : (
           <>
-            <p className="description-text">{description[selectedDescriptionIndex]}</p>
+            <div>
+              <h1 className="description-text font-bold">Interplanetary Status Report</h1>
+              {interplanetaryStatusReport ? (
+                <div>
+                  {focused && (
+                    <div>
+                      <h2>Report Message:</h2>
+                      <p>{interplanetaryStatusReport}</p>
+                    </div>
+                  )}
+                  :
+                </div>
+              ) : (
+                <p>Loading report...</p>
+              )}
+            </div>
+
             <select
               value={selectedDescriptionIndex}
               onChange={e => onDescriptionIndexChange(Number(e.target.value))}
