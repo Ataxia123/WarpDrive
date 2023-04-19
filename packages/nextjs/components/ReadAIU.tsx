@@ -106,54 +106,54 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
 
   return (
     <>
-      <div className={`token-selection-panel${isMinimized ? "-focused" : ""}`}>
-        <div className={`dropdown-container${isMinimized ? "-focused" : ""}`}>
+      <button className="toggle-minimize-button" onClick={onToggleMinimize}>
+        <div className="spaceship-display-screen dropdown-container">
+          {!isMinimized ? "^" : "V"}
           <select id="tokenId" value={selectedTokenId} onChange={handleTokenIdChange} className="dropdown-select">
             <option value="">incoming transmisionID--</option>
             {tokenIds.map(tokenId => (
-              <option key={tokenId} value={tokenId} className="">
-                {tokenId}
+              <option key={tokenId} value={tokenId} className="dropdown-option">
+                {selectedTokenId}
               </option>
             ))}
           </select>
         </div>
+      </button>
 
-        {isMinimized ? (
-          <>
-            {metadata && (
-              <>
-                <div className="content-container spaceship-display-screen focused-spaceship-display-screen">
-                  {imageSrc && (
-                    <div className="image-column">
-                      <img className="image-component " src={imageSrc} alt={metadata?.name} />
+      <div className={`token-selection-panel${isMinimized ? "-focused" : ""}`}>
+        <div className="spaceship-display-screen">
+          {isMinimized ? (
+            <>
+              {metadata && (
+                <>
+                  <div className="content-container">
+                    {imageSrc && (
+                      <div className="image-column">
+                        <img className="image-component " src={imageSrc} alt={metadata?.name} />
+                      </div>
+                    )}
+
+                    <div className="text-response text-column">
+                      <h3>Description:</h3>
+                      <p>{metadata.description}</p>
+                      <h3>Attributes:</h3>
+                      <ul>
+                        {metadata.attributes.map((attribute: any, index: number) => (
+                          <li key={index}>
+                            {attribute.trait_type}: {attribute.value}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                  )}
-
-                  <div className="text-response text-column">
-                    <h3>Description:</h3>
-                    <p>{metadata.description}</p>
-                    <h3>Attributes:</h3>
-                    <ul>
-                      {metadata.attributes.map((attribute: any, index: number) => (
-                        <li key={index}>
-                          {attribute.trait_type}: {attribute.value}
-                        </li>
-                      ))}
-                    </ul>
                   </div>
-                </div>
-              </>
-            )}
-          </>
-        ) : (
-          <div className="spaceship-display-screen">
-            {imageSrc && <img className="image-display" src={imageSrc} alt={metadata?.name} />}
-          </div>
-        )}
-        <div>
-          <button className="toggle-minimize-button" onClick={onToggleMinimize}>
-            {"^|v"}
-          </button>
+                </>
+              )}
+            </>
+          ) : (
+            <div className="spaceship-display-screen">
+              {imageSrc && <img className="image-display" src={imageSrc} alt={metadata?.name} />}
+            </div>
+          )}
         </div>
       </div>
     </>
