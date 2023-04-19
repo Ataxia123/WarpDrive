@@ -21,19 +21,15 @@ const AcquiringTarget: React.FC<AcquiringTargetProps> = ({ travelStatus, selecte
   };
 
   return (
-    <div className="acquiring-target-card">
+    <div className="acquiring-target-card spaceship-display-screen">
       {!selectedTokenId && travelStatus == "NoTarget" && (
         <div>
           Select <br /> Token <br /> ID
         </div>
       )}
-
-      {selectedTokenId && (
-        <div className="acquiring-target-circle" style={{ backgroundColor: getColor() }}>
-          <h1>{selectedTokenId}</h1> <br />
-          <h2>{travelStatus}</h2>
-        </div>
-      )}
+      <h1>Token ID: {selectedTokenId}</h1>
+      <h2>STATUS: {travelStatus}</h2>
+      {selectedTokenId && <div className="acquiring-target-circle" style={{ backgroundColor: getColor() }}></div>}
     </div>
   );
 };

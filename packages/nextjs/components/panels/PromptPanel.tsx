@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Switchboard from "../Swittchboard";
 
 type Metadata = {
   Level: string;
@@ -31,10 +32,14 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
   metadata,
   buttonMessageId,
 }) => {
+  const attributes = ["Power1", "Power2", "Power3", "Power4", "Alignment1", "Alignment2", "Side"];
   const [nijiFlag, setNijiFlag] = useState(false);
   const [vFlag, setVFlag] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
+  const handleToggle = (attribute: string, isEnabled: boolean) => {
+    console.log(`${attribute} is ${isEnabled ? "enabled" : "disabled"}`);
+  };
 
   const onNijiFlagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNijiFlag(event.target.checked);
@@ -65,80 +70,36 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
     );
   };
   return (
-    <div
-      className={`${isFocused ? "focused" : "unfocused"} ${
-        !isZoomed ? "" : "zoomed"
-      } prompt-panel   transition-all duration-300 transform w-full px-8 rounded-md bg-black `}
-      onClick={handleClick}
-    >
-      {/* Display minimal content when not focused */}
-      {!isZoomed && (
-        <div className="spaceship-display-screen">
-          <h2 className="description-text">
-            ESTABLISHING CONNECTION WITH:
-            <br />
-            <p className="description-text">
-              {metadata.Level} {metadata.Power1} {metadata.Power2} {metadata.Power3} {metadata.Power4}{" "}
-            </p>
-          </h2>
+    <div className={`${isFocused ? "focused" : ""}prompt-panel spaceship-display-screen`}>
+      <>
+        <div className="">
+          <h1 className="description-text">ESTABLISHED CONNECTION WITH:</h1>
+          <br />
+          <h1>
+            {metadata.Level} {metadata.Power1} {metadata.Power2} {metadata.Power3}
+            {metadata.Power4}{" "}
+          </h1>
+
+          <Switchboard attributes={attributes} onToggle={handleToggle} />
+
           {imageUrl && <img src={imageUrl} className="w-full rounded shadow-md mb-4" alt="nothing" />}
+
+          {imageUrl ? (
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => onSubmit("character")}
+              disabled={loading || !srcUrl}
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </button>
+          ) : (
+            <div>
+              <p>Get AIU</p>
+            </div>
+          )}
+          {buttonMessageId !== "" ? <AvailableButtons /> : <div></div>}
         </div>
-      )}
-
-      {isFocused && (
-        <>
-          <div className="spaceship-display-screen">
-            <h1 className="description-text">ESTABLISHED CONNECTION WITH:</h1>
-            <br />
-
-            <h1>
-              {metadata.Level} {metadata.Power1} {metadata.Power2} {metadata.Power3}
-              {metadata.Power4}{" "}
-            </h1>
-            {imageUrl && <img src={imageUrl} className="w-full rounded shadow-md mb-4" alt="nothing" />}
-
-            <label>
-              <input type="checkbox" checked={nijiFlag} onChange={onNijiFlagChange} />
-              --niji 5
-            </label>
-            <label>
-              <input type="checkbox" checked={nijiFlag} onChange={onNijiFlagChange} />
-              --useDescription
-            </label>
-            <label>
-              <input type="checkbox" checked={nijiFlag} onChange={onNijiFlagChange} />
-              --useIncomingMessage
-            </label>
-            <label>
-              <input type="checkbox" checked={nijiFlag} onChange={onNijiFlagChange} />
-              --useOutgoingMessage
-            </label>
-            <label>
-              <input type="checkbox" checked={vFlag} onChange={onVFlagChange} />
-              --useOutgoingMessageResponse
-            </label>
-
-            <label>
-              <input type="checkbox" checked={vFlag} onChange={onVFlagChange} />
-              --v 5
-            </label>
-            {imageUrl ? (
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={() => onSubmit("character")}
-                disabled={loading || !srcUrl}
-              >
-                {loading ? "Submitting..." : "Submit"}
-              </button>
-            ) : (
-              <div>
-                <p>Get AIU</p>
-              </div>
-            )}
-            {buttonMessageId !== "" ? <AvailableButtons /> : <div></div>}
-          </div>
-        </>
-      )}
+      </>
     </div>
   );
 };

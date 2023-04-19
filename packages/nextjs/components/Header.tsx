@@ -49,43 +49,44 @@ export const Header = () => {
   );
 
   return (
-    <div className="sticky lg:static top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary">
-      <div className="navbar-start w-auto lg:w-1/2">
-        <div className="lg:hidden dropdown" ref={burgerMenuRef}>
-          <button
-            className={`ml-1 btn btn-ghost ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
-            onClick={() => {
-              setIsDrawerOpen(prevIsOpenState => !prevIsOpenState);
-            }}
-          >
-            <Bars3Icon className="h-1/2" />
-          </button>
-          {isDrawerOpen && (
-            <ul
-              tabIndex={0}
-              className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+    <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary ">
+      <div className="spaceship-display-screen">
+        <div className="navbar-start w-auto lg:w-1/2 ">
+          <div className="lg:hidden dropdown" ref={burgerMenuRef}>
+            <button
+              className={`ml-1 btn btn-ghost ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
               onClick={() => {
-                setIsDrawerOpen(false);
+                setIsDrawerOpen(prevIsOpenState => !prevIsOpenState);
               }}
             >
-              {navLinks}
-            </ul>
-          )}
-        </div>
-        <div className="hidden lg:flex items-center gap-2 ml-4 mr-6">
-          <Link href="/" passHref className="flex relative w-10 h-10">
-            <Image alt="SE2 logo" className="cursor-pointer" fill src="/logo.svg" />
-          </Link>
-          <div className="flex flex-col">
-            <span className="font-bold leading-tight">Scaffold-eth</span>
-            <span className="text-xs">Ethereum dev stack</span>
+              <Bars3Icon className="h-1/2" />
+            </button>
+            {isDrawerOpen && (
+              <ul
+                tabIndex={0}
+                className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+                onClick={() => {
+                  setIsDrawerOpen(false);
+                }}
+              >
+                {navLinks}
+              </ul>
+            )}
+          </div>
+          <div className="hidden lg:flex items-center gap-2 ml-4 mr-6">
+            <Link href="/" passHref className="flex relative w-40 h-10">
+              <Image alt="SE2 logo" className="cursor-pointer" fill src="/aiu.svg" />
+            </Link>
+            <div className="flex flex-col">
+              <span className="font-bold leading-tight text-xs">powered by...Scaffold-eth</span>
+            </div>
           </div>
         </div>
-        <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">{navLinks}</ul>
-      </div>
-      <div className="navbar-end flex-grow mr-4">
-        <RainbowKitCustomConnectButton />
-        <FaucetButton />
+        <div className="hidden lg:flex items-center justify-center w-1/2">ALLIANCE OF THE INFINITE UNIVERSE</div>
+        <div className="navbar-end flex-grow mr-4">
+          <RainbowKitCustomConnectButton />
+          <FaucetButton />
+        </div>
       </div>
     </div>
   );

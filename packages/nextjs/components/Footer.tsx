@@ -16,24 +16,16 @@ export const Footer = () => {
     <div className="min-h-0 p-5 mb-11 lg:mb-0">
       <div>
         <div className="fixed flex justify-between items-center w-full z-20 p-4 bottom-0 left-0 pointer-events-none">
-          <div className="flex space-x-2 pointer-events-auto">
-            {ethPrice > 0 && (
-              <div className="btn btn-primary btn-sm font-normal cursor-auto">
-                <CurrencyDollarIcon className="h-4 w-4 mr-0.5" />
-                <span>{ethPrice}</span>
-              </div>
-            )}
-            {getTargetNetwork().id === hardhat.id && <Faucet />}
-          </div>
+          <div className="flex space-x-2 pointer-events-auto">{getTargetNetwork().id === hardhat.id && <Faucet />}</div>
           <SwitchTheme className="pointer-events-auto" />
         </div>
       </div>
-      <div className="w-full">
+      <div className="w-full spaceship-display-screen">
         <ul className="menu menu-horizontal w-full">
           <div className="flex justify-center items-center gap-2 text-sm w-full">
             <div>
               <a
-                href="https://github.com/scaffold-eth/se-2"
+                href="https://github.com/ataxia123/WarpDrive"
                 target="_blank"
                 rel="noreferrer"
                 className="underline underline-offset-2"
@@ -43,7 +35,7 @@ export const Footer = () => {
             </div>
             <span>·</span>
             <div>
-              Built with <HeartIcon className="inline-block h-4 w-4" /> at 🏰{" "}
+              Built with <HeartIcon className="inline-block h-4 w-4 " /> at 🤓{" "}
               <a
                 href="https://buidlguidl.com/"
                 target="_blank"

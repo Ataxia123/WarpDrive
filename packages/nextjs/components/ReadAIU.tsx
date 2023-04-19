@@ -104,39 +104,44 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
     }
   }, [metadata]);
 
+  console.log(metadata, "metadata");
+
   return (
     <>
-      <button className="toggle-minimize-button" onClick={onToggleMinimize}>
-        <div className="spaceship-display-screen dropdown-container">
-          {!isMinimized ? "^" : "V"}
-          <select id="tokenId" value={selectedTokenId} onChange={handleTokenIdChange} className="dropdown-select">
-            <option value="">incoming transmisionID--</option>
-            {tokenIds.map(tokenId => (
-              <option key={tokenId} value={tokenId} className="dropdown-option">
-                {selectedTokenId}
-              </option>
-            ))}
-          </select>
-        </div>
+      <button className="dropdown-container toggle-minimize-button spaceship-display-screen" onClick={onToggleMinimize}>
+        <div>{!isMinimized ? "^" : "v"}</div>
+        <select
+          id="tokenId"
+          value={selectedTokenId}
+          onChange={handleTokenIdChange}
+          className="dropdown-option dropdown-select"
+        >
+          <option value="">-ID-</option>
+          {tokenIds.map(tokenId => (
+            <option key={tokenId} value={tokenId}>
+              {selectedTokenId}
+            </option>
+          ))}
+        </select>
       </button>
 
-      <div className={`token-selection-panel${isMinimized ? "-focused" : ""}`}>
-        <div className="spaceship-display-screen">
+      <div className={`spaceship-display-screen token-selection-panel${isMinimized ? "-focused" : ""}`}>
+        <div>
           {isMinimized ? (
             <>
               {metadata && (
                 <>
-                  <div className="content-container">
+                  <div className="panel-content">
                     {imageSrc && (
                       <div className="image-column">
-                        <img className="image-component " src={imageSrc} alt={metadata?.name} />
+                        <img className="focused-image-display" src={imageSrc} alt={metadata?.name} />
                       </div>
                     )}
 
-                    <div className="text-response text-column">
-                      <h3>Description:</h3>
+                    <div className="text-column">
+                      <h3 className="description-text">Description:</h3>
                       <p>{metadata.description}</p>
-                      <h3>Attributes:</h3>
+                      <h3 className="description-text">Attributes:</h3>
                       <ul>
                         {metadata.attributes.map((attribute: any, index: number) => (
                           <li key={index}>
@@ -150,9 +155,18 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
               )}
             </>
           ) : (
-            <div className="spaceship-display-screen">
-              {imageSrc && <img className="image-display" src={imageSrc} alt={metadata?.name} />}
-            </div>
+            <>
+              <h3 className="panel-title focused-title description-text">{">INCOMING<"}</h3>
+              <div className="panel-content">
+                {metadata?.attributes[1].value}
+                <br />
+                {metadata?.attributes[2].value}
+                <br />
+                {metadata?.attributes[3].value}
+                <br />
+                {metadata?.attributes[4].value}
+              </div>
+            </>
           )}
         </div>
       </div>

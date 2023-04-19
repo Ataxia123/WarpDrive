@@ -6,6 +6,7 @@ import NextNProgress from "nextjs-progressbar";
 import { Toaster } from "react-hot-toast";
 import { useDarkMode } from "usehooks-ts";
 import { WagmiConfig } from "wagmi";
+import Background from "~~/components/Background";
 import { Footer } from "~~/components/Footer";
 import { Header } from "~~/components/Header";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
@@ -40,7 +41,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
         avatar={BlockieAvatar}
         theme={isDarkTheme ? darkTheme() : lightTheme()}
       >
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen main-container">
           <Header />
           <main className="relative flex flex-col flex-1">
             <Component {...pageProps} />

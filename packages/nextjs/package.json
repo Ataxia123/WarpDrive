@@ -24,6 +24,7 @@
     "ethers": "^5.0.0",
     "events": "^3.3.0",
     "lru-cache": "^9.0.1",
+    "marquee": "^0.2.1",
     "next": "^13.1.6",
     "nextjs-progressbar": "^0.0.16",
     "openai": "^3.2.1",

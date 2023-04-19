@@ -64,7 +64,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
           INTERGALACTIC COMMUNICATIONS
         </h3>
         <div className={focused ? "spaceship-display-screen" : ""}>
-          {description.length === 0 && !scanning && selectedTokenId ? (
+          {description.length === 0 && !scanning && selectedTokenId && focused ? (
             <div>
               <button
                 className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}

@@ -10,6 +10,7 @@ import TokenSelectionPanel from "../components/panels/TokenSelectionPanel";
 import axios from "axios";
 import GraphemeSplitter from "grapheme-splitter";
 import { Configuration, OpenAIApi } from "openai";
+import { MarqueePanel } from "~~/components/panels/MarqueePannel";
 
 type Metadata = {
   Level: string;
@@ -339,45 +340,53 @@ export default function Home() {
   console.log(description);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <link rel="preconnect" href="https://fonts.gstatic.com" />
-      <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
-      <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
-        <Dashboard>
-          <SpaceshipInterface />
-          <AcquiringTarget loading={loading} travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
-          <Background
-            travelStatus={travelStatus}
-            dynamicImageUrl={backgroundImageUrl}
-            fixedImageUrl="assets/view.png"
-          />
-          <TokenSelectionPanel
-            onMetadataReceived={handleMetadataReceived}
-            onImageSrcReceived={handleImageSrcReceived}
-            onTokenIdsReceived={handleTokenIdsReceived}
-            onSelectedTokenIdRecieved={handleSelectedTokenIdRecieved}
-            interplanetaryStatusReport={interplanetaryStatusReport}
-          />
-          <DescriptionPanel
-            interplanetaryStatusReport={interplanetaryStatusReport}
-            selectedTokenId={selectedTokenId}
-            description={description}
-            onDescriptionIndexChange={setSelectedDescriptionIndex}
-            selectedDescriptionIndex={selectedDescriptionIndex}
-            handleDescribeClick={handleDescribeClick}
-          />
-          <PromptPanel
-            imageUrl={imageUrl}
-            srcUrl={srcUrl}
-            onSubmitPrompt={submitPrompt}
-            onSubmit={submitPrompt}
-            handleButtonClick={handleButtonClick}
-            loading={loading}
-            metadata={metadata}
-            buttonMessageId={buttonMessageId}
-          />
-        </Dashboard>
+    <>
+      <div className="flex flex-col items-center justify-center min-h-screen py-2">
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
+        <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
+          <Dashboard travelStatus={travelStatus} dynamicImageUrl={backgroundImageUrl}>
+            <MarqueePanel
+              imageUrl={imageUrl}
+              srcUrl={srcUrl}
+              onSubmitPrompt={submitPrompt}
+              onSubmit={submitPrompt}
+              handleButtonClick={handleButtonClick}
+              loading={loading}
+              metadata={metadata}
+              buttonMessageId={buttonMessageId}
+            />
+            <SpaceshipInterface />
+            <AcquiringTarget loading={loading} travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
+
+            <TokenSelectionPanel
+              onMetadataReceived={handleMetadataReceived}
+              onImageSrcReceived={handleImageSrcReceived}
+              onTokenIdsReceived={handleTokenIdsReceived}
+              onSelectedTokenIdRecieved={handleSelectedTokenIdRecieved}
+              interplanetaryStatusReport={interplanetaryStatusReport}
+            />
+            <DescriptionPanel
+              interplanetaryStatusReport={interplanetaryStatusReport}
+              selectedTokenId={selectedTokenId}
+              description={description}
+              onDescriptionIndexChange={setSelectedDescriptionIndex}
+              selectedDescriptionIndex={selectedDescriptionIndex}
+              handleDescribeClick={handleDescribeClick}
+            />
+            <PromptPanel
+              imageUrl={imageUrl}
+              srcUrl={srcUrl}
+              onSubmitPrompt={submitPrompt}
+              onSubmit={submitPrompt}
+              handleButtonClick={handleButtonClick}
+              loading={loading}
+              metadata={metadata}
+              buttonMessageId={buttonMessageId}
+            />
+          </Dashboard>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

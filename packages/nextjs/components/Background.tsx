@@ -41,8 +41,7 @@ const Background: React.FC<BackgroundProps> = ({ dynamicImageUrl, fixedImageUrl,
           transform: `translate(${bgPosition.x}px, ${bgPosition.y}px)`,
         }}
       />
-      <img className={styles.fixedImage} src={fixedImageUrl} alt="Fixed Image" />
-      <div className={`warpSpeedEffect ${travelStatus === "TargetAcquired" ? "warpSpeedActive" : ""}`}>
+      <div className={`warpSpeedEffect ${travelStatus === "Target Acquired" ? "warpSpeedActive" : ""}`}>
         <div className="warpImage warpImage1" />
         <div className="warpImage warpImage2" />
       </div>
