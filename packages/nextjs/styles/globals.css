@@ -98,7 +98,7 @@ align-items: center;
   left: 81%;
   width: 10%;
   height:25%;
-  transform: translateY(-31%) perspective(1000px) rotateX(50deg) rotateY(-2deg) rotateZ(26deg) scale(0.8); /* Add translateY */
+  transform: translateY(-31%) perspective(1000px) rotateX(50deg) rotateY(-6deg) rotateZ(26deg) scale(0.8); /* Add translateY */
   transform-origin: right center;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
   z-index: 10;
@@ -388,8 +388,8 @@ align-items: center;
   width: auto;
   height: 27%;
   z-index: 30;
-  transform: perspective(1000px) rotateX(10deg) translateX(-15%)translateY(-140%)rotateY(
-    32deg) rotateZ(-23deg)scale(1);
+  transform: perspective(1000px) rotateX(10deg) translateX(-5%)translateY(-140%)rotateY(
+    28deg) rotateZ(-23deg)scale(1);
   transform-origin: left bottom;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 16px 0px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
@@ -727,7 +727,7 @@ input:checked + .slider:before {
 
 .acquiring-target-card {
   position: absolute;
-  top: 61%;
+  top: 63.5%;
   left: 25.7%;
   background-color: rgba(0, 0, 0, 0);
   width: 10%; /* Set the width */
@@ -744,17 +744,29 @@ input:checked + .slider:before {
   flex-direction: column;
   align-items: center;
 }
+.tokenid-display {
+  position: absolute;
+  top: 63%;
+  bottom: 79%;
+  left: 33.3%;
+  background-color: rgba(0, 0, 0, 0);
+  width: 10%; /* Set the width */
+  height: 15%; /* Set the height */
+  max-width: 4%; /* Set the width */
+  max-height: 8.2%; /* Set the height */
+  border-color: #00000093;
+  transform-origin: left;
+  justify-content: center;
+  transform: rotateY(-20deg)rotateZ(-6deg)rotateX(03deg);
+  animation: randomFlicker 1.65s infinite ease-in-out;
+  z-index: 1;
+}
 
 
 .acquiring-target-circle {
 
-  width: 6.6rem;
-  height: 5rem;
-  padding: 1rem;
-  border-radius: 50%;
-  position: absolute;
-  opacity: 0.6;
-  z-index: -1100;
+
+  animation: blink 1s infinite;
 }
 
 @keyframes blink {

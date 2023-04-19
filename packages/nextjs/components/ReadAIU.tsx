@@ -156,15 +156,13 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
             </>
           ) : (
             <>
-              <h3 className="panel-title focused-title description-text">{">INCOMING<"}</h3>
-              <div className="panel-content">
+              <h3 className="panel-title focused-title description-text position-relative">
+                {"  >SIGNAL ENCOUNTERED<"}
+              </h3>
+              <div className="panel-content justify-center">
                 {metadata?.attributes[1].value}
                 <br />
-                {metadata?.attributes[2].value}
-                <br />
-                {metadata?.attributes[3].value}
-                <br />
-                {metadata?.attributes[4].value}
+                {metadata?.attributes[2].value} {metadata?.attributes[3].value} {metadata?.attributes[4].value}
               </div>
             </>
           )}
