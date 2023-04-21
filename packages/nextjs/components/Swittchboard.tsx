@@ -112,7 +112,22 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
   return (
     <>
       <div className="spaceship-display-screen switchboard overflow-hidden hex-prompt hex-data">
+        <div>
+          {modifiedPrompt}
+          {selectedAttributes.length > 0 && (
+            <input
+              type="text"
+              className="prompt-input dropdown-option w-full"
+              placeholder="Additional text message"
+              value={extraText}
+              onChange={handleExtraTextChange}
+            />
+          )}
+        </div>
         {stringToHex(modifiedPrompt)}
+        <button className={"description-text"} onClick={generateModifiedPrompt}>
+          Generate Modified Prompt
+        </button>
         {isExpanded && (
           <div>
             {attributes.map(attribute => {
@@ -131,21 +146,7 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
                 </div>
               );
             })}
-            <button onClick={generateModifiedPrompt}>Generate Modified Prompt</button>
-            <br />
-            <br />
-            {modifiedPrompt}
           </div>
-        )}
-
-        {selectedAttributes.length > 0 && (
-          <input
-            type="text"
-            className="prompt-input dropdown-option w-full px-3"
-            placeholder="Additional text message"
-            value={extraText}
-            onChange={handleExtraTextChange}
-          />
         )}
       </div>
     </>

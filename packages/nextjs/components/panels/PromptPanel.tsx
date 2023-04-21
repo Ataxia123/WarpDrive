@@ -56,6 +56,17 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
   interplanetaryStatusReport,
   generatePrompt,
 }) => {
+  const [isMouseOver, setIsMouseOver] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsFocused(false);
+    setIsZoomed(false); // Add this line // Add this line
+    !isMouseOver && setIsMouseOver(true);
+  };
+
+  const handleMouseLeave = () => {
+    console.log("Mouse left");
+  };
   const attributes = [
     "srcUrl",
     "Level",
@@ -84,8 +95,8 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
   };
 
   const handleClick = () => {
-    setIsFocused(!isFocused);
-    setIsZoomed(!isZoomed); // Add this line
+    setIsFocused(true);
+    setIsZoomed(true); // Add this line
   };
 
   const onGeneratePrompt = (prompt: string) => {
@@ -116,6 +127,13 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
       setSelectedAttributes(prevState => prevState.filter(attr => attr !== attribute));
     }
   };
+  function stringToHex(str: string): string {
+    let hex = "";
+    for (let i = 0; i < str.length; i++) {
+      hex += str.charCodeAt(i).toString(16);
+    }
+    return hex;
+  }
 
   return (
     <div className={`prompt-panel${!isFocused ? "-closed" : ""}`} onClick={handleClick}>
@@ -147,7 +165,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
       <>
         {isFocused && (
           <div className="prompt-display-div">
-            <div className="screen-border">
+            <div className="screen-border prompt-input" onMouseLeave={handleMouseLeave}>
               <Switchboard
                 attributes={attributes}
                 onToggle={handleToggle}
@@ -173,6 +191,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
           </div>
         )}
       </>
+      <div className="prompt-utility-div-right" onMouseEnter={handleMouseEnter}></div>
     </div>
   );
 };

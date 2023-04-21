@@ -27,6 +27,10 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
     }
   }, [descriptionIndex]);
 
+  const handleMouseEnter = () => {
+    setFocused(false);
+  };
+
   const handleClick = () => {
     setFocused(!focused);
   };
@@ -61,9 +65,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
         onClick={handleClick}
       >
         <div className="screen-border">
-          <h3 className="description-text text-xl font-bold mb-2 spaceship-display-screen">
-            INTERGALACTIC COMMUNICATIONS
-          </h3>
+          <h3 className="description-text text-xl font-bold mb-2">INTERGALACTIC COMMUNICATIONS</h3>
           <div className={focused ? "spaceship-display-screen" : ""}>
             {description.length === 0 && !scanning && selectedTokenId && focused ? (
               <div>
@@ -87,8 +89,8 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
             ) : (
               focused && (
                 <>
-                  <div className="font-bold">
-                    <h1 className="font-bold">INCOMING AI-U ASSISTANCE REQUESTS</h1>
+                  <div className="">
+                    <h1 className="py-2 px-4 font-bold">INCOMING AI-U ASSISTANCE REQUESTS</h1>
 
                     {interplanetaryStatusReport ? (
                       <div>
@@ -126,6 +128,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
             )}
           </div>
         </div>
+        <div className="prompt-utility-div-left" onMouseEnter={handleMouseEnter}></div>
       </div>
     </>
   );
