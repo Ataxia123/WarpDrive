@@ -111,43 +111,43 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
   };
   return (
     <>
-      <div className="spaceship-display-screen switchboard overflow-hidden hex-prompt hex-data">
+      <div className="switchboard screen-border">
+        {selectedAttributes.length > 0 && (
+          <input
+            type="text"
+            className=""
+            placeholder="Additional text message"
+            value={extraText}
+            onChange={handleExtraTextChange}
+          />
+        )}
         <div>
-          {modifiedPrompt}
-          {selectedAttributes.length > 0 && (
-            <input
-              type="text"
-              className="prompt-input dropdown-option w-full"
-              placeholder="Additional text message"
-              value={extraText}
-              onChange={handleExtraTextChange}
-            />
+          Generate Modified Prompt
+          {stringToHex(modifiedPrompt)}
+        </div>
+        <div className="spaceship-display-screen overflow-auto">
+          {isExpanded && (
+            <>
+              {attributes.map(attribute => {
+                const displayName =
+                  !excludedAttributes.includes(attribute) && promptData[attribute as keyof typeof promptData]
+                    ? promptData[attribute as keyof typeof promptData]
+                    : attribute;
+                const isChecked = checkedAttributes.includes(attribute);
+                <div>{modifiedPrompt}</div>;
+                return (
+                  <div
+                    key={attribute}
+                    className={`switchboard-attribute ${isChecked ? "checked" : ""}`}
+                    onClick={() => handleToggle(attribute)}
+                  >
+                    <span>{displayName}</span>
+                  </div>
+                );
+              })}
+            </>
           )}
         </div>
-        {stringToHex(modifiedPrompt)}
-        <button className={"description-text"} onClick={generateModifiedPrompt}>
-          Generate Modified Prompt
-        </button>
-        {isExpanded && (
-          <div>
-            {attributes.map(attribute => {
-              const displayName =
-                !excludedAttributes.includes(attribute) && promptData[attribute as keyof typeof promptData]
-                  ? promptData[attribute as keyof typeof promptData]
-                  : attribute;
-              const isChecked = checkedAttributes.includes(attribute);
-              return (
-                <div
-                  key={attribute}
-                  className={`switchboard-attribute ${isChecked ? "checked" : ""}`}
-                  onClick={() => handleToggle(attribute)}
-                >
-                  <span>{displayName}</span>
-                </div>
-              );
-            })}
-          </div>
-        )}
       </div>
     </>
   );

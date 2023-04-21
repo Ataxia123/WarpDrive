@@ -402,7 +402,7 @@ opacity: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 10000000000000000000000;
   background-color: rgba(17, 2, 2, 0.623);
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -438,6 +438,35 @@ opacity: 1;
   background-color: #32CD32;
   color: #2d2d2d;
   border-color: #2d2d2d;
+}
+
+.prompt-button {
+  background-color: #2d2d2d;
+  border: 1px solid #32CD32;
+  color: #32CD32;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  text-transform: uppercase;
+  user-select: none;
+  transition: all 0.2s ease;
+
+  height: 10.1%;
+  transform: translate(510%,330%) perspective(100rem) rotateX(35deg)   ;
+  width: 4.5%;
+
+}
+.master-button {
+
+  border: 1px solid #32CD32;
+  color: #32CD32;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  text-transform: uppercase;
+  user-select: none;
+  transition: all 0.2s ease;
 }
 
 .prompt-panel {
@@ -690,10 +719,10 @@ perspective(10rem)
   background-color: #1010102f;
   color: #00ff00;
   position: absolute;
-  bottom: 28.6%;
+  bottom: 29.6%;
   left: 45.2%;
   width: 10.21%;
-  height: 15%;
+  height: 12%;
   z-index: 30;
   animation: randomFlicker 30s infinite ease-in-out;
 
@@ -842,7 +871,7 @@ input:checked + .slider:before {
   left: 80%;
   height: 30%;
   width: 15%;
-transform: perspective(19rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skewY(-5deg)skewX(-10deg)scale(1);
+transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skewY(-5deg)skewX(-10deg)scale(1);
    /* Apply the 3D transformations */
    
    transform-origin: center center;

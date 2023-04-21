@@ -6,6 +6,7 @@ interface TokenSelectionPanelProps {
   onImageSrcReceived: (imageSrc: string) => void;
   onTokenIdsReceived: (tokenIds: string[]) => void;
   onSelectedTokenIdRecieved: (selectedTokenId: string) => void;
+  onSubmit: (type: "character" | "background") => Promise<void>;
   interplanetaryStatusReport: string;
 }
 
@@ -15,6 +16,7 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
   onTokenIdsReceived,
   onSelectedTokenIdRecieved,
   interplanetaryStatusReport,
+  onSubmit,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -44,6 +46,7 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
         onSelectedTokenIdRecieved={onSelectedTokenIdRecieved}
         isFocused={isFocused} // Pass isMinimized as a prop
         onToggleMinimize={handleClick} // Pass handleClick as a prop
+        onSubmit={onSubmit}
       />
     </>
   );

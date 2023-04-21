@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect, useState } from "react";
-import { BigNumber, ethers } from "ethers";
+import { BigNumber, Contract, ethers } from "ethers";
 import { useAccount, useProvider } from "wagmi";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth/useScaffoldEventHistory";
@@ -12,6 +12,7 @@ interface ReadAIUProps {
   isFocused: boolean; // Add this prop
   isMinimized: boolean; // Add this prop
   onToggleMinimize: () => void; // Add this prop
+  onSubmit: (type: "character" | "background") => Promise<void>;
 }
 
 export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
@@ -25,13 +26,14 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
 }) => {
   const { address } = useAccount();
   const { data: deployedContract } = useDeployedContractInfo("WarpDrive");
-  const [tokenIds, setTokenIds] = useState<string[]>([]);
+  const [tokenIds, setTokenIds] = useState<string[] | undefined>([]);
   const [balance, setBalance] = useState<BigNumber>(ethers.BigNumber.from(0));
   const [selectedTokenId, setSelectedTokenId] = useState<string>();
   const [tokenURI, setTokenURI] = useState<string>();
   const provider = useProvider();
   const [metadata, setMetadata] = useState<any>(null);
   const [imageSrc, setImageSrc] = useState<string>();
+  const [mouseTrigger, setMouseTrigger] = useState<boolean>(false);
 
   const { data: transferEvents } = useScaffoldEventHistory({
     contractName: "WarpDrive",
@@ -40,25 +42,52 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
     filters: { to: address },
   });
 
+  const fetchUserBalance = async (address: string, contract: any) => {
+    if (!address || !contract) return ethers.BigNumber.from(0);
+    return await contract.balanceOf(address);
+  };
+
+  console.log("---------_CONSOLELOG_---------");
+  console.log("isFocused: ", isFocused, "address: ", address, "TransferEvents", transferEvents);
+
+  const fetchOwnedTokenIds = (transferEvents: any[] | undefined) => {
+    if (!transferEvents) return [];
+    return transferEvents.map(event => event.args.tokenId.toString());
+  };
+
+  const updateAppState = (userBalance: BigNumber, ownedTokenIds: string[]) => {
+    setBalance(userBalance);
+    setTokenIds(ownedTokenIds);
+    onTokenIdsReceived(ownedTokenIds);
+  };
+
+  const resetAppState = () => {
+    setBalance(ethers.BigNumber.from(0));
+    setTokenIds([]);
+    onTokenIdsReceived([]);
+    setSelectedTokenId("");
+  };
+
   useEffect(() => {
     const fetchTokenIds = async () => {
-      if (address && deployedContract) {
-        const contract = new ethers.Contract(deployedContract.address, deployedContract.abi, provider);
-        const userBalance = await contract.balanceOf(address);
-        if (!userBalance.eq(balance)) {
-          setBalance(userBalance);
-        }
+      if (!address || !deployedContract || !tokenIds) {
+        resetAppState();
+        return;
+      }
 
-        if (transferEvents) {
-          const ownedTokenIds = transferEvents.map(event => event.args.tokenId.toString());
-          setTokenIds(ownedTokenIds);
-          onTokenIdsReceived(ownedTokenIds); // Add this line
-        }
+      const contract = new ethers.Contract(deployedContract.address, deployedContract.abi, provider);
+      const userBalance = await fetchUserBalance(address, contract);
+      const ownedTokenIds = fetchOwnedTokenIds(transferEvents);
+
+      if (userBalance.gt(0)) {
+        updateAppState(userBalance, ownedTokenIds);
+      } else {
+        resetAppState();
       }
     };
 
     fetchTokenIds();
-  }, [address, deployedContract, transferEvents]);
+  }, [address, mouseTrigger, transferEvents]);
 
   useEffect(() => {
     const fetchTokenURI = async () => {
@@ -104,73 +133,91 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
     }
   }, [metadata]);
 
-  console.log(metadata, "metadata");
-
   return (
     <>
-      <div>
-        <button
-          className="dropdown-container toggle-minimize-button spaceship-display-screen"
-          onClick={onToggleMinimize}
-        >
-          {!isMinimized ? "^" : "v"}
+      <div
+        className="screen-border spaceship-display-screen thefinal"
+        style={{
+          position: "absolute",
+          height: "12%",
+          top: "58.3%",
+          width: "10.5%",
+          left: "45%",
+          opacity: "0.5",
+        }}
+      >
+        THeFinalDiv
+      </div>
+      <div onMouseEnter={() => setMouseTrigger(true)} className="toggle-minimize-button spaceship-display-screen">
+        <div onMouseEnter={onToggleMinimize} onMouseLeave={onToggleMinimize} className="spaceship-display-screen">
           <div className="screen-border">
-            <select id="tokenId" value={selectedTokenId} onChange={handleTokenIdChange} className="dropdown-option ">
-              <option value="">-ID-</option>
-              {tokenIds.map(tokenId => (
+            {metadata?.attributes[1].value}
+            {""}
+            {metadata?.attributes[2].value} {""}
+            {metadata?.attributes[3].value} {""}
+            {metadata?.attributes[4].value}
+            <br />
+            <select
+              id="tokenId"
+              value={selectedTokenId}
+              onChange={handleTokenIdChange}
+              className=" dropdown-container "
+            >
+              <option value="hex-prompt dropdown-option">-ID-</option>
+              {tokenIds?.map(tokenId => (
                 <option key={tokenId} value={tokenId}>
                   {selectedTokenId}
                 </option>
               ))}
             </select>
+            <button
+              className="spaceship-display-screen hex-data master-button"
+              onClick={() => console.log("Button onSubmit()")}
+            >
+              ButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHere
+            </button>
           </div>
-        </button>
+        </div>
       </div>
 
       <div className={`spaceship-display-screen token-selection-panel${isMinimized ? "-focused" : ""}`}>
         <div className="screen-border">
-          {isMinimized ? (
+          {metadata && (
             <>
-              {metadata && (
-                <>
-                  <div className="panel-content">
-                    {imageSrc && (
-                      <div className="image-column">
-                        <img className="focused-image-display" src={imageSrc} alt={metadata?.name} />
-                      </div>
-                    )}
-
-                    <div className="text-column">
-                      <h3 className="description-text">Description:</h3>
-                      <p>{metadata.description}</p>
-                      <h3 className="description-text">Attributes:</h3>
-                      <ul>
-                        {metadata.attributes.map((attribute: any, index: number) => (
-                          <li key={index}>
-                            {attribute.trait_type}: {attribute.value}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+              <div className="panel-content">
+                {imageSrc && (
+                  <div className="image-column">
+                    <img className="focused-image-display" src={imageSrc} alt={metadata?.name} />
                   </div>
-                </>
-              )}
-            </>
-          ) : (
-            <>
-              <h3 className="panel-title focused-title description-text position-relative">
-                {"  >SIGNAL ENCOUNTERED<"}
+                )}
 
-                <div className="panel-content justify-center">
-                  {metadata?.attributes[1].value}
-                  {""}
-                  {metadata?.attributes[2].value} {""}
-                  {metadata?.attributes[3].value} {""}
-                  {metadata?.attributes[4].value}
+                <div className="text-column">
+                  <h3 className="description-text">Description:</h3>
+                  <p>{metadata.description}</p>
+                  <h3 className="description-text">Attributes:</h3>
+                  <ul>
+                    {metadata.attributes.map((attribute: any, index: number) => (
+                      <li key={index}>
+                        {attribute.trait_type}: {attribute.value}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </h3>
+              </div>
             </>
           )}
+
+          <h3 className="panel-title focused-title description-text position-relative">
+            {"  >TU VIEJA<"}
+
+            <div className="panel-content justify-center">
+              {metadata?.attributes[1].value}
+              {""}
+              {metadata?.attributes[2].value} {""}
+              {metadata?.attributes[3].value} {""}
+              {metadata?.attributes[4].value}
+            </div>
+          </h3>
         </div>
       </div>
     </>

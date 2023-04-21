@@ -372,6 +372,7 @@ export default function Home() {
               onTokenIdsReceived={handleTokenIdsReceived}
               onSelectedTokenIdRecieved={handleSelectedTokenIdRecieved}
               interplanetaryStatusReport={interplanetaryStatusReport}
+              onSubmit={submitPrompt}
             />
             <DescriptionPanel
               interplanetaryStatusReport={interplanetaryStatusReport}
@@ -394,6 +395,7 @@ export default function Home() {
               buttonMessageId={buttonMessageId}
               generatePrompt={generatePrompt}
             />
+            <div></div>
           </Dashboard>
         </div>
       </div>

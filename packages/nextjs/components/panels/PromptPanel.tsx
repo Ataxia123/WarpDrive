@@ -165,7 +165,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
       <>
         {isFocused && (
           <div className="prompt-display-div">
-            <div className="screen-border prompt-input" onMouseLeave={handleMouseLeave}>
+            <div className="" onMouseLeave={handleMouseLeave}>
               <Switchboard
                 attributes={attributes}
                 onToggle={handleToggle}
@@ -173,18 +173,6 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
                 promptData={metadata}
                 selectedAttributes={selectedAttributes}
               />
-
-              {imageUrl ? (
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  onClick={() => onSubmit("character")}
-                  disabled={loading || !srcUrl}
-                >
-                  {loading ? "Submitting..." : "Submit"}
-                </button>
-              ) : (
-                <div></div>
-              )}
               {buttonMessageId !== "" ? <AvailableButtons /> : <div></div>}
               <br />
             </div>
