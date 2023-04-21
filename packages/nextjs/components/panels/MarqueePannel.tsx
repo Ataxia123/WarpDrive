@@ -28,12 +28,15 @@ export const MarqueePanel: React.FC<PromptPanelProps> = ({ metadata, imageUrl })
   return (
     <>
       <div className="marquee-container spaceship-display-screen">
-        <br />
-        <p className="marquee-content">
-          ESTABLISHING CONNECTION WITH: {metadata.Level} {metadata.Power1} {metadata.Power2} {metadata.Power3}{" "}
-          {metadata.Power4} SCAN TO DECODE ETHEREUM PRICE IS {ethPrice}
-        </p>
-        <h2 className="text-xl font-bold marquee-title">AI-U BROADCAST</h2>
+        <h2 className="text-s font-bold marquee-title description-text">AI-U BROADCAST</h2>
+        <div className="screen-border">
+          <br />
+
+          <p className="marquee-content">
+            ESTABLISHING CONNECTION WITH: {metadata.Level} {metadata.Power1} {metadata.Power2} {metadata.Power3}{" "}
+            {metadata.Power4} SCAN TO DECODE ETHEREUM PRICE IS {ethPrice}
+          </p>
+        </div>
       </div>
     </>
   );

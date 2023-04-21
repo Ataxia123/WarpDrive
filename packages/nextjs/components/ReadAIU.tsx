@@ -108,25 +108,27 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
 
   return (
     <>
-      <button className="dropdown-container toggle-minimize-button spaceship-display-screen" onClick={onToggleMinimize}>
-        <div>{!isMinimized ? "^" : "v"}</div>
-        <select
-          id="tokenId"
-          value={selectedTokenId}
-          onChange={handleTokenIdChange}
-          className="dropdown-option dropdown-select"
+      <div>
+        <button
+          className="dropdown-container toggle-minimize-button spaceship-display-screen"
+          onClick={onToggleMinimize}
         >
-          <option value="">-ID-</option>
-          {tokenIds.map(tokenId => (
-            <option key={tokenId} value={tokenId}>
-              {selectedTokenId}
-            </option>
-          ))}
-        </select>
-      </button>
+          {!isMinimized ? "^" : "v"}
+          <div className="screen-border">
+            <select id="tokenId" value={selectedTokenId} onChange={handleTokenIdChange} className="dropdown-option ">
+              <option value="">-ID-</option>
+              {tokenIds.map(tokenId => (
+                <option key={tokenId} value={tokenId}>
+                  {selectedTokenId}
+                </option>
+              ))}
+            </select>
+          </div>
+        </button>
+      </div>
 
       <div className={`spaceship-display-screen token-selection-panel${isMinimized ? "-focused" : ""}`}>
-        <div>
+        <div className="screen-border">
           {isMinimized ? (
             <>
               {metadata && (
@@ -158,12 +160,15 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
             <>
               <h3 className="panel-title focused-title description-text position-relative">
                 {"  >SIGNAL ENCOUNTERED<"}
+
+                <div className="panel-content justify-center">
+                  {metadata?.attributes[1].value}
+                  {""}
+                  {metadata?.attributes[2].value} {""}
+                  {metadata?.attributes[3].value} {""}
+                  {metadata?.attributes[4].value}
+                </div>
               </h3>
-              <div className="panel-content justify-center">
-                {metadata?.attributes[1].value}
-                <br />
-                {metadata?.attributes[2].value} {metadata?.attributes[3].value} {metadata?.attributes[4].value}
-              </div>
             </>
           )}
         </div>

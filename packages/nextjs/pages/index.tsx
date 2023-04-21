@@ -13,6 +13,7 @@ import { Configuration, OpenAIApi } from "openai";
 import { MarqueePanel } from "~~/components/panels/MarqueePannel";
 
 type Metadata = {
+  srcUrl: string | undefined;
   Level: string;
   Power1: string;
   Power2: string;
@@ -21,6 +22,7 @@ type Metadata = {
   Alignment1: string;
   Alignment2: string;
   Side: string;
+  interplanetaryStatusReport: string;
 };
 
 export default function Home() {
@@ -63,7 +65,7 @@ export default function Home() {
 
   function generatePrompt(
     type: "character" | "background",
-    srcURL: string | undefined,
+    srcUrl: string | undefined,
     level: string,
     power1: string,
     power2: string,
@@ -75,6 +77,7 @@ export default function Home() {
     nijiFlag: boolean,
     vFlag: boolean,
     side: string | "",
+    interplanetaryStatusReport: string | "",
   ): string {
     const niji = nijiFlag ? "--niji 5" : "";
     const v = vFlag ? "--v 5" : "";
@@ -84,7 +87,7 @@ export default function Home() {
     if (type === "background")
       return `${randomPlanet} ${keyword} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${selectedDescription} ${niji} ${v} viewed from space`.trim();
 
-    return `${srcURL} ${keyword} ${level} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${side} ${selectedDescription} ${niji} ${v}`.trim();
+    return `${srcUrl} ${keyword} ${level} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${side} ${selectedDescription} ${niji} ${v}`.trim();
   }
 
   useEffect(() => {
@@ -121,6 +124,7 @@ export default function Home() {
       nijiFlag,
       vFlag,
       side,
+      interplanetaryStatusReport,
     );
     if (waitingForWebhook) {
       console.log("Already waiting for webhook, please wait for response.");
@@ -312,6 +316,7 @@ export default function Home() {
 
   // make an array out of the metadata attributes
   const metadata: Metadata = {
+    srcUrl: srcUrl,
     Level: level,
     Power1: power1,
     Power2: power2,
@@ -320,6 +325,7 @@ export default function Home() {
     Alignment1: alignment1,
     Alignment2: alignment2,
     Side: side,
+    interplanetaryStatusReport: interplanetaryStatusReport,
   };
 
   const handleImageSrcReceived = (imageSrc: string) => {
@@ -345,17 +351,18 @@ export default function Home() {
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
         <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
-          <Dashboard travelStatus={travelStatus} dynamicImageUrl={backgroundImageUrl}>
-            <MarqueePanel
-              imageUrl={imageUrl}
-              srcUrl={srcUrl}
-              onSubmitPrompt={submitPrompt}
-              onSubmit={submitPrompt}
-              handleButtonClick={handleButtonClick}
-              loading={loading}
-              metadata={metadata}
-              buttonMessageId={buttonMessageId}
-            />
+          <Dashboard
+            imageUrl={imageUrl}
+            srcUrl={srcUrl}
+            onSubmitPrompt={submitPrompt}
+            onSubmit={submitPrompt}
+            handleButtonClick={handleButtonClick}
+            loading={loading}
+            metadata={metadata}
+            buttonMessageId={buttonMessageId}
+            travelStatus={travelStatus}
+            dynamicImageUrl={backgroundImageUrl}
+          >
             <SpaceshipInterface />
             <AcquiringTarget loading={loading} travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
 
@@ -376,6 +383,8 @@ export default function Home() {
             />
             <PromptPanel
               imageUrl={imageUrl}
+              interplanetaryStatusReport={interplanetaryStatusReport}
+              description={selectedDescription ? selectedDescription : "No Description"}
               srcUrl={srcUrl}
               onSubmitPrompt={submitPrompt}
               onSubmit={submitPrompt}
@@ -383,6 +392,7 @@ export default function Home() {
               loading={loading}
               metadata={metadata}
               buttonMessageId={buttonMessageId}
+              generatePrompt={generatePrompt}
             />
           </Dashboard>
         </div>

@@ -56,73 +56,75 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
     <>
       <div
         className={`${
-          focused ? "focused-right " : "unfocused-right scale-100 "
+          focused ? "focused-right " : "unfocused-right scale-100 spaceship-display-screen"
         } transition-all duration-300 spaceship-panel`}
         onClick={handleClick}
       >
-        <h3 className="description-text text-xl font-bold mb-2 spaceship-display-screen">
-          INTERGALACTIC COMMUNICATIONS
-        </h3>
-        <div className={focused ? "spaceship-display-screen" : ""}>
-          {description.length === 0 && !scanning && selectedTokenId && focused ? (
-            <div>
-              <button
-                className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
-                onClick={e => {
-                  e.stopPropagation();
-                  handleScanClick();
-                }}
-              >
-                {}
-                SCAN
-              </button>
-              {" ||"}
-            </div>
-          ) : scanning ? (
-            <>
-              <p className="description-text">Scanning...</p>
-              <div className="spaceship-display-screen"></div>
-            </>
-          ) : (
-            focused && (
+        <div className="screen-border">
+          <h3 className="description-text text-xl font-bold mb-2 spaceship-display-screen">
+            INTERGALACTIC COMMUNICATIONS
+          </h3>
+          <div className={focused ? "spaceship-display-screen" : ""}>
+            {description.length === 0 && !scanning && selectedTokenId && focused ? (
+              <div>
+                <button
+                  className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleScanClick();
+                  }}
+                >
+                  {}
+                  SCAN
+                </button>
+                {" ||"}
+              </div>
+            ) : scanning ? (
               <>
-                <div className="font-bold">
-                  <h1 className="font-bold">INCOMING AI-U ASSISTANCE REQUESTS</h1>
-
-                  {interplanetaryStatusReport ? (
-                    <div>
-                      {focused && (
-                        <div>
-                          <h2>MESSAGE:</h2>
-                          <p>{interplanetaryStatusReport}</p>
-                          <button
-                            className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
-                            onClick={handleButtonClick}
-                          >
-                            NEXT MESSAGE
-                          </button>
-                          {" ||"}
-                        </div>
-                      )}
-                    </div>
-                  ) : !selectedTokenId ? (
-                    <>
-                      <p>Select a transmission ID to scan</p>
-                    </>
-                  ) : (
-                    <p>
-                      <button
-                        className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
-                        onClick={handleButtonClick}
-                      >
-                        SET COORDINATES
-                      </button>
-                    </p>
-                  )}
-                </div>
+                <p className="description-text">Scanning...</p>
+                <div className="spaceship-display-screen"></div>
               </>
-            )
-          )}
+            ) : (
+              focused && (
+                <>
+                  <div className="font-bold">
+                    <h1 className="font-bold">INCOMING AI-U ASSISTANCE REQUESTS</h1>
+
+                    {interplanetaryStatusReport ? (
+                      <div>
+                        {focused && (
+                          <div>
+                            <h2>MESSAGE:</h2>
+                            <p>{interplanetaryStatusReport}</p>
+                            <button
+                              className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
+                              onClick={handleButtonClick}
+                            >
+                              NEXT MESSAGE
+                            </button>
+                            {" ||"}
+                          </div>
+                        )}
+                      </div>
+                    ) : !selectedTokenId ? (
+                      <>
+                        <p>Select a transmission ID to scan</p>
+                      </>
+                    ) : (
+                      <p>
+                        <button
+                          className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
+                          onClick={handleButtonClick}
+                        >
+                          SET COORDINATES
+                        </button>
+                      </p>
+                    )}
+                  </div>
+                </>
+              )
+            )}
+          </div>
         </div>
       </div>
     </>
