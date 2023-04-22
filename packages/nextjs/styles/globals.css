@@ -888,6 +888,7 @@ body {
   object-fit: fill;
   pointer-events: none;
   z-index: 1;
+  backdrop-filter: sepia(30%) invert(5%);
 }
 
 .toggle-container {

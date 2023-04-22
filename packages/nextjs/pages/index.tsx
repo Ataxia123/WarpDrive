@@ -70,6 +70,7 @@ export default function Home() {
       console.log("Travel status is not TargetAcquired");
     }
   }, [travelStatus]);
+
   useEffect(() => {
     setSelectedDescription(description[selectedDescriptionIndex]);
   }, [selectedDescriptionIndex]);
@@ -127,7 +128,7 @@ export default function Home() {
   }, [selectedDescription]);
 
   const submitPrompt = async (type: "character" | "background") => {
-    let prompt = generatePrompt(
+    const prompt = generatePrompt(
       type,
       srcUrl,
       level,
@@ -143,8 +144,7 @@ export default function Home() {
       side,
       interplanetaryStatusReport,
     );
-    type !== "character" ? (prompt = modifiedPrompt) : (prompt = prompt);
-    console.log("prompt", prompt);
+    console.log("USING THE FOLLOWING prompt", prompt);
     if (waitingForWebhook) {
       console.log("Already waiting for webhook, please wait for response.");
       return;
@@ -293,7 +293,7 @@ export default function Home() {
     setLoading(false);
     setWaitingForWebhook(false);
   };
-
+  // add logic so that user can click instead of timeout
   useEffect(() => {
     if (travelStatus === "AcquiringTarget" && srcUrl !== "") {
       //await 5 seconds

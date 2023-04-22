@@ -37,7 +37,6 @@ const Background: React.FC<BackgroundProps> = ({ dynamicImageUrl, warped, fixedI
   }, [travelStatus]);
   return (
     <div className={styles.background}>
-      <SpaceParticles />
       <img
         className={styles.dynamicImage}
         src={dynamicImageUrl}
