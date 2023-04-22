@@ -3,12 +3,13 @@ import React, { useEffect, useState } from "react";
 import styles from "./Background.module.css";
 
 interface BackgroundProps {
+  warped: boolean;
   dynamicImageUrl: string;
   fixedImageUrl: string;
   travelStatus: string;
 }
 
-const Background: React.FC<BackgroundProps> = ({ dynamicImageUrl, fixedImageUrl, travelStatus }) => {
+const Background: React.FC<BackgroundProps> = ({ dynamicImageUrl, warped, fixedImageUrl, travelStatus }) => {
   const [bgPosition, setBgPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [warpSpeedOpacity, setWarpSpeedOpacity] = useState("0");
   const handleMouseMove = (e: MouseEvent) => {
@@ -22,15 +23,17 @@ const Background: React.FC<BackgroundProps> = ({ dynamicImageUrl, fixedImageUrl,
       window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
-
   useEffect(() => {
-    if (travelStatus === "TargetAcquired") {
+    if (warped === true) {
       setWarpSpeedOpacity("1");
-    } else if (travelStatus === "NoTarget") {
-      setWarpSpeedOpacity("0");
+
+      // Wait for 5 seconds (5000 milliseconds) before executing the following code
+      setTimeout(() => {
+        // Change the opacity back to 0 after changing the background
+        setWarpSpeedOpacity("0");
+      }, 5000);
     }
   }, [travelStatus]);
-
   return (
     <div className={styles.background}>
       <img

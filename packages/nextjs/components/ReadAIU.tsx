@@ -1,10 +1,13 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import { BigNumber, Contract, ethers } from "ethers";
 import { useAccount, useProvider } from "wagmi";
+import { Balance, BlockieAvatar } from "~~/components/scaffold-eth";
+import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth/useScaffoldEventHistory";
 
 interface ReadAIUProps {
+  handleEngaged: (engaged: boolean) => void;
   onSelectedTokenIdRecieved: (selectedTokenId: string) => void;
   onMetadataReceived: (metadata: any) => void;
   onImageSrcReceived: (imageSrc: string) => void;
@@ -13,9 +16,13 @@ interface ReadAIUProps {
   isMinimized: boolean; // Add this prop
   onToggleMinimize: () => void; // Add this prop
   onSubmit: (type: "character" | "background") => Promise<void>;
+  travelStatus: string;
 }
 
 export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
+  handleEngaged,
+  travelStatus,
+  onSubmit,
   onSelectedTokenIdRecieved,
   onMetadataReceived,
   onImageSrcReceived,
@@ -34,6 +41,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   const [metadata, setMetadata] = useState<any>(null);
   const [imageSrc, setImageSrc] = useState<string>();
   const [mouseTrigger, setMouseTrigger] = useState<boolean>(false);
+  const [engaged, setEngaged] = useState<boolean>(false);
 
   const { data: transferEvents } = useScaffoldEventHistory({
     contractName: "WarpDrive",
@@ -122,6 +130,20 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
     setSelectedTokenId(e.target.value);
     onSelectedTokenIdRecieved(e.target.value); // Add this line
   };
+  useEffect(() => {
+    if (travelStatus === "ready") {
+      setEngaged(false);
+    }
+  }, [travelStatus]);
+
+  const handleButton = () => {
+    if (travelStatus === "TargetAcquired") {
+      setEngaged(true);
+      handleEngaged(true);
+    } else if (engaged === true) {
+      onSubmit("character");
+    }
+  };
 
   useEffect(() => {
     if (metadata && metadata.image) {
@@ -132,6 +154,13 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
       console.log("Image URL:", imageUrl);
     }
   }, [metadata]);
+  function stringToHex(str: string): string {
+    let hex = "";
+    for (let i = 0; i < str.length; i++) {
+      hex += str.charCodeAt(i).toString(16);
+    }
+    return hex;
+  }
 
   return (
     <>
@@ -143,43 +172,58 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
           top: "58.3%",
           width: "10.5%",
           left: "45%",
-          opacity: "0.5",
+          opacity: "0.9",
+          display: "flex",
+          overflow: "hidden",
+          flexDirection: "column",
+          alignContent: "right",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "2rem",
+          scale: "0.98",
         }}
       >
-        THeFinalDiv
-      </div>
-      <div onMouseEnter={() => setMouseTrigger(true)} className="toggle-minimize-button spaceship-display-screen">
-        <div onMouseEnter={onToggleMinimize} onMouseLeave={onToggleMinimize} className="spaceship-display-screen">
-          <div className="screen-border">
-            {metadata?.attributes[1].value}
-            {""}
-            {metadata?.attributes[2].value} {""}
-            {metadata?.attributes[3].value} {""}
-            {metadata?.attributes[4].value}
-            <br />
-            <select
-              id="tokenId"
-              value={selectedTokenId}
-              onChange={handleTokenIdChange}
-              className=" dropdown-container "
+        <RainbowKitCustomConnectButton />
+        {balance?.toString()} SIGNALS DETECTED
+      </div>{" "}
+      {balance?.toNumber() !== 0 ? (
+        <div onMouseEnter={() => setMouseTrigger(true)} className="toggle-minimize-button spaceship-display-screen">
+          <div onMouseEnter={onToggleMinimize} onMouseLeave={onToggleMinimize} className="spaceship-display-screen">
+            <div
+              className="screen-border"
+              style={{
+                color: "Black",
+                backgroundColor: "Black",
+                opacity: "0.8",
+              }}
             >
-              <option value="hex-prompt dropdown-option">-ID-</option>
-              {tokenIds?.map(tokenId => (
-                <option key={tokenId} value={tokenId}>
-                  {selectedTokenId}
-                </option>
-              ))}
-            </select>
-            <button
-              className="spaceship-display-screen hex-data master-button"
-              onClick={() => console.log("Button onSubmit()")}
-            >
-              ButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHereButtonGoesHere
-            </button>
+              <p className="display-text">SIGNALS DETECTED</p>
+              <br />
+              <select
+                id="tokenId"
+                value={selectedTokenId}
+                onChange={handleTokenIdChange}
+                className=" dropdown-container hex-prompt dropdown-option"
+              >
+                <option value="hex-prompt dropdown-option">-ID-</option>
+                {tokenIds?.map(tokenId => (
+                  <option key={tokenId} value={tokenId}>
+                    {selectedTokenId}
+                  </option>
+                ))}
+              </select>
+              <button className="spaceship-display-screen hex-data master-button" onClick={() => handleButton()}>
+                {stringToHex(metadata ? metadata.description : "No Metadata")}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-
+      ) : (
+        <div
+          style={{ color: "Black", backgroundColor: "Black", opacity: "0.8", pointerEvents: "none" }}
+          className="toggle-minimize-button spaceship-display-screen"
+        ></div>
+      )}
       <div className={`spaceship-display-screen token-selection-panel${isMinimized ? "-focused" : ""}`}>
         <div className="screen-border">
           {metadata && (
@@ -208,8 +252,6 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
           )}
 
           <h3 className="panel-title focused-title description-text position-relative">
-            {"  >TU VIEJA<"}
-
             <div className="panel-content justify-center">
               {metadata?.attributes[1].value}
               {""}

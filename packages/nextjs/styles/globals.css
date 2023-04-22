@@ -30,9 +30,9 @@ p {
   backdrop-filter: blur(4px);
   align-items: center;
   font-family: "Orbitron", sans-serif;
-  color: #00ff00;
-  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;;
-  border: #00ff00 1px solid;/* Adjust the color to your preference */
+  color: #f2982f;
+  text-shadow: 0 0 10px #f2982f, 0 0 20px #f2982f, 0 0 30px #f2982f;;
+  border: #f2982f 1px solid;/* Adjust the color to your preference */
   background-size: auto;
   background-repeat: no-repeat;
   z-index: 111111; /* Higher z-index to bring it up above other elements */
@@ -67,9 +67,9 @@ align-items: center;
   left: -5px;
   right: -5px;
   bottom: -5px;
-  border: 5px solid rgba(30, 255, 0, 0.5); /* Adjust the color to your preference */
+  border: 5px solid #f2982f; /* Adjust the color to your preference */
   border-radius: 5px;
-  box-shadow: 0 0 10px 2px rgba(67, 197, 15, 0.5); /* Adjust the color to your preference */
+  box-shadow: 0 0 10px 2px #f2982f; /* Adjust the color to your preference */
   overflow: hidden;
   opacity: 1; /* Set the initial opacity value here */
   transition: opacity 0.3s ease;
@@ -234,7 +234,7 @@ z-index: -1;
   object-fit: fill;
   transition: transform 0.5s ease-in-out, top 0.5s ease-in-out, left 0.5s ease-in-out;
   animation: randomFlicker 1.65s infinite ease-in-out;
-  border: #00ff00 1px solid;
+  border: #f2982f 1px solid;
   border-style: dashed;
 }
 
@@ -258,7 +258,7 @@ z-index: -1;
   z-index: 1; /* Change the z-index to bring it up above other elements */
   opacity: 1;
   width: 60rem;
-  border: #00ff00 1px solid;
+  border: #f2982f 1px solid;
   background-color: #000000f6;
   padding: 1.5rem;
   transform: scale(1.3);
@@ -388,7 +388,7 @@ opacity: 1;
   border-radius: 0.5rem;
   margin-left: 70%;
   padding: 1rem;
-  color: #32CD32; /* Green console-like font color */
+  color: #f2982f; /* Green console-like font color */
   font-family: "Courier New", Courier, monospace;
 }
 
@@ -422,8 +422,8 @@ opacity: 1;
 
 .spaceship-button {
   background-color: #2d2d2d;
-  border: 1px solid #32CD32;
-  color: #32CD32;
+  border: 1px solid #f2982f;
+  color: #f2982f;
   font-weight: bold;
   padding: 0.5rem 1rem;
   border-radius: 5px;
@@ -578,7 +578,7 @@ perspective(10rem)
   white-space: nowrap;
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: 5px;
-  border: 1px solid #32CD32;
+  border: 1px solid #f2982f;
   z-index: 0;
 }
 
@@ -586,7 +586,7 @@ perspective(10rem)
 .marquee-content {
   display: inline-block;
   font-size: 24px;
-  color: #32CD32;
+  color: #f2982f;
   font-family: "Orbitron", sans-serif;
   white-space: nowrap;
   bottom: 1rem;
@@ -605,15 +605,15 @@ perspective(10rem)
   margin-bottom: 1rem;
   right:1rem;
 
-  bottom: rem;
-  color: #32CD32;
+
+  color: #f2982f;
   font-family: "Orbitron", sans-serif;
   white-space: nowrap;
   
   text-shadow: 
-    0 0 5px rgba(50, 205, 50, 0.7), 
-    0 0 10px rgba(50, 205, 50, 0.5),
-    0 0 15px rgba(50, 205, 50, 0.3);
+    0 0 5px #f2982f, 
+    0 0 10px #f2972f8a,
+    0 0 15px #f2972f75;
 }
 
 @keyframes marquee {
@@ -625,14 +625,20 @@ perspective(10rem)
   }
 }
 
-
+.prompt-display{
+  position: absolute;
+height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .description-text {
   white-space: pre-wrap;
   overflow: hidden;
   border-right: 0.15rem solid;
-  animation: typing 1.5s steps(40, end),
-             blink-caret 0.75s step-end infinite alternate;
+  animation: blink-caret 0.75s step-end infinite alternate;
 }
 
 @keyframes typing {
@@ -668,18 +674,37 @@ perspective(10rem)
 .spaceship-panel {
   font-family: "Orbitron", sans-serif;
   background-color: #101010;
-  color: #00ff00;
-  border: 2px solid #00ff00;
+  color: #f2982f;
+  border: 2px solid #f2982f;
   border-radius: 10px;
   padding: 20px;
 }
-
+.token-selection-panel-focused-off {
+  font-family: "Orbitron", sans-serif;
+  background-color: #101010;
+  color: #f2982f;
+  border: 2px solid #f2982f;
+  border-radius: 10px;
+  position: absolute;
+  /*make into a circle*/
+  border-radius: 50%;
+  z-index: -1;
+  box-sizing: border-box; /* Add box-sizing to include padding and border in the dimensions */
+  overflow: hidden; /* Add overflow property to handle the overflowing content */
+  bottom: 60%;
+  top: 5%;
+  left: 27%;
+  opacity: .7;
+  right: 35%;
+  width: 45%;
+  height: 70%;
+}
 
 .token-selection-panel-focused {
   font-family: "Orbitron", sans-serif;
   background-color: #101010f3;
-  color: #00ff00;
-  border: 2px solid #00ff00;
+  color: #f2982f;
+  border: 2px solid #f2982f;
   border-radius: 10px;
   position: absolute;
   /*make into a circle*/
@@ -713,52 +738,113 @@ perspective(10rem)
   /* Add any additional styles for the text container */
 }
 
-
+.thefinal{
+  z-index: 100001;
+  opacity: 1;
+}
 .token-selection-panel {
   font-family: "Orbitron", sans-serif;
-  background-color: #1010102f;
-  color: #00ff00;
+  background-color: #101010;
+  color: #f2982f;
   position: absolute;
   bottom: 29.6%;
-  left: 45.2%;
+  left: 425.2%;
   width: 10.21%;
   height: 12%;
   z-index: 30;
+  opacity: 0;
+  z-index: 100000;
   animation: randomFlicker 30s infinite ease-in-out;
 
 }
 .switchboard {
-  display: flex;
+  position: relative;
+  max-height: 100%;
+  max-width: 100%;
+  height: 100%;
+  width: 100%;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   background-color: #222;
-  box-shadow: 0px 0px 10px rgba(0, 255, 0, 0.5);
-
+  box-shadow: 0px 0px 10px #f2982f;
+z-index: 10000000000000000000000000;
   opacity: 1;
   animation: none;
-  height: 100%;
+
 
 }
-
+.switchboard-attribute-container{
+  display: flex;
+  flex-wrap: wrap;
+height: auto;
+bottom: -5rem;
+width: auto;
+  background-color: #222;
+  box-shadow: 0px 0px 10px #f2982f;
+}
+.encode-signal-pannel{
+  justify-content: center;
+  width: 100%;
+  height: auto;
+  overflow-wrap: break-word;
+}
 .switchboard-attribute {
-  display: inline-block;
-  transform: scale(1.2);
-  padding: 0.5REM 0.51REM;
-  margin: .69rem;
-  border: 2px solid #00ff00;
-  border-radius: 4px;
-  color: #00ff00;
+  height: 15%;
+  width: 27%;
+  display: flex;
+  flex-wrap: wrap;
+  transform: scale(.91);
+  padding: 1rem;
+  margin: .9rem;
+  border: 2px solid #f2982f;
+  border-radius: 1px;
+  color: #f2982f;
   background-color: rgba(0, 255, 0, 0.1);
   cursor: pointer;
   user-select: none;
   transition: background-color 0.3s, color 0.3s;
+  overflow: hidden;
+  justify-content: center;
 }
 
 .switchboard-attribute.checked {
-  background-color: rgba(0, 255, 0, 0.3);
+  background-color: #f2982f;
   color: #000; /* Change the text color when checked for better visibility */
+  opacity: 0.1;
+  position: relative;
 }
+.switchboard-real{
+  position: relative;
+  top: 10%;
+  bottom: 0rem;
+  max-height: 10%;
+  max-width: 100%;
+  height: 10%;
+  width: 100%;
+  display:flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  background-color: #222;
+  box-shadow: 0px 0px 10px #f2982f;
+z-index: 10000000000000000000000000;
+  opacity: 1;
+  animation: none;
+
+}
+
+
+.fancy-data {
+  color: #f2982f;
+  font-family: "Courier New", monospace;
+  font-size: 1.2rem;
+  line-height: 1rem;
+  text-align: center;
+  white-space: wrap;
+  overflow-wrap: anywhere;
+}
+
 
 .hex-data {
   position: absolute;
@@ -766,7 +852,7 @@ perspective(10rem)
   left: 0;
   right: 0;
   bottom: 0;
-  color: rgba(0, 255, 0, 0.3);
+  color: #f2982f;
   font-family: "Courier New", monospace;
   font-size: 10px;
   line-height: 10px;
@@ -779,9 +865,9 @@ perspective(10rem)
 .hex-prompt {
   font-family: "Courier New", monospace;
   background-color: rgba(0, 255, 0, 0.1);
-  border: 1px solid #00ff00;
+  border: 1px solid #f2982f;
   border-radius: 4px;
-  color: #00ff00;
+  color: #f2982f;
 }
 .dashboard-content {
   display: flex;
@@ -849,7 +935,7 @@ body {
 }
 
 input:checked + .slider {
-  background-color: #00ff00;
+  background-color: #f2982f;
 }
 
 input:checked + .slider:before {
@@ -858,7 +944,7 @@ input:checked + .slider:before {
 
 .attribute-label {
   margin-top: 5px;
-  color: #00ff00;
+  color: #f2982f;
   font-weight: bold;
   font-family: 'Courier New', Courier, monospace;
 }
@@ -934,10 +1020,10 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
   max-width: 6%; /* Set the width */
   max-height: 11%; /* Set the height */
   border-radius: 50%; /* Make it a circle */
-  border: 2px solid #32CD32;
+  border: 2px solid#f2982f;
   z-index: 1;
   text-align: center;
-  color: #32CD32;
+  color: #f2982f;
   font-family: 'Courier New', Courier, monospace;
   display: flex;
   flex-direction: column;
@@ -971,38 +1057,29 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
   position: absolute;
   left: 25%;
   right: 10%;
-  margin-right: 100%;
-  height: 55%;
+  margin-right: 10%;
+  height: 75%;
   opacity: 1;
   background-color: #000;
-  bottom: -95%;
-  width: 70%;
+  bottom: -55%;
+  width: 100%;
   flex-direction: column;
   transform-origin: left;
   display: flex;
   transform:
-  perspective(80rem) 
+  perspective(150rem) 
   skewX(30deg)
-  skewY(-5deg)
-   rotateX(35deg)
-   rotateZ(15deg) 
-   rotateY(15deg)
+  skewY(-00deg)
+   rotateX(15deg)
+   rotateZ(25deg) 
+   rotateY(-45deg)
    scale(1.9) ;
-  animation: randomFlicker 1.65s infinite ease-in-out;
+   
 }
 
 .prompt-display-div:hover{
-  position:fixed;
-  transform:
-  scale(2.9) 
-  perspective(80rem) 
-  skewX(30deg)
-  skewY(-5deg)
-   rotateX(35deg)
-   rotateZ(15deg) 
-   rotateY(15deg)
-   translateY(-15%)
-;
+
+
 
 }
 
@@ -1018,25 +1095,46 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
   flex-direction: column;
   padding: 2rem;
   margin: 0.2rem;
+  z-index: 10000000000000000000000000000000;
 }
 
-
+.spaceship-display-screen-off{
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  backdrop-filter: blur(8px);
+  align-items: center;
+  font-family: "Orbitron", sans-serif;
+  opacity: .8;
+  text-shadow: 0 0 20px #000000, 0 0 40px #000000, 0 0 60px #000000;;
+  border: #030000 10px solid;/* Adjust the color to your preference */
+  background-size: auto;
+  background-repeat: no-repeat;
+  z-index: 11111100000000000000000000000000000000000; /* Higher z-index to bring it up above other elements */
+  /* Center the screen and scale it up */
+  pointer-events: none;
+}
 .prompt-span{
-  position: relative;
-  top: 63%;
-  bottom: 79%;
-  left: 33.3%;
-  background-color: rgba(0, 0, 0, 0);
-  width: 10%; /* Set the width */
-  height: 15%; /* Set the height */
-  max-width: 4%; /* Set the width */
-  max-height: 8.2%; /* Set the height */
-  border-color: #00000093;
-  transform-origin: left;
+display: flex;
+  flex-direction: column;
   justify-content: center;
-  transform: rotateY(-20deg)rotateZ(-6deg)rotateX(03deg);
+  flex-wrap: wrap;
+  word-break: break-all;
+  align-items: center;
+  margin: 0.2rem;
+  padding: 0.2rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.5rem;
+  color: #f2982f;
+  text-shadow: 0 0 0.5rem #f2982f;
   animation: randomFlicker 1.65s infinite ease-in-out;
-  z-index: 1;
+
+}
+.screen-toggle{
+  position: relative;
+  height: 30%;
+  width: 35%;
+  transform: perspective(10rem) rotateX(10deg) skewX(47deg) rotateZ(13deg) translateX(-30%) translateY(170%)scale(0.9);
 }
 
 .acquiring-target-circle {
@@ -1108,9 +1206,9 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
 }
 
 .spaceship-button {
-  background-color: rgba(50, 205, 50, 0.5);
-  color: #32CD32;
-  border: 1px solid #32CD32;
+  background-color: #f2982f;
+  color: #f2982f;
+  border: 1px solid #f2982f;
   border-radius: 5px;
   padding: 5px 10px;
   font-family: 'Courier New', Courier, monospace;
@@ -1120,11 +1218,11 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
 }
 
 .spaceship-button:hover {
-  background-color: rgba(50, 205, 50, 0.8);
+  background-color: #f2982f;
 }
 
 .spaceship-button.active {
-  background-color: rgba(50, 205, 50, 0.8);
+  background-color: #f2982f;
 }
 
 input[type='checkbox'] {
@@ -1154,7 +1252,7 @@ position: absolute;
 .dropdown-container{
   position: absolute;
 
-  border: 1px solid #32CD32;
+  border: 1px solid #f2982f;
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
@@ -1165,9 +1263,9 @@ position: absolute;
 }
 .holographic{
   background-color: rgba(0, 0, 0, 0.5);
-  color: #32CD32;
-  border: 1px solid #32CD32;
-  box-shadow: 0 0 10px #32CD32;
+  color: #f2982f;
+  border: 1px solid #f2982f;
+  box-shadow: 0 0 10px #f2982f;
   transition: all 0.3s ease-in-out;
 }
 .dropdown-select {
@@ -1176,20 +1274,20 @@ position: absolute;
   height: 100%;
   padding: 0 1rem;
   background-color: rgba(0, 0, 0, 0.5);
-  color: #32CD32;
+  color:#f2982f;
   font-family: 'Courier New', Courier, monospace;
-  border: 1px solid #32CD32;
-  box-shadow: 0 0 10px #32CD32;
+  border: 1px solid #f2982f;
+  box-shadow: 0 0 10px #f2982f;
   appearance: none;
   cursor: pointer;
 }
 
 .dropdown-option {
   background-color: rgba(0, 0, 0, 0.733);
-  color: #32CD32;
+  color: #f2982f;
   font-family: 'Courier New', Courier, monospace;
-  border: 1px solid #32CD32;
-  box-shadow: 0 0 10px #32CD32;
+  border: 1px solid #f2982f;
+  box-shadow: 0 0 10px#f2982f;
   transition: all 0.3s ease-in-out;
 }
 .aiu-content {
@@ -1238,13 +1336,22 @@ position: absolute;
   margin-left: 30%;
   right: -30rem;
   background-color: #101010b0;
-  border: #00ff00;
+  border: #f2982f;
   border-style: solid;
   border-radius: 5px;
   padding: 20px;
   z-index: 30;
 }
-
+.encode-signal-button {
+  opacity: 0.8;
+  background-color: rgba(0, 0, 0, 1);
+  z-index:-1;
+}
+.encode-signal-switchboard-attribute-container {
+  opacity: 0.8;
+  background-color: rgba(0, 0, 0, 1);
+  z-index:-1;
+}
 .attributes,
 .description {
   width: 25%;

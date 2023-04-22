@@ -52,7 +52,24 @@ export default function Home() {
   const [travelStatus, setTravelStatus] = useState<"NoTarget" | "AcquiringTarget" | "TargetAcquired">("NoTarget");
   const [interplanetaryStatusReport, setInterplanetaryStatusReport] = useState("");
   const [selectedDescription, setSelectedDescription] = useState(description[selectedDescriptionIndex]);
+  const [modifiedPrompt, setModifiedPrompt] = useState("");
+  const [engaged, setEngaged] = useState(false);
+  const [warped, setWarped] = useState(false);
 
+  const handleEngaged = (engaged: boolean) => {
+    if (engaged === true) {
+      setWarped(!warped);
+      console.log("WARP DRIVE IS ENGAGED");
+    }
+  };
+
+  useEffect(() => {
+    if (travelStatus === "TargetAcquired") {
+      setEngaged(true);
+    } else {
+      console.log("Travel status is not TargetAcquired");
+    }
+  }, [travelStatus]);
   useEffect(() => {
     setSelectedDescription(description[selectedDescriptionIndex]);
   }, [selectedDescriptionIndex]);
@@ -110,7 +127,7 @@ export default function Home() {
   }, [selectedDescription]);
 
   const submitPrompt = async (type: "character" | "background") => {
-    const prompt = generatePrompt(
+    let prompt = generatePrompt(
       type,
       srcUrl,
       level,
@@ -126,6 +143,8 @@ export default function Home() {
       side,
       interplanetaryStatusReport,
     );
+    type !== "character" ? (prompt = modifiedPrompt) : (prompt = prompt);
+    console.log("prompt", prompt);
     if (waitingForWebhook) {
       console.log("Already waiting for webhook, please wait for response.");
       return;
@@ -331,10 +350,15 @@ export default function Home() {
   const handleImageSrcReceived = (imageSrc: string) => {
     console.log("Image URL received in the parent component:", imageSrc);
     setSrcUrl(imageSrc);
+    console.log(modifiedPrompt, "modifiedPrompt");
     console.log(srcUrl);
     // Handle the imageSrc here, e.g., update the state or call another function
   };
-
+  const handleModifedPrompt = (modifiedPrompt: string) => {
+    setModifiedPrompt(modifiedPrompt);
+    console.log(modifiedPrompt, "modifiedPrompt received in the parent component");
+    submitPrompt("character");
+  };
   const handleSelectedTokenIdRecieved = (selectedTokenId: string) => {
     console.log("Token Selected Recieved received in the parent component:", selectedTokenId);
     setSelectedTokenId(selectedTokenId);
@@ -352,6 +376,8 @@ export default function Home() {
         <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
         <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
           <Dashboard
+            interplanetaryStatusReport={interplanetaryStatusReport}
+            warped={warped}
             imageUrl={imageUrl}
             srcUrl={srcUrl}
             onSubmitPrompt={submitPrompt}
@@ -367,12 +393,15 @@ export default function Home() {
             <AcquiringTarget loading={loading} travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
 
             <TokenSelectionPanel
+              handleEngaged={handleEngaged}
+              engaged={engaged}
               onMetadataReceived={handleMetadataReceived}
               onImageSrcReceived={handleImageSrcReceived}
               onTokenIdsReceived={handleTokenIdsReceived}
               onSelectedTokenIdRecieved={handleSelectedTokenIdRecieved}
               interplanetaryStatusReport={interplanetaryStatusReport}
               onSubmit={submitPrompt}
+              travelStatus={travelStatus}
             />
             <DescriptionPanel
               interplanetaryStatusReport={interplanetaryStatusReport}
@@ -383,6 +412,9 @@ export default function Home() {
               handleDescribeClick={handleDescribeClick}
             />
             <PromptPanel
+              warped={warped}
+              engaged={engaged}
+              setModifiedPrompt={handleModifedPrompt}
               imageUrl={imageUrl}
               interplanetaryStatusReport={interplanetaryStatusReport}
               description={selectedDescription ? selectedDescription : "No Description"}

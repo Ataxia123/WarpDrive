@@ -4,6 +4,8 @@ import Background from "./Background";
 import { MarqueePanel } from "./panels/MarqueePannel";
 
 interface DashboardProps {
+  warped: boolean;
+  interplanetaryStatusReport: string;
   children: React.ReactNode;
   travelStatus: string;
   dynamicImageUrl: string;
@@ -27,6 +29,8 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
+  warped,
+  interplanetaryStatusReport,
   imageUrl,
   srcUrl,
   onSubmitPrompt,
@@ -44,6 +48,7 @@ const Dashboard: React.FC<DashboardProps> = ({
       <div className="dashboard" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
         <img className="staticOverlay" src="assets/view.png" alt="Static Image Overlay" />
         <MarqueePanel
+          interplanetaryStatusReport={interplanetaryStatusReport}
           imageUrl={imageUrl}
           srcUrl={srcUrl}
           onSubmitPrompt={onSubmitPrompt}
@@ -54,6 +59,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           buttonMessageId={buttonMessageId}
         />
         <Background
+          warped={warped}
           travelStatus={travelStatus}
           dynamicImageUrl={dynamicImageUrl}
           fixedImageUrl="assets/view.png"

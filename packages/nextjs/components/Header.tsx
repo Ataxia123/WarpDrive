@@ -37,21 +37,27 @@ export const Header = () => {
   const navLinks = (
     <>
       <li>
-        <NavLink href="/">Home</NavLink>
-      </li>
-      <li>
-        <NavLink href="/debug">
-          <BugAntIcon className="h-4 w-4" />
-          Debug Contracts
-        </NavLink>
+        <NavLink href="https://ai-universe.io/">MINT-AIU</NavLink>
       </li>
     </>
   );
 
   return (
-    <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary ">
-      <div className="spaceship-display-screen">
-        <div className="navbar-start w-auto lg:w-1/2 ">
+    <div
+      className="sticky lg:static w:-1/2 top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary "
+      style={{
+        position: "absolute",
+      }}
+    >
+      <div
+        className="spaceship-display-screen"
+        style={{
+          scale: "1.15",
+          left: "-10%",
+          paddingLeft: "7.5rem",
+        }}
+      >
+        <div className="navbar-start w-auto lg:w-1/2">
           <div className="lg:hidden dropdown" ref={burgerMenuRef}>
             <button
               className={`ml-1 btn btn-ghost ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
@@ -59,7 +65,7 @@ export const Header = () => {
                 setIsDrawerOpen(prevIsOpenState => !prevIsOpenState);
               }}
             >
-              <Bars3Icon className="h-1/2" />
+              <Bars3Icon className="h-2/2" />
             </button>
             {isDrawerOpen && (
               <ul
@@ -74,7 +80,7 @@ export const Header = () => {
             )}
           </div>
           <div className="hidden lg:flex items-center gap-2 ml-4 mr-6">
-            <Link href="/" passHref className="flex relative w-40 h-10">
+            <Link href="https://ai-universe.io/" passHref className="flex relative w-40 h-10">
               <Image alt="SE2 logo" className="cursor-pointer" fill src="/aiu.svg" />
             </Link>
             <div className="flex flex-col">
@@ -82,11 +88,16 @@ export const Header = () => {
             </div>
           </div>
         </div>
-        <div className="hidden lg:flex items-center justify-center w-1/2">ALLIANCE OF THE INFINITE UNIVERSE</div>
-        <div className="navbar-end flex-grow mr-4">
-          <RainbowKitCustomConnectButton />
-          <FaucetButton />
+        <div
+          className="hidden lg:flex items-center justify-center w-1/2"
+          style={{
+            paddingRight: "6.5rem",
+            fontStyle: "italic",
+          }}
+        >
+          ALLIANCE OF THE INFINITE UNIVERSE
         </div>
+        <div className="navbar-end flex-grow mr-4"></div>
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ type Metadata = {
 };
 
 interface PromptPanelProps {
+  interplanetaryStatusReport: string;
   buttonMessageId: string | "";
   imageUrl: string;
   srcUrl: string | undefined;
@@ -23,7 +24,7 @@ interface PromptPanelProps {
   handleButtonClick: (button: string, type: "character" | "background") => void;
 }
 
-export const MarqueePanel: React.FC<PromptPanelProps> = ({ metadata, imageUrl }) => {
+export const MarqueePanel: React.FC<PromptPanelProps> = ({ metadata, imageUrl, interplanetaryStatusReport }) => {
   const ethPrice = useEthPrice();
   return (
     <>
@@ -33,8 +34,9 @@ export const MarqueePanel: React.FC<PromptPanelProps> = ({ metadata, imageUrl })
           <br />
 
           <p className="marquee-content">
-            ESTABLISHING CONNECTION WITH: {metadata.Level} {metadata.Power1} {metadata.Power2} {metadata.Power3}{" "}
-            {metadata.Power4} SCAN TO DECODE ETHEREUM PRICE IS {ethPrice}
+            INTERPLANETARY STATUS REPORT: {interplanetaryStatusReport} ESTABLISHING CONNECTION WITH: {metadata.Level}{" "}
+            {metadata.Power1} {metadata.Power2} {metadata.Power3} {metadata.Power4} SCAN TO DECODE ETHEREUM PRICE IS{" "}
+            {ethPrice}
           </p>
         </div>
       </div>

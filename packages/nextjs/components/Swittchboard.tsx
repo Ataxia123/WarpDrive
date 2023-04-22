@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface SwitchboardProps {
+  warped: boolean;
+  onModifiedPrompt: (modifiedPrompt: string) => void;
   attributes: string[];
   onToggle: (attribute: string, isEnabled: boolean) => void;
   generatePrompt: (
@@ -41,12 +43,16 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
   generatePrompt,
   promptData,
   selectedAttributes,
+  onModifiedPrompt,
+  warped,
 }) => {
   const [checkedAttributes, setCheckedAttributes] = useState<string[]>([]);
   const excludedAttributes = ["srcUrl", "nijiFlag", "vFlag", "selectedDescription", "interplanetaryStatusReport"];
   const [modifiedPrompt, setModifiedPrompt] = useState("");
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [extraText, setExtraText] = useState("");
+  const [showExtraTextInput, setShowExtraTextInput] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(false);
 
   const handleToggle = (attribute: string) => {
     if (checkedAttributes.includes(attribute)) {
@@ -59,6 +65,10 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
   const handleExpand = () => {
     setIsExpanded(!isExpanded);
   };
+
+  useEffect(() => {
+    warped === true ? setIsEnabled(true) : setIsEnabled(false);
+  }, [warped]);
 
   const generateModifiedPrompt = () => {
     const { srcUrl, Level, Power1, Power2, Power3, Power4, Alignment1, Alignment2, Side, interplanetaryStatusReport } =
@@ -105,54 +115,88 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
     );
     console.log(modifiedPrompt);
     setModifiedPrompt(modifiedPrompt);
+    onModifiedPrompt(modifiedPrompt);
   };
-  const handleExtraTextChange = () => {
-    setExtraText(extraText);
+  const handleExtraTextChange = (e: any) => {
+    e.preventDefault();
+    setExtraText(e.target.value);
   };
+
   return (
     <>
-      <div className="switchboard screen-border">
-        {selectedAttributes.length > 0 && (
-          <input
-            type="text"
-            className=""
-            placeholder="Additional text message"
-            value={extraText}
-            onChange={handleExtraTextChange}
-          />
-        )}
-        <div>
-          Generate Modified Prompt
-          {stringToHex(modifiedPrompt)}
-        </div>
-        <div className="spaceship-display-screen overflow-auto">
-          {isExpanded && (
-            <>
-              {attributes.map(attribute => {
-                const displayName =
-                  !excludedAttributes.includes(attribute) && promptData[attribute as keyof typeof promptData]
-                    ? promptData[attribute as keyof typeof promptData]
-                    : attribute;
-                const isChecked = checkedAttributes.includes(attribute);
-                <div>{modifiedPrompt}</div>;
-                return (
-                  <div
-                    key={attribute}
-                    className={`switchboard-attribute ${isChecked ? "checked" : ""}`}
-                    onClick={() => handleToggle(attribute)}
-                  >
-                    <span>{displayName}</span>
-                  </div>
-                );
-              })}
-            </>
-          )}
-        </div>
+      <div
+        className="spaceship-display-screen screen-border screen-toggle description-text encode-signal-button"
+        onClick={handleExpand}
+      >
+        -ENCODE SIGNAL-
       </div>
+      {isExpanded && (
+        <div className="prompt-display-div">
+          <div className="prompt-display">
+            {isExpanded && (
+              <div className="switchboard">
+                <p className="spaceship-display-screen overflow-auto">
+                  <button className="" onClick={handleExpand}>
+                    -x-
+                  </button>
+                  <div className="spaceship-display-screen">
+                    <p className="description-text"> ||||||||||||AI-UNIVERSE SIGNAL ENCODER||||||||||||||</p>
+                    <div className="hex-prompt">
+                      <input
+                        type="text"
+                        className="prompt-input spaceship-display-screen"
+                        value={extraText}
+                        onChange={handleExtraTextChange}
+                      />
+                      <div className="hex-data">
+                        {stringToHex(extraText)}
+                        {stringToHex(extraText)}
+                        {stringToHex(extraText)}
+                        {stringToHex(extraText)}
+                      </div>
+                      {modifiedPrompt}
+                      <br />
+                      <button
+                        className="description-text"
+                        style={{ border: "1px solid", margin: "10px", alignContent: "right" }}
+                        onClick={generateModifiedPrompt}
+                      >
+                        Submit
+                      </button>
+                    </div>
+                    <br />
+                    <div className="spaceship-display-screen switchboard-attribute-container">
+                      |||||||||||-------|DETECTED SIGNATURE DATA|----|||||||||||||
+                      <div className="switchboard-real">
+                        {attributes.map(attribute => {
+                          const displayName =
+                            !excludedAttributes.includes(attribute) && promptData[attribute as keyof typeof promptData]
+                              ? promptData[attribute as keyof typeof promptData]
+                              : attribute;
+                          const isChecked = checkedAttributes.includes(attribute);
+
+                          return (
+                            <div
+                              key={attribute}
+                              className={`switchboard-attribute ${!isChecked ? "checked" : ""}`}
+                              onClick={() => handleToggle(attribute)}
+                            >
+                              <span className="">{displayName}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 };
-
 // Helper function to convert a string to a hex string
 function stringToHex(str: string): string {
   let hex = "";

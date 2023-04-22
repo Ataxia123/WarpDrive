@@ -15,6 +15,9 @@ type Metadata = {
 };
 
 interface PromptPanelProps {
+  warped: boolean;
+  engaged: boolean;
+  setModifiedPrompt: (modifiedPrompt: string) => void;
   description: string;
   interplanetaryStatusReport: string;
   buttonMessageId: string | "";
@@ -45,6 +48,9 @@ interface PromptPanelProps {
 }
 
 export const PromptPanel: React.FC<PromptPanelProps> = ({
+  warped,
+  engaged,
+  setModifiedPrompt,
   imageUrl,
   loading,
   srcUrl,
@@ -86,23 +92,21 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
   const [isZoomed, setIsZoomed] = useState(false);
   const [selectedAttributes, setSelectedAttributes] = useState<string[]>([]);
 
-  const onNijiFlagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNijiFlag(event.target.checked);
-  };
+  function handleModifiedPrompt(modifiedPrompt: any) {
+    //Do something with the modifiedPrompt, e.g., update the state or perform other actions
+    setModifiedPrompt(modifiedPrompt);
+    console.log(modifiedPrompt);
 
-  const onVFlagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setVFlag(event.target.checked);
-  };
+    console.log("submitted", modifiedPrompt);
+  }
 
   const handleClick = () => {
-    setIsFocused(true);
-    setIsZoomed(true); // Add this line
+    if (engaged === true) {
+      setIsFocused(true);
+      setIsZoomed(true); // Add this line
+    }
   };
 
-  const onGeneratePrompt = (prompt: string) => {
-    console.log("Generated prompt:", prompt);
-    console.log(attributes);
-  };
   const AvailableButtons = () => {
     const buttons = ["U1", "U2", "U3", "U4", "🔄", "V1", "V2", "V3", "V4"];
     return (
@@ -136,8 +140,8 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
   }
 
   return (
-    <div className={`prompt-panel${!isFocused ? "-closed" : ""}`} onClick={handleClick}>
-      <div className="spaceship-display-screen">
+    <div className={`prompt-panel${!engaged === true && !isFocused ? "-closed" : ""}`} onClick={handleClick}>
+      <div className={`spaceship-display-screen${engaged ? "" : "-off"}`}>
         <div className="spaceship-display-screen animated-floating">
           <div className="display-border">
             <h1 className="description-text">
@@ -164,19 +168,19 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
 
       <>
         {isFocused && (
-          <div className="prompt-display-div">
-            <div className="" onMouseLeave={handleMouseLeave}>
-              <Switchboard
-                attributes={attributes}
-                onToggle={handleToggle}
-                generatePrompt={generatePrompt}
-                promptData={metadata}
-                selectedAttributes={selectedAttributes}
-              />
-              {buttonMessageId !== "" ? <AvailableButtons /> : <div></div>}
-              <br />
-            </div>
-          </div>
+          <>
+            <Switchboard
+              warped={warped}
+              onModifiedPrompt={handleModifiedPrompt}
+              attributes={attributes}
+              onToggle={handleToggle}
+              generatePrompt={generatePrompt}
+              promptData={metadata}
+              selectedAttributes={selectedAttributes}
+            />
+            {buttonMessageId !== "" ? <AvailableButtons /> : <div></div>}
+            <br />
+          </>
         )}
       </>
       <div className="prompt-utility-div-right" onMouseEnter={handleMouseEnter}></div>

@@ -2,29 +2,30 @@ import React, { useEffect, useState } from "react";
 import ReadAIU from "../ReadAIU";
 
 interface TokenSelectionPanelProps {
+  handleEngaged: (engaged: boolean) => void;
   onMetadataReceived: (metadata: any) => void;
   onImageSrcReceived: (imageSrc: string) => void;
   onTokenIdsReceived: (tokenIds: string[]) => void;
   onSelectedTokenIdRecieved: (selectedTokenId: string) => void;
   onSubmit: (type: "character" | "background") => Promise<void>;
   interplanetaryStatusReport: string;
+  engaged: boolean;
+  travelStatus: string;
 }
 
 const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
+  handleEngaged,
   onMetadataReceived,
   onImageSrcReceived,
   onTokenIdsReceived,
   onSelectedTokenIdRecieved,
   interplanetaryStatusReport,
   onSubmit,
+  travelStatus,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  useEffect(() => {
-    if (interplanetaryStatusReport !== "") {
-      setIsFocused(true);
-    }
-  }, [interplanetaryStatusReport]);
+  const [engaged, setEngaged] = useState(false);
 
   const handleClick = () => {
     if (isMinimized === false) {
@@ -35,10 +36,18 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
     setIsMinimized(false);
     console.log("unminimized");
   };
-  //det focus handling
+
+  useEffect(() => {
+    if (engaged === true) {
+      handleEngaged(true);
+    }
+  }, [engaged]);
+
   return (
     <>
       <ReadAIU
+        handleEngaged={handleEngaged}
+        travelStatus={travelStatus}
         isMinimized={isMinimized} // Pass isMinimized as a prop
         onMetadataReceived={onMetadataReceived}
         onImageSrcReceived={onImageSrcReceived}
