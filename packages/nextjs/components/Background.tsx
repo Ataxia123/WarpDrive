@@ -1,6 +1,7 @@
 // Background.tsx
 import React, { useEffect, useState } from "react";
 import styles from "./Background.module.css";
+import SpaceParticles from "./SpaceParticles";
 
 interface BackgroundProps {
   warped: boolean;
@@ -36,6 +37,7 @@ const Background: React.FC<BackgroundProps> = ({ dynamicImageUrl, warped, fixedI
   }, [travelStatus]);
   return (
     <div className={styles.background}>
+      <SpaceParticles />
       <img
         className={styles.dynamicImage}
         src={dynamicImageUrl}
