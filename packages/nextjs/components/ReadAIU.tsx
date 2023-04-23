@@ -148,7 +148,9 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
       onSubmit("character");
       setEngaged(false);
     } else {
-      setTravelStatus("AcquiringTarget");
+      if (selectedTokenId) {
+        setTravelStatus("AcquiringTarget");
+      }
     }
   };
 
