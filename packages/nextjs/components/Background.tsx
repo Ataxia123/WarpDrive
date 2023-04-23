@@ -4,13 +4,14 @@ import styles from "./Background.module.css";
 import SpaceParticles from "./SpaceParticles";
 
 interface BackgroundProps {
+  warping: boolean;
   warped: boolean;
   dynamicImageUrl: string;
   fixedImageUrl: string;
   travelStatus: string;
 }
 
-const Background: React.FC<BackgroundProps> = ({ dynamicImageUrl, warped, fixedImageUrl, travelStatus }) => {
+const Background: React.FC<BackgroundProps> = ({ warping, dynamicImageUrl, warped, fixedImageUrl, travelStatus }) => {
   const [bgPosition, setBgPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [warpSpeedOpacity, setWarpSpeedOpacity] = useState("0");
   const handleMouseMove = (e: MouseEvent) => {
@@ -25,16 +26,8 @@ const Background: React.FC<BackgroundProps> = ({ dynamicImageUrl, warped, fixedI
     };
   }, []);
   useEffect(() => {
-    if (warped === true) {
-      setWarpSpeedOpacity("1");
-
-      // Wait for 5 seconds (5000 milliseconds) before executing the following code
-      setTimeout(() => {
-        // Change the opacity back to 0 after changing the background
-        setWarpSpeedOpacity("0");
-      }, 5000);
-    }
-  }, [travelStatus]);
+    setWarpSpeedOpacity("1");
+  }, [warping]);
   return (
     <div className={styles.background}>
       <img
@@ -45,7 +38,7 @@ const Background: React.FC<BackgroundProps> = ({ dynamicImageUrl, warped, fixedI
           transform: `translate(${bgPosition.x}px, ${bgPosition.y}px)`,
         }}
       />
-      <div className={`warpSpeedEffect ${travelStatus === "Target Acquired" ? "warpSpeedActive" : ""}`}>
+      <div className={`warpSpeedEffect ${warping ? "warpSpeedActive" : ""}`}>
         <div className="warpImage warpImage1" />
         <div className="warpImage warpImage2" />
       </div>

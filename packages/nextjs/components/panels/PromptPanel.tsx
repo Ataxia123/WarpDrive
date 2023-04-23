@@ -15,6 +15,7 @@ type Metadata = {
 };
 
 interface PromptPanelProps {
+  travelStatus: string;
   warped: boolean;
   engaged: boolean;
   setModifiedPrompt: (modifiedPrompt: string) => void;
@@ -48,6 +49,7 @@ interface PromptPanelProps {
 }
 
 export const PromptPanel: React.FC<PromptPanelProps> = ({
+  travelStatus,
   warped,
   engaged,
   setModifiedPrompt,
@@ -96,15 +98,10 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
     //Do something with the modifiedPrompt, e.g., update the state or perform other actions
     setModifiedPrompt(modifiedPrompt);
     console.log(modifiedPrompt);
-
-    console.log("submitted", modifiedPrompt);
   }
 
   const handleClick = () => {
-    if (engaged === true) {
-      setIsFocused(true);
-      setIsZoomed(true); // Add this line
-    }
+    setIsFocused(!isFocused);
   };
 
   const AvailableButtons = () => {
@@ -114,7 +111,12 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
         {buttons.map(button => (
           <button
             key={button}
-            className={`spaceship-button ${isFocused ? "active" : ""}`}
+            className={`spaceship-button ${isFocused ? "active" : ""} display-text`}
+            style={{
+              marginTop: "5%",
+              padding: button === "🔄" ? "0.5rem" : "0.5rem",
+              backgroundColor: button === "🔄" ? "black" : "black",
+            }}
             onClick={() => handleButtonClick(button, "character")}
           >
             {button}
@@ -125,7 +127,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
   };
 
   const handleToggle = (attribute: string, isEnabled: boolean) => {
-    if (isEnabled) {
+    if (!isEnabled) {
       setSelectedAttributes(prevState => [...prevState, attribute]);
     } else {
       setSelectedAttributes(prevState => prevState.filter(attr => attr !== attribute));
@@ -140,12 +142,12 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
   }
 
   return (
-    <div className={`prompt-panel${!engaged === true && !isFocused ? "-closed" : ""}`} onClick={handleClick}>
-      <div className={`spaceship-display-screen${engaged ? "" : "-off"}`}>
+    <div className={`prompt-panel${isFocused ? "-closed" : ""}`} onClick={handleClick}>
+      <div className={`spaceship-display-screen${travelStatus !== "NoTarget" ? "" : "-off"}`}>
         <div className="spaceship-display-screen animated-floating">
           <div className="display-border">
             <h1 className="description-text">
-              ESTABLISHED <br></br>CONNECTION WITH:
+              ESTABLISHED CONNECTION WITH:
               <br />
               <p className="font-bold text-2xl">
                 {metadata.Level} {metadata.Power1} {metadata.Power2} {metadata.Power3}
@@ -153,37 +155,36 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
               </p>
             </h1>
 
-            {imageUrl && !isFocused ? (
-              <img src={imageUrl} className="w-full rounded shadow-md mb-4 position-relative" alt="nothing" />
-            ) : (
-              isFocused && (
-                <div className="spaceship-display-screen">
+            {!isFocused && (
+              <div className="spaceship-display-screen">
+                {imageUrl ? (
+                  <img src={imageUrl} className="screen-border image-display " alt="nothing" />
+                ) : (
                   <img src={srcUrl} className="image-display screen-border" alt="nothing" />
-                </div>
-              )
+                )}
+              </div>
             )}
           </div>
         </div>
+        {buttonMessageId !== "" ? <AvailableButtons /> : <div></div>}
+        <br />
       </div>
 
       <>
-        {isFocused && (
-          <>
-            <Switchboard
-              warped={warped}
-              onModifiedPrompt={handleModifiedPrompt}
-              attributes={attributes}
-              onToggle={handleToggle}
-              generatePrompt={generatePrompt}
-              promptData={metadata}
-              selectedAttributes={selectedAttributes}
-            />
-            {buttonMessageId !== "" ? <AvailableButtons /> : <div></div>}
-            <br />
-          </>
-        )}
+        <>
+          <Switchboard
+            travelStatus={travelStatus}
+            engaged={engaged}
+            warped={warped}
+            onModifiedPrompt={handleModifiedPrompt}
+            attributes={attributes}
+            onToggle={handleToggle}
+            generatePrompt={generatePrompt}
+            promptData={metadata}
+            selectedAttributes={selectedAttributes}
+          />
+        </>
       </>
-      <div className="prompt-utility-div-right" onMouseEnter={handleMouseEnter}></div>
     </div>
   );
 };

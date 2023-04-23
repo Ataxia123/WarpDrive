@@ -39,16 +39,35 @@ p {
   /* Center the screen and scale it up */
 
 }
+.spaceship-display-screen-offset {
+position: fixed;
+
+  width: 100%;
+  height: 40rem;
+  background: rgba(0, 0, 0, 0.541);
+  backdrop-filter: blur(5px);
+  align-items: center;
+  font-family: "Orbitron", sans-serif;
+  color: #f2982f;
+  text-shadow: 0 0 10px #f2982f, 0 0 20px #f2982f, 0 0 30px #f2982f;;
+  border: #f2982f 1px solid;/* Adjust the color to your preference */
+  background-size: auto;
+  background-repeat: no-repeat;
+  z-index: 11111111111115; /* Higher z-index to bring it up above other elements */
+  /* Center the screen and scale it up */
+  opacity: 0.3;
+  pointer-events: none;
+  animation : blink 1s infinite;
 
 
-
-.text-response {
-  font-size: 1.2rem;
-  font-weight: 400;
-align-items: center;
-
-  margin-bottom: 1rem;
 }
+
+.spaceship-display-screen-offset:hover {
+  opacity: 0;
+
+}
+
+
 
 .screen-overlay {
   position: absolute;
@@ -127,17 +146,37 @@ z-index: -1;
   opacity: 0.3;
   pointer-events: none;
 }
+.unfocused{
+  position: absolute;
+  top: 148%;
+  left: 40%;
+  width: 25%;
+  height: 27%;
+  transform: perspective(1000px) rotateX(25deg) rotateY(-9deg)rotateZ(-2deg) skewY(-2deg) scale(1.3) skewX(30deg);
+  transform-origin: center bottom;
+  z-index: 1000000000000;
+  animation: randomFlicker 2.65s infinite ease-in-out;
+}
 
+.unfocused-focused{
+  position: relative;
+  top: 0;
+  left: 0%;
+  opacity: 0.01;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
 
 .unfocused-right {
   position: absolute;
    /* Add top property */
   top: 70%;
-  right:5%;
+  right:2%;
   left: 81%;
   width: 10%;
   height:25%;
-  transform: translateY(-31%) perspective(1000px) rotateX(50deg) rotateY(-6deg) rotateZ(26deg) scale(0.8); /* Add translateY */
+  transform: translateY(-31%) perspective(1000px) rotateX(45deg) rotateY(-6deg) rotateZ(26deg) scale(0.7) skewX(-15deg); /* Add translateY */
   transform-origin: right center;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
   z-index: 10;
@@ -150,12 +189,6 @@ z-index: -1;
   transform: translateX(20%);
   box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 16px 0px;
   z-index: 20; /* Add a higher z-index value */
-}
-
-.panel-content {
-  padding: 1rem;
-  overflow: hidden;
-
 }
 
 .unfocused-bottom {
@@ -181,7 +214,6 @@ z-index: -1;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
   transition: transform 0.5s ease-in-out, bottom 0.5s ease-in-out, right 0.5s ease-in-out, width 0.5s ease-in-out;
 }
-
 
 @keyframes randomFlicker {
   0% {
@@ -251,18 +283,6 @@ z-index: -1;
   }
 }
 
-.data-display {
-  position: absolute;
-  top: -20rem;
-  right: -20rem;
-  z-index: 1; /* Change the z-index to bring it up above other elements */
-  opacity: 1;
-  width: 60rem;
-  border: #f2982f 1px solid;
-  background-color: #000000f6;
-  padding: 1.5rem;
-  transform: scale(1.3);
-}
 
 .image-container{
   position: absolute;
@@ -315,6 +335,7 @@ transform: translateY(50%);
 .image-display{
   margin-left: 1.4rem;
   transform: scale(1) skewX(5deg);
+  z-index: 1000000000000000000000000000000000000000000;
 }
 
 .image-display:hover{
@@ -344,14 +365,14 @@ opacity: 1;
 
 .fixedImage {
   z-index: -2;
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
 }
 .dynamicImage {
-  position: fixed;
+  position: relative;
   top: 0;
   left: 0;
   width: 100%;
@@ -365,14 +386,17 @@ opacity: 1;
 }
 
 .dashboard {
-  position: absolute;
-  bottom: 0;
+  position: fixed;
+  bottom: -5%;
+  top:-5%;
   left: 0;
   width: 100%;
+  height: 120%;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   z-index: 10;
+  perspective: 2500px;
 }
 
 .dashboard-container {
@@ -482,22 +506,23 @@ opacity: 1;
   transform-origin:  left;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 16px 0px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
-  z-index: 100000000000;
+  z-index: 1;
   left:02%;
   width: 25%;
   bottom: 47%;
   height: 50%;
 
+  
+
 
 transform:
-perspective(10rem)
+perspective(500px)
  scale(0.9) 
  rotateX(0deg) 
  rotateY(10deg) 
  skewX(5deg) 
  skewY(0deg)
  rotateZ(6deg);
-
   animation: randomFlicker 20s infinite ;
 }
 
@@ -517,18 +542,18 @@ perspective(10rem)
   box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 16px 0px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
   z-index: 100000000000;
-  left:8%;
-  width: 24%;
-  bottom: 9.8%;
+  left:7.6%;
+  width: 19%;
+  bottom: 9.7%;
   height: 27.5%;
   transform:
-  perspective(70rem)
+  perspective(100rem)
  scale(0.40) 
  rotateX(25deg) 
- rotateY(9deg) 
+ rotateY(22deg) 
  skewX(20.5deg) 
  skewY(15deg)
- rotateZ(-30deg);
+ rotateZ(-33deg);
 
 
   animation: randomFlicker 20s infinite ;
@@ -595,7 +620,7 @@ perspective(10rem)
     0 0 5px rgba(50, 205, 50, 0.7), 
     0 0 10px rgba(50, 205, 50, 0.5),
     0 0 15px rgba(50, 205, 50, 0.3);
-  animation: marquee 20s linear infinite;
+  animation: marquee 155s linear infinite;
 }
 .marquee-title {
   position: absolute;
@@ -758,11 +783,13 @@ height: 100%;
 
 }
 .switchboard {
-  position: relative;
+  position: absolute;
   max-height: 100%;
   max-width: 100%;
-  height: 100%;
+  height: 45%;
   width: 100%;
+  top: 140%;
+  display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
@@ -771,6 +798,8 @@ height: 100%;
 z-index: 10000000000000000000000000;
   opacity: 1;
   animation: none;
+  transition-delay: 2s;
+  transform: scale(1) skewX(25deg) rotateZ(-8.5deg);
 
 
 }
@@ -880,7 +909,7 @@ body {
   overflow: hidden;
 }
 .staticOverlay {
-  position: absolute;
+  position: fixed;
   top: -1rem;
   left: 0;
   width: 100%;
@@ -889,6 +918,7 @@ body {
   pointer-events: none;
   z-index: 1;
   backdrop-filter: sepia(30%) invert(5%);
+  transform: perspective(300px) translateZ(0px);
 }
 
 .toggle-container {
@@ -965,6 +995,47 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
   z-index: 100;
   animation: randomFlicker 10.65s infinite ease-in-out;
 }
+
+/* Default button styles */
+#spaceshipButton {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  background-color: #000;
+  color: rgb(255, 153, 0);
+  border: 1px solid #0f0;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.5s, color 0.5s, border-color 0.5s;
+}
+
+#spaceshipButton.loading {
+  background-color: #333;
+  color: rgba(229, 255, 0, 0.956);
+  border-color: rgba(0, 255, 0, 0.5);
+  animation: pulseText 2s infinite;
+}
+
+@keyframes pulseText {
+  0% { opacity: 0.5; }
+  50% { opacity: 0.6; }
+  100% { opacity: 0.5; }
+}
+
+/* Style for the active state */
+#spaceshipButton.active {
+  background-color: rgba(31, 108, 21, 0.985);
+  color: #000;
+  border-color: #000;
+  animation: blinkText 0.5s infinite;
+}
+
+/* Blinking text animation */
+@keyframes blinkText {
+  0% { opacity: 0.6; }
+  50% { opacity: 0.6; }
+  100% { opacity: 0.5; }
+}
+
 
 .warpSpeedEffect {
   position: absolute;
@@ -1055,30 +1126,68 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
 }
 
 .prompt-display-div{
-  position: absolute;
-  left: 25%;
+  position: relative;
+  left: 10%;
+  right: 10%;
+  margin-right: 10%;
+  height: 65%;
+  opacity: 1;
+  background-color: #000;
+  bottom: -37%;
+  width: 100%;
+  flex-direction: column;
+  transform-origin: left;
+  display: flex;
+  transform: rotateX(45deg) rotateZ(-5deg)skewX(23deg) skewY(-7deg) scale(0.86);
+  transition: ease-in-out 0.5s;
+
+
+   
+}
+
+/* General scrollbar styles */
+::-webkit-scrollbar {
+  width: 12px; /* Adjust the width of the scrollbar */
+}
+
+/* Track (the part that the scrollbar thumb slides on) */
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2); /* Add some transparency to the track */
+  border-radius: 10px; /* Add rounded corners to the track */
+}
+
+/* Thumb (the draggable part of the scrollbar) */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, rgb(12, 9, 0), #f2982f); /* Create a holographic gradient */
+  border-radius: 10px; /* Add rounded corners to the thumb */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Add a subtle border to the thumb */
+}
+
+/* Hover effect for the thumb */
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, D, rgb(12, 9, 0)); /* Change the gradient colors on hover */
+  border: 1px solid FW; /* Increase the border opacity on hover */
+}
+
+
+.prompt-display-div:hover{
+  position: relative;
+  left: 10%;
   right: 10%;
   margin-right: 10%;
   height: 75%;
   opacity: 1;
   background-color: #000;
-  bottom: -55%;
+  bottom: -2%;
   width: 100%;
   flex-direction: column;
   transform-origin: left;
   display: flex;
-  transform:
-  perspective(150rem) 
-  skewX(30deg)
-  skewY(-00deg)
-   rotateX(15deg)
-   rotateZ(25deg) 
-   rotateY(-45deg)
-   scale(1.9) ;
-   
-}
-
-.prompt-display-div:hover{
+  transform:  scale(1.2);
+  transition: ease-in-out 0.5s;
+  animation:none;
+  color:white;
+  z-index: 10000000000000000000000000000000;
 
 
 
@@ -1133,9 +1242,13 @@ display: flex;
 }
 .screen-toggle{
   position: relative;
-  height: 30%;
-  width: 35%;
-  transform: perspective(10rem) rotateX(10deg) skewX(47deg) rotateZ(13deg) translateX(-30%) translateY(170%)scale(0.9);
+  bottom: 5%;
+  top:5%;
+  left:29%;
+  height: 32%;
+  width: 28%;
+  transform: perspective(100rem) scale(1) rotateX(20deg) rotateZ(-25deg) rotateY(-10deg) skewX(10deg) skewY(21deg) ; 
+  animation: randomFlicker 1.65s infinite ease-in-out;
 }
 
 .acquiring-target-circle {
@@ -1223,7 +1336,7 @@ display: flex;
 }
 
 .spaceship-button.active {
-  background-color: #f2982f;
+  background-color: #39f22f;
 }
 
 input[type='checkbox'] {
@@ -1233,16 +1346,19 @@ input[type='checkbox'] {
 .spaceship-interface {
   overflow: fill;
 position: absolute;
-  top: 40%;
+  top: 21%;
   left: 72%;
-  width: fit-content;
-  height: fit-content;
-  bottom:40%;
+  right: 28%;
+  bottom:50%;
+  height: 25%;
+  width: 45%;
   opacity: 0.60;
+  opacity: 0.0;
+  left:auto;
 
   perspective: 1000px;
   transform-origin: right;
-  transform: rotateY(14deg) rotateX(-50deg) rotateZ(-1deg) skewX(7deg)skewY(-0.1deg)scale(2.5);
+  transform: rotateY(deg) rotateX(-deg) rotateZ(-1deg) skewX(37deg)skewY(10.1deg)scale(3.5);
 
   background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(14,14,44,1) 100%);
 }

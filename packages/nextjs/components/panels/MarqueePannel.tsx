@@ -1,4 +1,5 @@
 import { useState } from "react";
+import marquee from "vanilla-marquee";
 import { useEthPrice } from "~~/hooks/scaffold-eth";
 
 type Metadata = {
@@ -13,6 +14,8 @@ type Metadata = {
 };
 
 interface PromptPanelProps {
+  response: string;
+  error: string;
   interplanetaryStatusReport: string;
   buttonMessageId: string | "";
   imageUrl: string;
@@ -24,8 +27,22 @@ interface PromptPanelProps {
   handleButtonClick: (button: string, type: "character" | "background") => void;
 }
 
-export const MarqueePanel: React.FC<PromptPanelProps> = ({ metadata, imageUrl, interplanetaryStatusReport }) => {
+export const MarqueePanel: React.FC<PromptPanelProps> = ({
+  response,
+  error,
+  metadata,
+  imageUrl,
+  interplanetaryStatusReport,
+}) => {
   const ethPrice = useEthPrice();
+  function stringToHex(str: string): string {
+    let hex = "";
+    for (let i = 0; i < str.length; i++) {
+      hex += str.charCodeAt(i).toString(16);
+    }
+    return hex;
+  }
+
   return (
     <>
       <div className="marquee-container spaceship-display-screen">
@@ -33,10 +50,10 @@ export const MarqueePanel: React.FC<PromptPanelProps> = ({ metadata, imageUrl, i
         <div className="screen-border">
           <br />
 
-          <p className="marquee-content">
-            INTERPLANETARY STATUS REPORT: {interplanetaryStatusReport} ESTABLISHING CONNECTION WITH: {metadata.Level}{" "}
-            {metadata.Power1} {metadata.Power2} {metadata.Power3} {metadata.Power4} SCAN TO DECODE ETHEREUM PRICE IS{" "}
-            {ethPrice}
+          <p className="marquee-content" id="mc">
+            {stringToHex(error ? error : metadata.Level)} RESPONSE------ {stringToHex(response)} INTERPLANETARY STATUS
+            REPORT: {interplanetaryStatusReport} ESTABLISHING CONNECTION WITH: {metadata.Level} {metadata.Power1}
+            {metadata.Power2} {metadata.Power3} {metadata.Power4} SCAN TO DECODE ETHEREUM PRICE IS {ethPrice}
           </p>
         </div>
       </div>

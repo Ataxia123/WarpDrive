@@ -7,6 +7,9 @@ import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth/useScaffoldEventHistory";
 
 interface ReadAIUProps {
+  interplanetaryStatusReport: string;
+  setWarping: (warping: boolean) => void;
+  setTravelStatus: (type: "NoTarget" | "AcquiringTarget" | "TargetAcquired") => void;
   handleEngaged: (engaged: boolean) => void;
   onSelectedTokenIdRecieved: (selectedTokenId: string) => void;
   onMetadataReceived: (metadata: any) => void;
@@ -20,6 +23,9 @@ interface ReadAIUProps {
 }
 
 export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
+  interplanetaryStatusReport,
+  setWarping,
+  setTravelStatus,
   handleEngaged,
   travelStatus,
   onSubmit,
@@ -54,9 +60,6 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
     if (!address || !contract) return ethers.BigNumber.from(0);
     return await contract.balanceOf(address);
   };
-
-  console.log("---------_CONSOLELOG_---------");
-  console.log("isFocused: ", isFocused, "address: ", address, "TransferEvents", transferEvents);
 
   const fetchOwnedTokenIds = (transferEvents: any[] | undefined) => {
     if (!transferEvents) return [];
@@ -139,9 +142,13 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   const handleButton = () => {
     if (travelStatus === "TargetAcquired") {
       setEngaged(true);
+      setWarping(true);
       handleEngaged(true);
     } else if (engaged === true) {
       onSubmit("character");
+      setEngaged(false);
+    } else {
+      setTravelStatus("AcquiringTarget");
     }
   };
 
@@ -151,7 +158,6 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
       const imageUrl = metadata.image.replace("ipfs://", `${ipfsGateway}/ipfs/`);
       setImageSrc(imageUrl);
       onImageSrcReceived(imageUrl); // Add this line
-      console.log("Image URL:", imageUrl);
     }
   }, [metadata]);
   function stringToHex(str: string): string {
@@ -162,10 +168,25 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
     return hex;
   }
 
+  useEffect(() => {
+    const button = document.getElementById("spaceshipButton");
+
+    if (travelStatus === "AcquiringTarget") {
+      button?.classList.add("active");
+      button?.classList.remove("loading");
+    } else if (travelStatus === "TargetAcquired") {
+      button?.classList.add("loading");
+      button?.classList.remove("active");
+    } else {
+      button?.classList.remove("active");
+      button?.classList.remove("loading");
+    }
+  }, [travelStatus]);
+
   return (
     <>
       <div
-        className="screen-border spaceship-display-screen thefinal"
+        className="screen-border spaceship-display-screen thefinal overflow-auto"
         style={{
           position: "absolute",
           height: "12%",
@@ -179,13 +200,17 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
           alignContent: "right",
           justifyContent: "center",
           alignItems: "center",
-          padding: "2rem",
+          padding: "1rem",
           scale: "0.98",
+          fontSize: "1.5rem",
         }}
       >
-        <RainbowKitCustomConnectButton />
         {balance?.toString()} SIGNALS DETECTED
-      </div>{" "}
+        <br />
+        <div>ENGAGED{engaged}</div>
+        <RainbowKitCustomConnectButton />
+      </div>
+
       {balance?.toNumber() !== 0 ? (
         <div onMouseEnter={() => setMouseTrigger(true)} className="toggle-minimize-button spaceship-display-screen">
           <div onMouseEnter={onToggleMinimize} onMouseLeave={onToggleMinimize} className="spaceship-display-screen">
@@ -197,13 +222,19 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                 opacity: "0.8",
               }}
             >
-              <p className="display-text">SIGNALS DETECTED</p>
+              <p className="display-text hex-prompt">SIGNALS DETECTED</p>
               <br />
               <select
                 id="tokenId"
                 value={selectedTokenId}
                 onChange={handleTokenIdChange}
                 className=" dropdown-container hex-prompt dropdown-option"
+                style={{
+                  color: "green",
+                  alignContent: "center",
+                  top: "70%",
+                  left: "11%",
+                }}
               >
                 <option value="hex-prompt dropdown-option">-ID-</option>
                 {tokenIds?.map(tokenId => (
@@ -212,7 +243,11 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                   </option>
                 ))}
               </select>
-              <button className="spaceship-display-screen hex-data master-button" onClick={() => handleButton()}>
+              <button
+                id="spaceshipButton"
+                className="spaceship-display-screen hex-data master-button"
+                onClick={() => handleButton()}
+              >
                 {stringToHex(metadata ? metadata.description : "No Metadata")}
               </button>
             </div>
@@ -231,34 +266,78 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
               <div className="panel-content">
                 {imageSrc && (
                   <div className="image-column">
-                    <img className="focused-image-display" src={imageSrc} alt={metadata?.name} />
+                    <img
+                      className="focused-image-display"
+                      src={imageSrc}
+                      alt={metadata?.name}
+                      style={{
+                        position: "absolute",
+                        padding: "5rem",
+                        paddingRight: "2rem",
+                        marginLeft: "10%",
+                        top: "-30%",
+                        bottom: "10%",
+                        left: "-12%",
+                        objectFit: "cover",
+                      }}
+                    />
                   </div>
                 )}
 
-                <div className="text-column">
-                  <h3 className="description-text">Description:</h3>
-                  <p>{metadata.description}</p>
-                  <h3 className="description-text">Attributes:</h3>
-                  <ul>
-                    {metadata.attributes.map((attribute: any, index: number) => (
-                      <li key={index}>
-                        {attribute.trait_type}: {attribute.value}
-                      </li>
-                    ))}
-                  </ul>
+                <div
+                  className="text-column screen-border"
+                  style={{
+                    position: "relative",
+                    textAlign: "center",
+                    padding: "10rem",
+                    paddingRight: "6rem",
+                    content: "fit-content",
+                    bottom: "20%",
+                    maxHeight: "50%",
+                    maxWidth: "90%",
+                    marginLeft: "-2.5rem",
+                    marginRight: "12rem",
+                    marginBottom: "-44rem",
+                    marginTop: "-7rem",
+                    height: "60rem",
+                  }}
+                >
+                  {" "}
+                  <h2>
+                    <h3
+                      style={{
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {" "}
+                      WELCOME TO THE FINAL FRONTIER -------------------------------
+                      <br />
+                      {interplanetaryStatusReport ? interplanetaryStatusReport : "No Status Report"}
+                    </h3>
+                    Attributes:
+                    <h3 className="description-text">
+                      {metadata?.attributes[1].value}
+                      {""}
+                      {metadata?.attributes[2].value} {""}
+                      {metadata?.attributes[3].value} {""}
+                      {metadata?.attributes[4].value}
+                      {stringToHex(metadata ? metadata.description : "No Metadata")}
+                      <ul>
+                        {metadata.attributes.map((attribute: any, index: number) => (
+                          <li key={index}>
+                            {attribute.trait_type}: {attribute.value}
+                          </li>
+                        ))}
+                      </ul>
+                    </h3>
+                  </h2>
                 </div>
               </div>
             </>
           )}
 
           <h3 className="panel-title focused-title description-text position-relative">
-            <div className="panel-content justify-center">
-              {metadata?.attributes[1].value}
-              {""}
-              {metadata?.attributes[2].value} {""}
-              {metadata?.attributes[3].value} {""}
-              {metadata?.attributes[4].value}
-            </div>
+            <div className="panel-content justify-center"></div>
           </h3>
         </div>
       </div>

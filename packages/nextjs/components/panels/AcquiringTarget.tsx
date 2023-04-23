@@ -44,15 +44,36 @@ const AcquiringTarget: React.FC<AcquiringTargetProps> = ({ travelStatus, selecte
 
       {selectedTokenId && (
         <div>
-          {" "}
-          <div className="screen-border acquiring-target-card spaceship-display-screen">
+          TRAVEL STATUw
+          <div
+            className="screen-border acquiring-target-card spaceship-display-screen"
+            style={{
+              fontWeight: "bold",
+              paddingTop: "3rem",
+              marginBottom: "1rem",
+              fontSize: "1.2rem",
+              alignContent: "center",
+              justifyContent: "center",
+              paddingBottom: "3rem",
+              height: "100%",
+            }}
+          >
             <br />
-            <p className="description-text acquiring-target-text">
-              <br />
-              STATUS
-              <br />
-              {travelStatus}
-            </p>
+            {travelStatus == "TargetAcquired" && (
+              <>
+                Target<br></br>Acquired
+              </>
+            )}
+            {travelStatus == "AcquiringTarget" && (
+              <>
+                Acquiring<br></br>Target
+              </>
+            )}
+            {travelStatus == "NoTarget" && (
+              <>
+                No<br></br>Target
+              </>
+            )}
             <div className="acquiring-target-circle" style={{ backgroundColor: getColor() }}>
               {" "}
             </div>

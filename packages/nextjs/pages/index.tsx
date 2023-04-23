@@ -53,23 +53,15 @@ export default function Home() {
   const [interplanetaryStatusReport, setInterplanetaryStatusReport] = useState("");
   const [selectedDescription, setSelectedDescription] = useState(description[selectedDescriptionIndex]);
   const [modifiedPrompt, setModifiedPrompt] = useState("");
-  const [engaged, setEngaged] = useState(false);
   const [warped, setWarped] = useState(false);
+  const [warping, setWarping] = useState(false);
 
   const handleEngaged = (engaged: boolean) => {
     if (engaged === true) {
-      setWarped(!warped);
-      console.log("WARP DRIVE IS ENGAGED");
+      setWarping(!warping);
+      console.log("WARP DRIVE IS ENGAGED", { warping, engaged });
     }
   };
-
-  useEffect(() => {
-    if (travelStatus === "TargetAcquired") {
-      setEngaged(true);
-    } else {
-      console.log("Travel status is not TargetAcquired");
-    }
-  }, [travelStatus]);
 
   useEffect(() => {
     setSelectedDescription(description[selectedDescriptionIndex]);
@@ -144,7 +136,7 @@ export default function Home() {
       side,
       interplanetaryStatusReport,
     );
-    console.log("USING THE FOLLOWING prompt", prompt);
+
     if (waitingForWebhook) {
       console.log("Already waiting for webhook, please wait for response.");
       return;
@@ -178,6 +170,7 @@ export default function Home() {
       if (type === "character") {
         setImageUrl(imageUrl);
         setButtonMessageId(messageId);
+        setWarping(false);
       } else {
         setTempUrl(imageUrl);
         setButtonMessageId(messageId);
@@ -205,6 +198,7 @@ export default function Home() {
       console.log("response", r.data);
       if (travelStatus === "AcquiringTarget") {
         setTravelStatus("TargetAcquired");
+        setWarping(true);
       }
 
       // Poll the server to fetch the response from the cache
@@ -226,9 +220,10 @@ export default function Home() {
       }
       if (type === "character") {
         setImageUrl(imageUrl);
+        setWarping(false);
         setButtonMessageId(buttonId);
       } else setBackgroundImageUrl(imageUrl);
-      setTravelStatus("NoTarget");
+      setWarping(false);
 
       setButtonMessageId(buttonId);
       console.log("Button Command Response:", buttonCommandResponse);
@@ -246,9 +241,6 @@ export default function Home() {
     if (waitingForWebhook) {
       console.log("Already waiting for webhook, please wait for response.");
       return;
-    }
-    if (travelStatus === "NoTarget") {
-      setTravelStatus("AcquiringTarget");
     }
 
     setWaitingForWebhook(true);
@@ -348,23 +340,20 @@ export default function Home() {
   };
 
   const handleImageSrcReceived = (imageSrc: string) => {
-    console.log("Image URL received in the parent component:", imageSrc);
     setSrcUrl(imageSrc);
-    console.log(modifiedPrompt, "modifiedPrompt");
+
     console.log(srcUrl);
     // Handle the imageSrc here, e.g., update the state or call another function
   };
   const handleModifedPrompt = (modifiedPrompt: string) => {
     setModifiedPrompt(modifiedPrompt);
-    console.log(modifiedPrompt, "modifiedPrompt received in the parent component");
-    submitPrompt("character");
+
+    setTravelStatus("AcquiringTarget");
   };
   const handleSelectedTokenIdRecieved = (selectedTokenId: string) => {
-    console.log("Token Selected Recieved received in the parent component:", selectedTokenId);
     setSelectedTokenId(selectedTokenId);
   };
   const handleTokenIdsReceived = (tokenIds: string[]) => {
-    console.log("Token IDs received in the parent component:", tokenIds);
     // Handle the token IDs here, e.g., update the state or call another function
   };
   console.log(description);
@@ -376,6 +365,9 @@ export default function Home() {
         <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
         <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
           <Dashboard
+            response={response}
+            error={error}
+            warping={warping}
             interplanetaryStatusReport={interplanetaryStatusReport}
             warped={warped}
             imageUrl={imageUrl}
@@ -393,8 +385,10 @@ export default function Home() {
             <AcquiringTarget loading={loading} travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
 
             <TokenSelectionPanel
+              setWarping={setWarping}
+              setTravelStatus={setTravelStatus}
               handleEngaged={handleEngaged}
-              engaged={engaged}
+              engaged={warped}
               onMetadataReceived={handleMetadataReceived}
               onImageSrcReceived={handleImageSrcReceived}
               onTokenIdsReceived={handleTokenIdsReceived}
@@ -404,6 +398,7 @@ export default function Home() {
               travelStatus={travelStatus}
             />
             <DescriptionPanel
+              travelStatus={travelStatus}
               interplanetaryStatusReport={interplanetaryStatusReport}
               selectedTokenId={selectedTokenId}
               description={description}
@@ -412,8 +407,9 @@ export default function Home() {
               handleDescribeClick={handleDescribeClick}
             />
             <PromptPanel
+              travelStatus={travelStatus}
               warped={warped}
-              engaged={engaged}
+              engaged={warped}
               setModifiedPrompt={handleModifedPrompt}
               imageUrl={imageUrl}
               interplanetaryStatusReport={interplanetaryStatusReport}

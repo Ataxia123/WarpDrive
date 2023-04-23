@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 interface DescriptionPanelProps {
+  travelStatus: string;
   description: string[];
   selectedDescriptionIndex: number;
   onDescriptionIndexChange: (index: number) => void;
@@ -10,6 +11,7 @@ interface DescriptionPanelProps {
 }
 
 export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
+  travelStatus,
   interplanetaryStatusReport,
   description,
   selectedDescriptionIndex,
@@ -52,85 +54,88 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
 
   const handleButtonClick = () => {
     setDescriptionIndex(prevIndex => (prevIndex + 1) % description.length);
-    console.log("descriptionIndex", descriptionIndex);
-    console.log("selectedDescriptionIndex", selectedDescriptionIndex);
   };
 
   return (
-    <>
-      <div
-        className={`${
-          focused ? "focused-right " : "unfocused-right scale-100 spaceship-display-screen"
-        } transition-all duration-300 spaceship-panel`}
-        onClick={handleClick}
-      >
-        <div className="screen-border">
-          <h3 className="description-text text-xl font-bold mb-2">INTERGALACTIC COMMUNICATIONS</h3>
-          <div className={focused ? "spaceship-display-screen" : ""}>
-            {description.length === 0 && !scanning && selectedTokenId && focused ? (
-              <div>
-                <button
-                  className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
-                  onClick={e => {
-                    e.stopPropagation();
-                    handleScanClick();
-                  }}
-                >
-                  {}
-                  SCAN
-                </button>
-                {" ||"}
-              </div>
-            ) : scanning ? (
-              <>
-                <p className="description-text">Scanning...</p>
-                <div className="spaceship-display-screen"></div>
-              </>
-            ) : (
-              focused && (
-                <>
-                  <div className="">
-                    <h1 className="py-2 px-4 font-bold">INCOMING AI-U ASSISTANCE REQUESTS</h1>
+    <div
+      className={`${
+        focused
+          ? "focused-right spaceship-display-screen screen-border transition-all duration-300 "
+          : "unfocused-right scale-100 spaceship-display-screen"
+      } transition-all duration-300 spaceship-panel overflow-auto screen-border `}
+      style={{
+        overflow: "auto",
+      }}
+      onClick={handleClick}
+    >
+      <h3 className="description-text text-xl font-bold mb-2">INTERGALACTIC COMMUNICATIONS</h3>
+      <div className={focused ? "spaceship-display-screen" : ""}>
+        {description.length === 0 && !scanning && selectedTokenId ? (
+          <div>
+            <button
+              className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
+              onClick={e => {
+                e.stopPropagation();
+                handleButtonClick();
+                handleScanClick();
+              }}
+            >
+              {}
+              SCAN
+            </button>
+            {" ||"}
+          </div>
+        ) : scanning ? (
+          <>
+            <p className="description-text">Scanning...</p>
+            <div className="spaceship-display-screen"></div>
+          </>
+        ) : (
+          <div className="spaceship-screen-display overflow-auto">
+            {travelStatus !== "NoTarget" && (
+              <div className="spaceship-screen-display overflow-auto">
+                <h1 className="py-2 px-4 font-bold">INCOMING AI-U ASSISTANCE REQUESTS</h1>
 
-                    {interplanetaryStatusReport ? (
-                      <div>
-                        {focused && (
-                          <div>
-                            <h2>MESSAGE:</h2>
-                            <p>{interplanetaryStatusReport}</p>
-                            <button
-                              className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
-                              onClick={handleButtonClick}
-                            >
-                              NEXT MESSAGE
-                            </button>
-                            {" ||"}
-                          </div>
-                        )}
-                      </div>
-                    ) : !selectedTokenId ? (
-                      <>
-                        <p>Select a transmission ID to scan</p>
-                      </>
-                    ) : (
-                      <p>
-                        <button
-                          className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
-                          onClick={handleButtonClick}
-                        >
-                          SET COORDINATES
-                        </button>
-                      </p>
-                    )}
+                {interplanetaryStatusReport ? (
+                  <div>
+                    <div>
+                      <h2>MESSAGE:</h2>
+                      <p className="spaceship-display-screen overflow-auto">{interplanetaryStatusReport}</p>
+                      <button
+                        className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleButtonClick();
+                        }}
+                      >
+                        NEXT MESSAGE
+                      </button>
+                      {" ||"}
+                    </div>
                   </div>
-                </>
-              )
+                ) : !selectedTokenId ? (
+                  <>
+                    <p>Select a transmission ID to scan</p>
+                  </>
+                ) : (
+                  <p>
+                    <button
+                      className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleButtonClick();
+                      }}
+                    >
+                      SET COORDINATES
+                    </button>
+                  </p>
+                )}
+              </div>
             )}
           </div>
-        </div>
-        <div className="prompt-utility-div-left" onMouseEnter={handleMouseEnter}></div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 

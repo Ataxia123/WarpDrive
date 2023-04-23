@@ -2,8 +2,12 @@
 import React from "react";
 import Background from "./Background";
 import { MarqueePanel } from "./panels/MarqueePannel";
+import { Header } from "~~/components/Header";
 
 interface DashboardProps {
+  response: string;
+  error: string;
+  warping: boolean;
   warped: boolean;
   interplanetaryStatusReport: string;
   children: React.ReactNode;
@@ -29,6 +33,9 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
+  response,
+  error,
+  warping,
   warped,
   interplanetaryStatusReport,
   imageUrl,
@@ -45,9 +52,11 @@ const Dashboard: React.FC<DashboardProps> = ({
 }) => {
   return (
     <>
-      <div className="dashboard" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
+      <div className="dashboard">
         <img className="staticOverlay" src="assets/view.png" alt="Static Image Overlay" />
         <MarqueePanel
+          error={error}
+          response={response}
           interplanetaryStatusReport={interplanetaryStatusReport}
           imageUrl={imageUrl}
           srcUrl={srcUrl}
@@ -59,12 +68,15 @@ const Dashboard: React.FC<DashboardProps> = ({
           buttonMessageId={buttonMessageId}
         />
         <Background
+          warping={warping}
           warped={warped}
           travelStatus={travelStatus}
           dynamicImageUrl={dynamicImageUrl}
           fixedImageUrl="assets/view.png"
         ></Background>
+
         {children}
+        <Header />
       </div>
     </>
   );

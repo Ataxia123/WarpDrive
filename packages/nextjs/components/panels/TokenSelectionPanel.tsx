@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import ReadAIU from "../ReadAIU";
 
 interface TokenSelectionPanelProps {
+  setWarping: (warping: boolean) => void;
+  setTravelStatus: (type: "NoTarget" | "AcquiringTarget" | "TargetAcquired") => void;
   handleEngaged: (engaged: boolean) => void;
   onMetadataReceived: (metadata: any) => void;
   onImageSrcReceived: (imageSrc: string) => void;
@@ -14,6 +16,8 @@ interface TokenSelectionPanelProps {
 }
 
 const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
+  setWarping,
+  setTravelStatus,
   handleEngaged,
   onMetadataReceived,
   onImageSrcReceived,
@@ -46,6 +50,9 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
   return (
     <>
       <ReadAIU
+        interplanetaryStatusReport={interplanetaryStatusReport}
+        setWarping={setWarping}
+        setTravelStatus={setTravelStatus}
         handleEngaged={handleEngaged}
         travelStatus={travelStatus}
         isMinimized={isMinimized} // Pass isMinimized as a prop

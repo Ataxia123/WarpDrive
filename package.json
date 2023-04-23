@@ -37,6 +37,7 @@
   "dependencies": {
     "grapheme-splitter": "^1.0.4",
     "install": "^0.13.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "vanilla-marquee": "^1.1.2"
   }
 }

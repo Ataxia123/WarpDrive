@@ -46,15 +46,14 @@ export const Header = () => {
     <div
       className="sticky lg:static w:-1/2 top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary "
       style={{
-        position: "absolute",
+        position: "relative",
       }}
     >
       <div
         className="spaceship-display-screen"
         style={{
           scale: "1.15",
-          left: "-10%",
-          paddingLeft: "7.5rem",
+          position: "relative",
         }}
       >
         <div className="navbar-start w-auto lg:w-1/2">

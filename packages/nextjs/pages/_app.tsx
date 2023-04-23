@@ -8,7 +8,6 @@ import { useDarkMode } from "usehooks-ts";
 import { WagmiConfig } from "wagmi";
 import Background from "~~/components/Background";
 import { Footer } from "~~/components/Footer";
-import { Header } from "~~/components/Header";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { useEthPrice } from "~~/hooks/scaffold-eth";
 import { useAppStore } from "~~/services/store/store";
@@ -42,7 +41,6 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
         theme={isDarkTheme ? darkTheme() : lightTheme()}
       >
         <div className="flex flex-col min-h-screen main-container">
-          <Header />
           <main className="relative flex flex-col flex-1">
             <Component {...pageProps} />
           </main>
