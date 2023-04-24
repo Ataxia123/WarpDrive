@@ -120,7 +120,7 @@ export default function Home() {
   }, [selectedDescription]);
 
   const submitPrompt = async (type: "character" | "background") => {
-    const prompt = generatePrompt(
+    let prompt = generatePrompt(
       type,
       srcUrl,
       level,
@@ -142,6 +142,12 @@ export default function Home() {
       return;
     }
     setWaitingForWebhook(true);
+    if (type === "character") {
+      prompt = modifiedPrompt;
+      setWarped(true);
+      setWarping(true);
+      console.log("WARP DRIVE IS CHARACTER IN ENGAGED", { warping, warped });
+    }
 
     try {
       const r = await axios.post("/api/apiHandler", { text: prompt });
@@ -171,6 +177,7 @@ export default function Home() {
         setImageUrl(imageUrl);
         setButtonMessageId(messageId);
         setWarping(false);
+        setTravelStatus("NoTarget");
       } else {
         setTempUrl(imageUrl);
         setButtonMessageId(messageId);
@@ -222,8 +229,10 @@ export default function Home() {
         setImageUrl(imageUrl);
         setWarping(false);
         setButtonMessageId(buttonId);
+        setTravelStatus("NoTarget");
       } else setBackgroundImageUrl(imageUrl);
       setWarping(false);
+      setTravelStatus("NoTarget");
 
       setButtonMessageId(buttonId);
       console.log("Button Command Response:", buttonCommandResponse);
@@ -291,7 +300,7 @@ export default function Home() {
       //await 5 seconds
       setTimeout(() => {
         submitPrompt("background");
-      }, 10000);
+      }, 5000);
 
       console.log("waiting for 10 seconds");
     }
@@ -347,8 +356,6 @@ export default function Home() {
   };
   const handleModifedPrompt = (modifiedPrompt: string) => {
     setModifiedPrompt(modifiedPrompt);
-
-    setTravelStatus("AcquiringTarget");
   };
   const handleSelectedTokenIdRecieved = (selectedTokenId: string) => {
     setSelectedTokenId(selectedTokenId);
@@ -385,11 +392,13 @@ export default function Home() {
             <AcquiringTarget loading={loading} travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
 
             <TokenSelectionPanel
+              buttonMessageId={buttonMessageId}
+              handleButtonClick={handleButtonClick}
               modifiedPrompt={modifiedPrompt}
               setWarping={setWarping}
               setTravelStatus={setTravelStatus}
               handleEngaged={handleEngaged}
-              engaged={warped}
+              engaged={warping}
               onMetadataReceived={handleMetadataReceived}
               onImageSrcReceived={handleImageSrcReceived}
               onTokenIdsReceived={handleTokenIdsReceived}
@@ -408,6 +417,7 @@ export default function Home() {
               handleDescribeClick={handleDescribeClick}
             />
             <PromptPanel
+              handleEngaged={handleEngaged}
               travelStatus={travelStatus}
               warped={warped}
               engaged={warped}

@@ -15,6 +15,7 @@ type Metadata = {
 };
 
 interface PromptPanelProps {
+  handleEngaged: (engaged: boolean) => void;
   travelStatus: string;
   warped: boolean;
   engaged: boolean;
@@ -49,6 +50,7 @@ interface PromptPanelProps {
 }
 
 export const PromptPanel: React.FC<PromptPanelProps> = ({
+  handleEngaged,
   travelStatus,
   warped,
   engaged,
@@ -104,28 +106,6 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
     setIsFocused(!isFocused);
   };
 
-  const AvailableButtons = () => {
-    const buttons = ["U1", "U2", "U3", "U4", "🔄", "V1", "V2", "V3", "V4"];
-    return (
-      <div className="button-container">
-        {buttons.map(button => (
-          <button
-            key={button}
-            className={`spaceship-button ${isFocused ? "active" : ""} display-text`}
-            style={{
-              marginTop: "5%",
-              padding: button === "🔄" ? "0.5rem" : "0.5rem",
-              backgroundColor: button === "🔄" ? "black" : "black",
-            }}
-            onClick={() => handleButtonClick(button, "character")}
-          >
-            {button}
-          </button>
-        ))}
-      </div>
-    );
-  };
-
   const handleToggle = (attribute: string, isEnabled: boolean) => {
     if (!isEnabled) {
       setSelectedAttributes(prevState => [...prevState, attribute]);
@@ -166,13 +146,14 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
             )}
           </div>
         </div>
-        {buttonMessageId !== "" ? <AvailableButtons /> : <div></div>}
+
         <br />
       </div>
 
       <>
         <>
           <Switchboard
+            handleEngaged={handleEngaged}
             travelStatus={travelStatus}
             engaged={engaged}
             warped={warped}

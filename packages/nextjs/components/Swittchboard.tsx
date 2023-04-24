@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 interface SwitchboardProps {
+  handleEngaged: (engaged: boolean) => void;
   travelStatus: string;
   engaged: boolean;
   warped: boolean;
@@ -40,6 +41,7 @@ interface SwitchboardProps {
 }
 
 export const Switchboard: React.FC<SwitchboardProps> = ({
+  handleEngaged,
   travelStatus,
   engaged,
   attributes,
@@ -147,7 +149,7 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
                 <input
                   type="text"
                   className="prompt-input spaceship-display-screen"
-                  value={modifiedPrompt}
+                  value={extraText}
                   onChange={handleExtraTextChange}
                   onClick={e => {
                     e.stopPropagation();

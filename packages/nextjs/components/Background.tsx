@@ -14,6 +14,7 @@ interface BackgroundProps {
 const Background: React.FC<BackgroundProps> = ({ warping, dynamicImageUrl, warped, fixedImageUrl, travelStatus }) => {
   const [bgPosition, setBgPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [warpSpeedOpacity, setWarpSpeedOpacity] = useState("0");
+  const [lightSpeed, setLightSpeed] = useState(false);
   const handleMouseMove = (e: MouseEvent) => {
     const { clientX, clientY } = e;
     setBgPosition({ x: clientX / 50, y: clientY / 50 });
@@ -26,8 +27,8 @@ const Background: React.FC<BackgroundProps> = ({ warping, dynamicImageUrl, warpe
     };
   }, []);
   useEffect(() => {
-    setWarpSpeedOpacity("1");
-  }, [warping]);
+    setLightSpeed(travelStatus === "TargetAcquired" ? true : false);
+  }, [warping, travelStatus]);
   return (
     <div className={styles.background}>
       <img
@@ -38,7 +39,7 @@ const Background: React.FC<BackgroundProps> = ({ warping, dynamicImageUrl, warpe
           transform: `translate(${bgPosition.x}px, ${bgPosition.y}px)`,
         }}
       />
-      <div className={`warpSpeedEffect ${warping ? "warpSpeedActive" : ""}`}>
+      <div className={`warpSpeedEffect ${lightSpeed ? "warpSpeedActive" : ""}`}>
         <div className="warpImage warpImage1" />
         <div className="warpImage warpImage2" />
       </div>

@@ -64,7 +64,14 @@ export const RainbowKitCustomConnectButton = () => {
                       </span>
                     </div>
 
-                    <button onClick={openAccountModal} type="button" className="flex screen-border">
+                    <button
+                      onClick={openAccountModal}
+                      type="button"
+                      className="flex screen-border"
+                      style={{
+                        zIndex: 1000000000000000000000000000000000000000000000000000000000000000000000,
+                      }}
+                    >
                       <BlockieAvatar address={account.address} size={24} ensImage={account.ensAvatar} />
                       <span className="">{account.displayName}</span>
                       <span>

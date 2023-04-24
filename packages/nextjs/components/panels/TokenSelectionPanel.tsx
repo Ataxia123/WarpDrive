@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import ReadAIU from "../ReadAIU";
 
 interface TokenSelectionPanelProps {
+  handleButtonClick: (button: string, type: "character" | "background") => Promise<void>;
+  buttonMessageId: string | "";
   modifiedPrompt: string;
   setWarping: (warping: boolean) => void;
   setTravelStatus: (type: "NoTarget" | "AcquiringTarget" | "TargetAcquired") => void;
@@ -17,6 +19,9 @@ interface TokenSelectionPanelProps {
 }
 
 const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
+  handleButtonClick,
+  buttonMessageId,
+  engaged,
   modifiedPrompt,
   setWarping,
   setTravelStatus,
@@ -31,16 +36,13 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [engaged, setEngaged] = useState(false);
 
   const handleClick = () => {
     if (isMinimized === false) {
-      console.log("minimized");
       setIsMinimized(true);
       return;
     }
     setIsMinimized(false);
-    console.log("unminimized");
   };
 
   useEffect(() => {
@@ -52,6 +54,9 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
   return (
     <>
       <ReadAIU
+        handleButtonClick={handleButtonClick}
+        buttonMessageId={buttonMessageId}
+        engaged={engaged}
         modifiedPrompt={modifiedPrompt}
         interplanetaryStatusReport={interplanetaryStatusReport}
         setWarping={setWarping}

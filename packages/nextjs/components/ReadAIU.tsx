@@ -7,6 +7,9 @@ import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth/useScaffoldEventHistory";
 
 interface ReadAIUProps {
+  handleButtonClick: (button: string, type: "character" | "background") => Promise<void>;
+  buttonMessageId: string | "";
+  engaged: boolean;
   modifiedPrompt: string;
   interplanetaryStatusReport: string;
   setWarping: (warping: boolean) => void;
@@ -24,6 +27,9 @@ interface ReadAIUProps {
 }
 
 export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
+  handleButtonClick,
+  buttonMessageId,
+  engaged: engagedProp,
   modifiedPrompt,
   interplanetaryStatusReport,
   setWarping,
@@ -136,21 +142,21 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
     onSelectedTokenIdRecieved(e.target.value); // Add this line
   };
   useEffect(() => {
-    if (travelStatus === "ready") {
-      setEngaged(false);
-    }
-  }, [travelStatus]);
+    setEngaged(true);
+  }, [modifiedPrompt]);
 
   const handleButton = () => {
-    if (travelStatus === "TargetAcquired") {
+    if (travelStatus === "AcquiringTarget" && engaged === false) {
+      setWarping(false);
       setEngaged(true);
-      setWarping(true);
-      handleEngaged(true);
-    } else if (engaged === true) {
+      return;
+    }
+    if (engaged === true && travelStatus === "AcquiringTarget") {
       onSubmit("character");
-      setEngaged(false);
+      setTravelStatus("TargetAcquired");
+      setWarping(true);
     } else {
-      if (selectedTokenId) {
+      if (selectedTokenId && travelStatus === "NoTarget") {
         setTravelStatus("AcquiringTarget");
       }
     }
@@ -176,16 +182,69 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
     const button = document.getElementById("spaceshipButton");
 
     if (travelStatus === "AcquiringTarget") {
-      button?.classList.add("active");
-      button?.classList.remove("loading");
-    } else if (travelStatus === "TargetAcquired") {
       button?.classList.add("loading");
       button?.classList.remove("active");
+    } else if (travelStatus === "TargetAcquired") {
+      button?.classList.add("active");
+      button?.classList.remove("loading");
     } else {
       button?.classList.remove("active");
       button?.classList.remove("loading");
     }
   }, [travelStatus]);
+
+  const AvailableButtons = () => {
+    const buttons = ["U1", "U2", "U3", "U4", "🔄", "V1", "V2", "V3", "V4"];
+    return (
+      <div
+        style={{
+          display: "flexbox",
+
+          flexDirection: "column",
+          columns: 2,
+          justifyContent: "space-between",
+          height: "116%",
+          width: "300%",
+          left: "-100%",
+          position: "absolute",
+          top: "-10%",
+          paddingLeft: "3%",
+          right: "-20%",
+          marginTop: "10%",
+          paddingRight: "-30%",
+          flexWrap: "wrap",
+          whiteSpace: "nowrap",
+          zIndex: 1000,
+          columnGap: "100px",
+        }}
+        className="spaceship-button-container spaceship-display-screen"
+      >
+        {buttons.map(button => (
+          <button
+            key={button}
+            className={`spaceship-button ${
+              travelStatus === "TargetAcquired" ? "active" : ""
+            } display-text screen-border`}
+            style={{
+              marginTop: "15%",
+              marginBottom: "15%",
+              marginLeft: "15%",
+              marginRight: "5%",
+              padding: button === "🔄" ? "0.5rem" : ".5rem",
+              backgroundColor: button === "🔄" ? "black" : "black",
+              position: "relative",
+              display: "flex",
+              fontSize: "1.5rem",
+              width: "3.5rem",
+            }}
+            onClick={() => handleButtonClick(button, "character")}
+          >
+            {button}
+          </button>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -209,54 +268,92 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
           fontSize: "1rem",
         }}
       >
-        <div
+        <a
           style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            scale: "1",
+            position: "absolute",
+            width: "100%",
+            height: "60%",
           }}
-          className="spaceship-display-screen"
+          href="https://ai-universe.io/"
         >
-          <ul
+          <div
             style={{
               display: "flex",
-              alignContent: "center",
+              flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              flexDirection: "column",
-
               scale: "1",
             }}
+            className="spaceship-display-screen"
           >
-            <li
+            <ul
               style={{
                 display: "flex",
                 alignContent: "center",
                 justifyContent: "center",
                 alignItems: "center",
+                flexDirection: "column",
+                width: "90%",
 
                 scale: "1",
               }}
             >
-              {balance?.toString()} AI-U SIGNALS STATUS:{engaged ? "ENGAGED" : "OFF"}
-            </li>
-            <br />
+              <li
+                style={{
+                  alignContent: "center",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: "-2rem",
+                  padding: "0.1rem",
+                  scale: "1",
+                  width: "110%",
+                  top: "30%",
+                  display: "flex",
+                  flexDirection: "column",
+                  position: "absolute",
+                }}
+              >
+                AI-Universe
+              </li>
 
-            <li
-              style={{
-                display: "flex",
-                alignContent: "center",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "3rem",
-              }}
-            >
-              <RainbowKitCustomConnectButton />
-            </li>
-          </ul>
-        </div>
+              <li
+                style={{
+                  fontSize: "0.8rem",
+                  color: "white",
+                  position: "absolute",
+                  top: "25%",
+                  left: "11%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {" "}
+                {balance?.toString()} SIGNALS INC<br></br>STATUS:{engaged ? "ENGAGED" : "OFF"}
+              </li>
+
+              <br />
+
+              <li
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  overflow: "show",
+                  top: "100%",
+                  alignContent: "center",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: "-2rem",
+                  padding: "0.1rem",
+                  scale: "1",
+                  width: "110%",
+                  height: "10rem",
+                  zIndex: 1000000000000000,
+                }}
+              ></li>
+            </ul>
+          </div>
+        </a>
+        <RainbowKitCustomConnectButton />
       </div>
       {balance?.toNumber() !== 0 ? (
         <div onMouseEnter={() => setMouseTrigger(true)} className="toggle-minimize-button spaceship-display-screen">
@@ -299,6 +396,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
               </button>
             </div>
           </div>
+          {buttonMessageId === "" ? <AvailableButtons /> : <div></div>}
         </div>
       ) : (
         <div
