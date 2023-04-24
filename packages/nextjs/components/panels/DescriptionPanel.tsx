@@ -23,6 +23,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
   const [focused, setFocused] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [descriptionIndex, setDescriptionIndex] = useState<number>(0);
+  const [waitingForDescription, setWaitingForDescription] = useState<boolean>(false);
 
   useEffect(() => {
     if (selectedDescriptionIndex !== descriptionIndex) {
@@ -59,6 +60,10 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
     setDescriptionIndex(prevIndex => (prevIndex + 1) % description.length);
   };
 
+  useEffect(() => {
+    setWaitingForDescription(!waitingForDescription);
+  }, [interplanetaryStatusReport]);
+
   return (
     <div
       className={`${
@@ -82,7 +87,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
         src="aiu.png"
       ></img>
       <div
-        className="spaceship-display-screen"
+        className="spaceship-display-screen description-text"
         style={{
           display: "flex",
           alignContent: "center",
@@ -93,16 +98,17 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
         }}
       >
         {" "}
+        AI-UNIVERSE
         <p
-          className="description-text text-xl font-bold mb-2"
+          className=""
           style={{
             color: "white",
-            marginBottom: "2.4rem",
+            marginBottom: "1.4rem",
             paddingBottom: "1.4rem",
           }}
         >
           {" "}
-          AI-U INTERGALACTIC ASSISTANCE COMMUNICATIONS
+          INTERGALACTIC SCANNER
         </p>
         <br />
         <>
@@ -133,6 +139,16 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
           )}
           {description.length > 0 && travelStatus !== "NoTarget" ? (
             <>
+              <p
+                className="description-text"
+                style={{
+                  top: "20%",
+                  position: "absolute",
+                }}
+              >
+                {" "}
+                INCOMING TRANSMISSION:
+              </p>
               <div
                 className="screen-border"
                 style={{
@@ -153,82 +169,30 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                 }}
               >
                 <h2
+                  className="scroll-text"
                   style={{
                     color: "white",
                     fontWeight: "bold",
                   }}
                 >
                   <br />
-                  INCOMING TRANSMISSION:
                 </h2>
-                <h3>
-                  <br /> {interplanetaryStatusReport}
-                </h3>
-
-                <button
-                  className={"py-2 px-4 rounded font-bold text-white spaceship-button"}
-                  style={{
-                    border: "1px solid",
-                    backgroundColor: "black",
-                  }}
-                  onClick={e => {
-                    e.stopPropagation();
-                    handleButtonClick();
-                  }}
-                >
-                  <div
-                    style={{
-                      color: "white",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {travelStatus === "TargetAcquired" ? (
-                      <>NEXT TRANSMISSION</>
-                    ) : interplanetaryStatusReport ? (
-                      <div
-                        style={{
-                          pointerEvents: "none",
-                        }}
-                      >
-                        CONFIGURING TARGETING COMPUTER
-                      </div>
-                    ) : (
-                      <>SET COORDINATES</>
-                    )}
-                  </div>
-                </button>
-
                 <div
-                  className="screen-border"
+                  className="hex-data"
                   style={{
-                    position: "absolute",
-                    justifyContent: "center",
-                    display: "flex",
-                    flexDirection: "column",
-                    padding: "2rem",
-                    scale: "0.8",
-                    height: "50%",
-                    width: "100%",
-                    left: "4%",
-                    top: "130%",
-                    marginBottom: "-6rem",
-                    bottom: "20%",
-                    paddingBottom: "1.8rem",
+                    opacity: "0.3",
+
+                    pointerEvents: "none",
                   }}
                 >
-                  ---------------------------------
-                  {" ||"} STATUS {" ||"}
-                  {" ||"} {travelStatus}
-                  {" ||"} <br /> COORDINATES DECODED : {selectedTokenId}
-                  <br />
-                  {travelStatus === "TargetAcquired" ? (
-                    <>|COORDINATES SET|</>
-                  ) : interplanetaryStatusReport ? (
-                    <>COMPUTING COORDINATES</>
-                  ) : (
-                    <>SETTING COODRINATES</>
-                  )}
+                  {description}
                 </div>
+                <h3>
+                  <br />{" "}
+                  <p className={"scroll-text"} style={{ color: "white" }}>
+                    {interplanetaryStatusReport}
+                  </p>
+                </h3>
               </div>
             </>
           ) : (
@@ -242,30 +206,110 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
           <br />
           <div>
             <br />
-            {!scanning && description[0] ? (
-              <div style={{ fontWeight: "bold" }}>
-                {travelStatus !== "NoTarget" && (
-                  <p
-                    style={{
-                      padding: "0rem",
-                      margin: "-0.3rem",
-                      bottom: "5rem",
-                      marginBottom: "-0rem",
-                    }}
-                  >
-                    SCANNER READY
-                  </p>
+
+            <div
+              className="screen-border"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                height: "33%",
+                top: "68%",
+                left: "-2%",
+                opacity: "1",
+                bottom: "10%",
+                marginBottom: "1rem",
+                paddingBottom: "1.5rem",
+                color: "white",
+
+                paddingTop: "2.6rem",
+                justifyContent: "space-around",
+                backdropFilter: "blur(5px)",
+                scale: "1",
+                fontSize: "0.7rem",
+              }}
+            >
+              <div>
+                <br /> {" ||"} {travelStatus}
+                {" ||"} <br /> DECODED ID : {selectedTokenId}
+                <br />
+                {travelStatus === "TargetAcquired" ? (
+                  <>|COORDINATES SET|</>
+                ) : interplanetaryStatusReport ? (
+                  <>COMPUTING COORDINATES</>
+                ) : (
+                  <>SETTING COODRINATES</>
                 )}
               </div>
-            ) : scanning ? (
-              <>
-                <div className="spaceship-display-screen">
-                  <p className="description-text">Scanning...</p>
+              {!scanning && description[0] ? (
+                <div style={{ fontWeight: "bold" }}>
+                  {travelStatus !== "NoTarget" && (
+                    <p
+                      style={{
+                        backdropFilter: "blur(3px)",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        top: "40%",
+                        bottom: "-10%",
+                        height: "10%",
+                        width: "100%",
+                        marginTop: "5rem",
+                        margin: "0rem",
+                      }}
+                    >
+                      <button
+                        className={`spaceship-button ${
+                          travelStatus === "AcquiringTarget" && !waitingForDescription === false ? "active" : ""
+                        }`}
+                        style={{
+                          border: "2px solid",
+                          backgroundColor: "black",
+                          bottom: "10%",
+                          marginBottom: "0rem",
+                        }}
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleButtonClick();
+                          setWaitingForDescription(true);
+                        }}
+                      >
+                        <div
+                          className="spaceship-button-text"
+                          style={{
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {travelStatus === "TargetAcquired" ? (
+                            <>NEXT TRANSMISSION</>
+                          ) : interplanetaryStatusReport ? (
+                            <div
+                              style={{
+                                pointerEvents: "none",
+                                color: "white",
+                              }}
+                            >
+                              CONFIGURING TARGETING COMPUTER
+                            </div>
+                          ) : (
+                            <>SET COORDINATES</>
+                          )}
+                        </div>
+                      </button>
+                      SCANNER READY
+                    </p>
+                  )}
                 </div>
-              </>
-            ) : (
-              travelStatus === "NoTarget" && <div className="description-text">SCANNER OFFLINE</div>
-            )}
+              ) : scanning ? (
+                <>
+                  <div className="spaceship-display-screen">
+                    <p className="description-text screen-border">Scanning...</p>
+                  </div>
+                </>
+              ) : (
+                travelStatus === "NoTarget" && <div className="description-text">SCANNER OFFLINE</div>
+              )}
+            </div>
           </div>
         </>
       </div>

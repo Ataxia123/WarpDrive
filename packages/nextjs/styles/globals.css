@@ -457,12 +457,6 @@ opacity: 1;
   transition: all 0.2s ease;
 }
 
-.spaceship-button:hover,
-.spaceship-button.active {
-  background-color: #32CD32;
-  color: #2d2d2d;
-  border-color: #2d2d2d;
-}
 
 .prompt-button {
   background-color: #2d2d2d;
@@ -648,6 +642,26 @@ perspective(500px)
   to {
     transform: translateX(-100%);
   }
+}
+
+.scroll-text {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  animation: scrolling 60s linear infinite;
+}
+
+@keyframes scrolling {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+.scroll-container:hover .scroll-text {
+  animation-play-state: paused;
 }
 
 .prompt-display{
@@ -1331,12 +1345,18 @@ display: flex;
   transition: background-color 0.3s ease-in-out;
 }
 
+
 .spaceship-button:hover {
-  background-color: #f2982f;
+  background-color: #2ff246;
+  opacity: 1;
 }
 
 .spaceship-button.active {
-  background-color: #39f22f;
+  background-color: #21d518;
+  opacity: 1;
+  color:#0f0;
+  animation: randomFlicker 0.25s infinite ease-in-out;
+  pointer-events: none;
 }
 
 input[type='checkbox'] {
