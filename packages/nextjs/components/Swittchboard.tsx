@@ -50,24 +50,24 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
   onModifiedPrompt,
   warped,
 }) => {
-  const [checkedAttributes, setCheckedAttributes] = useState<string[]>([]);
   const excludedAttributes = ["srcUrl", "nijiFlag", "vFlag", "selectedDescription", "interplanetaryStatusReport"];
-  const [modifiedPrompt, setModifiedPrompt] = useState("");
+  const [modifiedPrompt, setModifiedPrompt] = useState("ALLIANCEOFTHEINFINITEUNIVERSE");
   const [isExpanded, setIsExpanded] = useState(false);
   const [extraText, setExtraText] = useState("");
   const [showExtraTextInput, setShowExtraTextInput] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
+  const [checkedAttributes, setCheckedAttributes] = useState([...attributes]);
 
   const handleToggle = (attribute: string) => {
+    let attributeToggledOn;
     if (checkedAttributes.includes(attribute)) {
       setCheckedAttributes(checkedAttributes.filter(attr => attr !== attribute));
+      attributeToggledOn = false;
     } else {
       setCheckedAttributes([...checkedAttributes, attribute]);
+      attributeToggledOn = true;
     }
-    onToggle(attribute, !checkedAttributes.includes(attribute));
-  };
-  const handleExpand = () => {
-    setIsExpanded(!isExpanded);
+    onToggle(attribute, attributeToggledOn);
   };
 
   useEffect(() => {
@@ -128,36 +128,49 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
 
   return (
     <>
-      <div className="spaceship-display-screen overflow-auto prompt-display-div" style={{ opacity: 1.5 }}>
+      <div
+        className="spaceship-display-screen overflow-auto prompt-display-div"
+        style={{
+          overflowX: "hidden",
+          opacity: 1.5,
+        }}
+      >
         -ENCODE SIGNAL-
         <div className="spaceship-display-screen">
-          {travelStatus === "TargetAcquired" ? (
+          {travelStatus !== "NoTarget" ? (
             <>
-              <p className="description-text"> ||||||||||||AI-UNIVERSE SIGNAL ENCODER||||||||||||||</p>
+              <p className="description-text" style={{ color: "white" }}>
+                {" "}
+                ||||||||||||AI-UNIVERSE SIGNAL ENCODER||||||||||||||
+              </p>
               <div className="hex-prompt">
                 <input
                   type="text"
                   className="prompt-input spaceship-display-screen"
-                  value={extraText}
+                  value={modifiedPrompt}
                   onChange={handleExtraTextChange}
                   onClick={e => {
                     e.stopPropagation();
                   }}
                 />
                 <div className="hex-data">
-                  {stringToHex(extraText)}
-                  {stringToHex(extraText)}
-                  {stringToHex(extraText)}
-                  {stringToHex(extraText)}
+                  {stringToHex(modifiedPrompt)}
+                  {stringToHex(modifiedPrompt)}
+                  {stringToHex(modifiedPrompt)}
+                  {stringToHex(modifiedPrompt)}
+                  {stringToHex(modifiedPrompt)}
+                  {stringToHex(modifiedPrompt)}
+                  {stringToHex(modifiedPrompt)}
+                  {stringToHex(modifiedPrompt)}
                 </div>
                 {modifiedPrompt}
                 <br />
                 <button
-                  className="description-text"
+                  className="description-text spaceship-display-screen"
                   style={{ border: "1px solid", margin: "10px", alignContent: "right" }}
                   onClick={e => {
                     {
-                      generateModifiedPrompt;
+                      generateModifiedPrompt();
                     }
                     e.stopPropagation();
                   }}
@@ -179,7 +192,7 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
                     return (
                       <div
                         key={attribute}
-                        className={`switchboard-attribute ${!isChecked ? "checked" : ""}spaceship-panel`}
+                        className={`switchboard-attribute ${isChecked ? "checked" : ""} spaceship-panel`}
                         onClick={e => {
                           e.stopPropagation();
                           handleToggle(attribute);

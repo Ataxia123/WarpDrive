@@ -142,7 +142,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
   }
 
   return (
-    <div className={`prompt-panel${isFocused ? "-closed" : ""}`} onClick={handleClick}>
+    <div className={`prompt-panel${isFocused ? "" : "-closed"}`} onClick={handleClick}>
       <div className={`spaceship-display-screen${travelStatus !== "NoTarget" ? "" : "-off"}`}>
         <div className="spaceship-display-screen animated-floating">
           <div className="display-border">
@@ -155,7 +155,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
               </p>
             </h1>
 
-            {!isFocused && (
+            {isFocused && (
               <div className="spaceship-display-screen">
                 {imageUrl ? (
                   <img src={imageUrl} className="screen-border image-display " alt="nothing" />

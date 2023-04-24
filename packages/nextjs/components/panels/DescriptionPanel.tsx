@@ -61,8 +61,10 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
   };
 
   useEffect(() => {
-    setWaitingForDescription(!waitingForDescription);
-  }, [interplanetaryStatusReport]);
+    if (travelStatus === "TargetAcquired") {
+      setWaitingForDescription(false);
+    }
+  }, [travelStatus, interplanetaryStatusReport]);
 
   return (
     <div
@@ -81,7 +83,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
           height: "100%",
           width: "100%",
           objectFit: "fill",
-          left: "10%",
+          left: "4%",
           padding: "1.2rem",
         }}
         src="aiu.png"
@@ -142,12 +144,13 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
               <p
                 className="description-text"
                 style={{
-                  top: "20%",
+                  top: "17%",
                   position: "absolute",
                 }}
               >
                 {" "}
                 INCOMING TRANSMISSION:
+                <br />
               </p>
               <div
                 className="screen-border"
@@ -189,7 +192,14 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                 </div>
                 <h3>
                   <br />{" "}
-                  <p className={"scroll-text"} style={{ color: "white" }}>
+                  <p
+                    className={"scroll-text"}
+                    style={{
+                      padding: "0.2rem",
+                      marginRight: "1.2rem",
+                      color: "white",
+                    }}
+                  >
                     {interplanetaryStatusReport}
                   </p>
                 </h3>
@@ -203,113 +213,140 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
             )
           )}
 
-          <br />
-          <div>
-            <br />
+          <div
+            className="screen-border"
+            style={{
+              height: "30%",
+              width: "100%",
+              top: "65%",
+              left: "0%",
 
-            <div
-              className="screen-border"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                height: "33%",
-                top: "68%",
-                left: "-2%",
-                opacity: "1",
-                bottom: "10%",
-                marginBottom: "1rem",
-                paddingBottom: "1.5rem",
-                color: "white",
+              flexDirection: "row",
+              backdropFilter: "blur(3px)",
 
-                paddingTop: "2.6rem",
-                justifyContent: "space-around",
-                backdropFilter: "blur(5px)",
-                scale: "1",
-                fontSize: "0.7rem",
-              }}
-            >
-              <div>
-                <br /> {" ||"} {travelStatus}
-                {" ||"} <br /> DECODED ID : {selectedTokenId}
-                <br />
-                {travelStatus === "TargetAcquired" ? (
-                  <>|COORDINATES SET|</>
-                ) : interplanetaryStatusReport ? (
-                  <>COMPUTING COORDINATES</>
-                ) : (
-                  <>SETTING COODRINATES</>
-                )}
-              </div>
-              {!scanning && description[0] ? (
-                <div style={{ fontWeight: "bold" }}>
-                  {travelStatus !== "NoTarget" && (
-                    <p
+              position: "absolute",
+            }}
+          >
+            {!scanning && description[0] ? (
+              <div
+                style={{
+                  fontWeight: "bold",
+                  position: "relative",
+                  height: "100%",
+                  width: "100%",
+                }}
+              >
+                {" "}
+                {travelStatus !== "NoTarget" && (
+                  <div
+                    className="spaceship-screen-display"
+                    style={{
+                      position: "absolute",
+                      display: "flex",
+                      flexDirection: "row",
+                      scale: "1",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <button
+                      className={`spaceship-button ${waitingForDescription ? "active" : ""}`}
                       style={{
-                        backdropFilter: "blur(3px)",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        top: "40%",
-                        bottom: "-10%",
-                        height: "10%",
-                        width: "100%",
-                        marginTop: "5rem",
-                        margin: "0rem",
+                        position: "relative",
+                        height: "110%",
+                        width: "50%",
+                        marginBottom: "1.2rem",
+                        padding: "0.2rem",
+                        margin: "0.2rem",
+                        marginTop: "1.4rem",
+                        bottom: "53%",
+                      }}
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleButtonClick();
+                        setWaitingForDescription(!waitingForDescription);
                       }}
                     >
-                      <button
-                        className={`spaceship-button ${
-                          travelStatus === "AcquiringTarget" && !waitingForDescription === false ? "active" : ""
-                        }`}
+                      <div
+                        className="spaceship-button-container spaceship-button-text spaceship-display-screen"
                         style={{
-                          border: "2px solid",
-                          backgroundColor: "black",
-                          bottom: "10%",
-                          marginBottom: "0rem",
-                        }}
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleButtonClick();
-                          setWaitingForDescription(true);
+                          margin: "0rem",
+                          position: "absolute",
+                          top: "0%",
+                          left: "0%",
+                          width: "100%",
+                          height: "160%",
+                          paddingBottom: "-30%",
+                          marginBottom: "-30%",
+                          scale: "1",
                         }}
                       >
-                        <div
-                          className="spaceship-button-text"
-                          style={{
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {travelStatus === "TargetAcquired" ? (
-                            <>NEXT TRANSMISSION</>
-                          ) : interplanetaryStatusReport ? (
-                            <div
-                              style={{
-                                pointerEvents: "none",
-                                color: "white",
-                              }}
-                            >
-                              CONFIGURING TARGETING COMPUTER
-                            </div>
-                          ) : (
+                        {travelStatus === "TargetAcquired" ? (
+                          <p className={"spaceship-button-text"} style={{ color: "white", scale: "0.8" }}>
+                            NEXT TRANSMISSION
+                          </p>
+                        ) : interplanetaryStatusReport ? (
+                          <div
+                            className={"spaceship-button-text"}
+                            style={{
+                              pointerEvents: "none",
+                              color: "white",
+                              scale: "0.8",
+                            }}
+                          >
+                            CONFIGURING TARGETING COMPUTER
+                          </div>
+                        ) : (
+                          <p className={"spaceship-button-text"} style={{ scale: "0.8" }}>
                             <>SET COORDINATES</>
-                          )}
-                        </div>
-                      </button>
-                      SCANNER READY
-                    </p>
-                  )}
-                </div>
-              ) : scanning ? (
-                <>
-                  <div className="spaceship-display-screen">
-                    <p className="description-text screen-border">Scanning...</p>
+                          </p>
+                        )}
+                      </div>
+                    </button>
+                    <div
+                      className="spaceship-display-screen"
+                      style={{
+                        position: "absolute",
+                        display: "flex",
+                        flexDirection: "column",
+                        scale: ".6",
+                        padding: "0.4rem",
+                        paddingLeft: "-1.4rem",
+                        margin: "0.5rem",
+                        marginRight: "-2.6rem",
+                        width: "83%",
+                        height: "180%",
+                        left: "31%",
+                        top: "-80%",
+                        bottom: "25%",
+                        marginBottom: "0rem",
+                      }}
+                    >
+                      <br /> STATUS
+                      <br />
+                      {travelStatus}
+                      <br /> DECODED ID : {selectedTokenId}
+                      <br />
+                      {travelStatus === "TargetAcquired" ? (
+                        <>|COORDINATES SET|</>
+                      ) : interplanetaryStatusReport ? (
+                        <>COMPUTING COORDINATES</>
+                      ) : (
+                        <>SETTING COODRINATES</>
+                      )}
+                    </div>
                   </div>
-                </>
-              ) : (
-                travelStatus === "NoTarget" && <div className="description-text">SCANNER OFFLINE</div>
-              )}
-            </div>
+                )}
+              </div>
+            ) : scanning ? (
+              <>
+                <div className="spaceship-display-screen">
+                  <p className="description-text screen-border">Scanning...</p>
+                </div>
+              </>
+            ) : (
+              travelStatus === "NoTarget" && <div className="description-text">SCANNER OFFLINE</div>
+            )}
           </div>
         </>
       </div>

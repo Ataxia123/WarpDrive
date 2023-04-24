@@ -7,6 +7,7 @@ import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth/useScaffoldEventHistory";
 
 interface ReadAIUProps {
+  modifiedPrompt: string;
   interplanetaryStatusReport: string;
   setWarping: (warping: boolean) => void;
   setTravelStatus: (type: "NoTarget" | "AcquiringTarget" | "TargetAcquired") => void;
@@ -23,6 +24,7 @@ interface ReadAIUProps {
 }
 
 export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
+  modifiedPrompt,
   interplanetaryStatusReport,
   setWarping,
   setTravelStatus,
@@ -202,17 +204,60 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
           alignContent: "right",
           justifyContent: "center",
           alignItems: "center",
-          padding: "1rem",
-          scale: "0.98",
-          fontSize: "1.5rem",
+          padding: ".1rem",
+          scale: "0.88",
+          fontSize: "1rem",
         }}
       >
-        {balance?.toString()} SIGNALS DETECTED
-        <br />
-        <div>ENGAGED{engaged}</div>
-        <RainbowKitCustomConnectButton />
-      </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            scale: "1",
+          }}
+          className="spaceship-display-screen"
+        >
+          <ul
+            style={{
+              display: "flex",
+              alignContent: "center",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
 
+              scale: "1",
+            }}
+          >
+            <li
+              style={{
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "center",
+                alignItems: "center",
+
+                scale: "1",
+              }}
+            >
+              {balance?.toString()} AI-U SIGNALS STATUS:{engaged ? "ENGAGED" : "OFF"}
+            </li>
+            <br />
+
+            <li
+              style={{
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "3rem",
+              }}
+            >
+              <RainbowKitCustomConnectButton />
+            </li>
+          </ul>
+        </div>
+      </div>
       {balance?.toNumber() !== 0 ? (
         <div onMouseEnter={() => setMouseTrigger(true)} className="toggle-minimize-button spaceship-display-screen">
           <div onMouseEnter={onToggleMinimize} onMouseLeave={onToggleMinimize} className="spaceship-display-screen">
@@ -224,7 +269,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                 opacity: "0.8",
               }}
             >
-              <p className="display-text hex-prompt">SIGNALS DETECTED</p>
+              <div className="display-text hex-prompt">SIGNALS DETECTED</div>
               <br />
               <select
                 id="tokenId"
@@ -241,7 +286,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                 <option value="hex-prompt dropdown-option">-ID-</option>
                 {tokenIds?.map(tokenId => (
                   <option key={tokenId} value={tokenId}>
-                    {selectedTokenId}
+                    {tokenId}
                   </option>
                 ))}
               </select>
@@ -261,86 +306,261 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
           className="toggle-minimize-button spaceship-display-screen"
         ></div>
       )}
-      <div className={`spaceship-display-screen token-selection-panel${isMinimized ? "-focused" : ""}`}>
-        <div className="screen-border">
-          {metadata && (
-            <>
-              <div className="panel-content">
-                {imageSrc && (
-                  <div className="image-column">
-                    <img
-                      className="focused-image-display"
-                      src={imageSrc}
-                      alt={metadata?.name}
-                      style={{
-                        position: "absolute",
-                        padding: "5rem",
-                        paddingRight: "2rem",
-                        marginLeft: "10%",
-                        top: "-30%",
-                        bottom: "10%",
-                        left: "-12%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </div>
-                )}
+      <img
+        style={{
+          position: "absolute",
+          height: "25%",
+          width: "19%",
+          top: "19%",
+          left: "40.56%",
+          opacity: "0.11",
+          zIndex: "1000000",
+        }}
+        src="/aiu.png"
+        onClick={() => {
+          setEngaged(!engaged);
+        }}
+      ></img>{" "}
+      <div className={`spaceship-display-screen token-selection-panel${isMinimized || engaged ? "-focused" : ""}`}>
+        <div
+          style={{
+            color: "Black",
+            position: "relative",
 
+            opacity: "1",
+            height: "100%",
+            width: "100%",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              height: "40%",
+              width: "100%",
+              top: "20%",
+              display: "flex",
+              flexDirection: "row",
+            }}
+            className="spaceship-display-screen"
+          >
+            <div
+              className="spaceship-display-screen"
+              style={{ position: "relative", top: "-35%", height: "50%", width: "50%" }}
+            >
+              <div
+                style={{
+                  left: "30%",
+                  marginLeft: "-23%",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  top: "10%",
+                  position: "absolute",
+                  width: "100%",
+                  height: "20%",
+                }}
+                className="display-text hex-prompt"
+              >
+                {travelStatus}
+              </div>
+              <div
+                className="prompt-display"
+                style={{
+                  position: "absolute",
+                  left: "-15%",
+                  marginLeft: "45%",
+                  display: "flex",
+                  marginRight: "2180rem",
+                  right: "100%",
+                  padding: "1rem",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  top: "50%",
+                  width: "60%",
+                  height: "20%",
+                  fontSize: ".7rem",
+                  wordBreak: "break-all",
+                }}
+              >
+                {" "}
                 <div
-                  className="text-column screen-border"
+                  style={{
+                    position: "absolute",
+                    left: "15%",
+                    color: "white",
+                    top: "-130%",
+                    fontWeight: "bold",
+                  }}
+                  className="description-text"
+                >
+                  MODIFIED SIGNAL:
+                </div>
+              </div>
+              <div
+                className="hex-data-revealer"
+                style={{
+                  width: "50%",
+                  height: "50%",
+                  scale: "1.2",
+                  top: "55%",
+                  left: "35%",
+                }}
+              >
+                {stringToHex(modifiedPrompt ? modifiedPrompt : "No SIGNAL")}
+              </div>
+              <br />
+              <p
+                style={{
+                  position: "absolute",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+
+                  left: "35%",
+                  width: "50%",
+                  color: "white",
+                  top: "43%",
+                  wordBreak: "break-all",
+                  height: "50%",
+                  fontSize: ".7rem",
+                  overflowY: "auto",
+                }}
+              >
+                {" "}
+                {modifiedPrompt}
+              </p>
+              <br />
+              Attributes:
+              <h3
+                style={{
+                  position: "relative",
+                  left: "-5%",
+                  top: "-0%",
+                  width: "175%",
+                  height: "150%",
+                }}
+                className="description-text attributes"
+              >
+                <div
                   style={{
                     position: "relative",
-                    textAlign: "center",
-                    padding: "10rem",
-                    paddingRight: "6rem",
-                    content: "fit-content",
-                    bottom: "20%",
-                    maxHeight: "50%",
-                    maxWidth: "90%",
-                    marginLeft: "-2.5rem",
-                    marginRight: "12rem",
-                    marginBottom: "-44rem",
-                    marginTop: "-7rem",
-                    height: "60rem",
+                    left: "-15%",
+                    top: "30%",
                   }}
                 >
                   {" "}
-                  <h2>
-                    <h3
-                      style={{
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {" "}
-                      WELCOME TO THE FINAL FRONTIER -------------------------------
-                      <br />
-                      {interplanetaryStatusReport ? interplanetaryStatusReport : "No Status Report"}
-                    </h3>
-                    Attributes:
-                    <h3 className="description-text">
-                      {metadata?.attributes[1].value}
-                      {""}
-                      {metadata?.attributes[2].value} {""}
-                      {metadata?.attributes[3].value} {""}
-                      {metadata?.attributes[4].value}
-                      {stringToHex(metadata ? metadata.description : "No Metadata")}
-                      <ul>
-                        {metadata.attributes.map((attribute: any, index: number) => (
-                          <li key={index}>
-                            {attribute.trait_type}: {attribute.value}
-                          </li>
-                        ))}
-                      </ul>
-                    </h3>
-                  </h2>
+                  {metadata?.attributes[1].value}
+                  {""}
+                  {metadata?.attributes[2].value} {""}
+                  {metadata?.attributes[3].value} {""}
                 </div>
-              </div>
-            </>
-          )}
+                <div
+                  style={{
+                    right: "60%",
+                    top: "40%",
+                    marginLeft: "20%",
+                    marginTop: "0%",
+                    height: "15%",
+                    width: "30%",
+                    bottom: "-10%",
+                    opacity: "1",
+                    zIndex: "10000",
+                  }}
+                  className="hex-data-revealer hover: hover:opacity-10"
+                >
+                  {" "}
+                  {stringToHex(metadata ? metadata.description : "No Metadata")}
+                  {metadata?.attributes[4].value}
+                  <ul
+                    className="hex-prompt prompt-display"
+                    style={{
+                      position: "relative",
+                      padding: "0.5rem",
+                      color: "white",
+                      alignContent: "left",
+                      top: "-320%",
+                      left: "15%",
+                      width: "70%",
+                      height: "300%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "left",
+                      alignItems: "left",
+                    }}
+                  >
+                    {metadata?.attributes.map((attribute: any, index: number) => (
+                      <li key={index}>
+                        {attribute.trait_type}: {attribute.value}
+                      </li>
+                    ))}
+                  </ul>
+                </div>{" "}
+              </h3>
+              <br />
+            </div>
+            <div
+              className="spaceship-display-screen"
+              style={{
+                bottom: "50%",
+                top: "10%",
+                position: "relative",
+                height: "140%",
+                width: "50%",
+                display: "flex",
+                paddingTop: "11rem",
+                paddingRight: "4rem",
+                marginRight: "0rem",
+                marginLeft: "-1rem",
+              }}
+            >
+              <div
+                className=""
+                style={{
+                  color: "white",
+                  padding: "2rem",
+                }}
+              >
+                <h1
+                  style={{
+                    color: "white",
+                    fontSize: "1.2rem",
+                    textAlign: "center",
 
-          <h3 className="panel-title focused-title description-text position-relative">
-            <div className="panel-content justify-center"></div>
-          </h3>
+                    textEmphasisColor: "white",
+                    fontWeight: "bold",
+                  }}
+                >
+                  INTERPLANETARY STATUS REPORT
+                </h1>
+                <h2
+                  style={{
+                    height: "60%",
+                    width: "100%",
+                    position: "relative",
+                    marginBottom: "17rem",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  {interplanetaryStatusReport}
+                </h2>
+              </div>
+              <div className="hex-data"> {stringToHex(metadata ? metadata.description : "No Metadata")}</div>
+            </div>
+            <img
+              style={{
+                borderRadius: "50%",
+                position: "absolute",
+                height: "70%",
+                width: "28%",
+                top: "-45%",
+                left: "37%",
+                border: "12px solid #000000",
+                zIndex: 10000100,
+              }}
+              src={imageSrc}
+            ></img>
+          </div>
         </div>
       </div>
     </>

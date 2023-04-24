@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReadAIU from "../ReadAIU";
 
 interface TokenSelectionPanelProps {
+  modifiedPrompt: string;
   setWarping: (warping: boolean) => void;
   setTravelStatus: (type: "NoTarget" | "AcquiringTarget" | "TargetAcquired") => void;
   handleEngaged: (engaged: boolean) => void;
@@ -16,6 +17,7 @@ interface TokenSelectionPanelProps {
 }
 
 const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
+  modifiedPrompt,
   setWarping,
   setTravelStatus,
   handleEngaged,
@@ -50,6 +52,7 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
   return (
     <>
       <ReadAIU
+        modifiedPrompt={modifiedPrompt}
         interplanetaryStatusReport={interplanetaryStatusReport}
         setWarping={setWarping}
         setTravelStatus={setTravelStatus}

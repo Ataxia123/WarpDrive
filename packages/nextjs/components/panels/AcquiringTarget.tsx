@@ -58,7 +58,16 @@ const AcquiringTarget: React.FC<AcquiringTargetProps> = ({ travelStatus, selecte
               height: "100%",
             }}
           >
-            <br />
+            {" "}
+            <div
+              className="acquiring-target-circle"
+              style={{
+                backdropFilter: "blur(50px)",
+                backgroundColor: getColor(),
+              }}
+            >
+              {" "}
+            </div>
             {travelStatus == "TargetAcquired" && (
               <>
                 Target<br></br>Acquired
@@ -74,9 +83,6 @@ const AcquiringTarget: React.FC<AcquiringTargetProps> = ({ travelStatus, selecte
                 No<br></br>Target
               </>
             )}
-            <div className="acquiring-target-circle" style={{ backgroundColor: getColor() }}>
-              {" "}
-            </div>
           </div>
         </div>
       )}

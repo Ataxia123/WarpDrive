@@ -385,6 +385,7 @@ export default function Home() {
             <AcquiringTarget loading={loading} travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
 
             <TokenSelectionPanel
+              modifiedPrompt={modifiedPrompt}
               setWarping={setWarping}
               setTravelStatus={setTravelStatus}
               handleEngaged={handleEngaged}

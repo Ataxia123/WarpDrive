@@ -332,10 +332,13 @@ transform: translateY(50%);
   transform: translateX(15%) scale(1.1) translateY(20%); 
 }
 
+
+
 .image-display{
   margin-left: 1.4rem;
   transform: scale(1) skewX(5deg);
   z-index: 1000000000000000000000000000000000000000000;
+  transition: ease-in-out 0.5s;
 }
 
 .image-display:hover{
@@ -343,11 +346,13 @@ transform: translateY(50%);
   perspective(1000px)
  scale(1.5) 
  rotateX(-0deg) 
- rotateY(-50deg) 
- skewX(0deg) 
- skewY(-0deg)
- rotateZ(0deg) translateX(30%) translateY(-20%) scaleX(1.5)
-;
+ rotateY(-30deg) 
+ skewX(10deg) 
+ skewY(-15deg)
+ rotateZ(10deg) translateX(40%) translateY(10%) scaleX(1);
+ z-index: 90000000000000000000000000000000000000000000000000000000000000000000;
+ transition: ease-in-out 0.5s;
+
 opacity: 1;
 
 }
@@ -671,6 +676,7 @@ height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  word-break: break-all,
 }
 
 .description-text {
@@ -905,6 +911,32 @@ z-index: 10000000000000000000000000;
   z-index: -1;
 }
 
+.hex-data-revealer {
+  position: absolute;
+  top: 10%;
+  left: 0;
+  right: 10%;
+  bottom: 1rem;
+
+  height: 100%;
+  width: auto;
+  color: #f2982f;
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  line-height: 10px;
+  text-align: center;
+  white-space: wrap;
+  overflow-wrap: anywhere;
+  z-index: 1;
+  opacity: 1;
+}
+
+.hex-data-revealer:hover{
+  opacity: 0;
+  color: #00000007;
+}
+
+
 .hex-prompt {
   font-family: "Courier New", monospace;
   background-color: rgba(0, 255, 0, 0.1);
@@ -1115,6 +1147,7 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
   flex-direction: column;
   align-items: center;
   background-repeat: repeat;
+  transform: rotateZ(-11deg);
 
 }
 .tokenid-display {
@@ -1373,7 +1406,7 @@ position: absolute;
   height: 25%;
   width: 45%;
   opacity: 0.60;
-  opacity: 0.0;
+  opacity: .0;
   left:auto;
 
   perspective: 1000px;
