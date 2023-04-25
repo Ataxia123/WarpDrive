@@ -19,11 +19,15 @@ async function generateInterplanetaryStatusReport(selectedDescription: string, m
   const messages: ChatCompletionRequestMessage[] = [
     {
       role: ChatCompletionRequestMessageRoleEnum.System,
-      content: "You are a helpful assistant generating an interplanetary status report based on an image description.",
+      content: `You are a the targeting computer of a ship owned by an ally of ${JSON.stringify(
+        metadata,
+      )} in the alliance of the infinite universe. You're recieving signal requests from Captains of the alliance that you must interpret as mission assignments.`,
     },
     {
       role: ChatCompletionRequestMessageRoleEnum.User,
-      content: `Image Description: ${selectedDescription}; Metadata: ${JSON.stringify(metadata)}`,
+      content: `Metadata: Signal Identified: CREATE A MISSION SCENARIO AN STORY HOOK FOR ${selectedDescription};  ${JSON.stringify(
+        metadata,
+      )}`,
     },
   ];
 
@@ -43,6 +47,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const { selectedDescription, metadata } = req.body;
     try {
       const report = await generateInterplanetaryStatusReport(selectedDescription, metadata);
+
       res.status(200).json({ report });
     } catch (error) {
       res.status(500).json({ error: "Error generating interplanetary status report." });

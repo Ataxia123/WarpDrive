@@ -368,7 +368,43 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                 opacity: "0.8",
               }}
             >
-              <div className="display-text hex-prompt">SIGNALS DETECTED</div>
+              {selectedTokenId && travelStatus == "NoTarget" && (
+                <div
+                  style={{
+                    fontWeight: "bold",
+
+                    fontSize: "1rem",
+                    position: "absolute",
+                    top: "20%",
+                    height: "10%",
+                    width: "100%",
+                    padding: "0.1rem",
+                    marginTop: "-2rem",
+                    color: "white",
+                  }}
+                  className="description-text hex-prompt"
+                >
+                  ENGAGE
+                </div>
+              )}
+              {!selectedTokenId && (
+                <div
+                  style={{
+                    fontWeight: "bold",
+
+                    fontSize: "1rem",
+                    position: "absolute",
+                    top: "11%",
+                    height: "20%",
+                    width: "100%",
+                    padding: "0.1rem",
+                    marginTop: "-2rem",
+                  }}
+                  className="display-text hex-prompt"
+                >
+                  SELECT ID
+                </div>
+              )}
               <br />
               <select
                 id="tokenId"
@@ -638,6 +674,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                 paddingRight: "4rem",
                 marginRight: "0rem",
                 marginLeft: "-1rem",
+                pointerEvents: "auto",
               }}
             >
               <div
@@ -654,17 +691,20 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
               >
                 INTERPLANETARY STATUS REPORT
                 <h2
-                  className="scroll-text"
+                  className="hex-prompt"
                   style={{
                     alignContent: "center",
-                    left: "0%",
-                    top: "-10%",
-                    height: "60%",
+                    left: "5%",
+                    padding: "1rem",
+                    top: "125%",
+                    height: "130%",
                     width: "90%",
-                    position: "relative",
+                    position: "absolute",
                     marginBottom: "17rem",
                     fontSize: "0.9rem",
-                    zIndex: 111111111111111,
+
+                    overflowY: "auto",
+                    pointerEvents: "auto",
                   }}
                 >
                   {interplanetaryStatusReport}
@@ -672,7 +712,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
               </div>
               <div
                 style={{
-                  zIndex: 11111111111111,
+                  zIndex: -11111,
                 }}
                 className="hex-data"
               >

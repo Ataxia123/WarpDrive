@@ -1397,22 +1397,15 @@ input[type='checkbox'] {
 }
 
 .spaceship-interface {
-  overflow: fill;
-position: absolute;
-  top: 21%;
-  left: 72%;
-  right: 28%;
-  bottom:50%;
-  height: 25%;
-  width: 45%;
-  opacity: 0.60;
-  opacity: .0;
-  left:auto;
+
+position: relative;
+
+ height: 100%;
+  width: 100%;
+  bottom: -10%;
 
   perspective: 1000px;
   transform-origin: right;
-  transform: rotateY(deg) rotateX(-deg) rotateZ(-1deg) skewX(37deg)skewY(10.1deg)scale(3.5);
-
   background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(14,14,44,1) 100%);
 }
 

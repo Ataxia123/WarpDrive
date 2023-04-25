@@ -51,12 +51,13 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
   };
 
   useEffect(() => {
-    if (description) {
+    if (description.length > 0 || travelStatus === "TargetAcquired") {
       setScanning(false);
     }
-  }, [selectedTokenId, description]);
+  }, [selectedTokenId, description, interplanetaryStatusReport]);
 
   const handleButtonClick = () => {
+    setScanning(true);
     setDescriptionIndex(prevIndex => (prevIndex + 1) % description.length);
   };
 
@@ -124,9 +125,13 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
               }}
             >
               <button
-                className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700 description-text"}
+                className={
+                  "py-2 px-4 rounded font-bold text-white  hover:bg-green-700 description-text spaceship-text screen-border"
+                }
                 style={{
                   border: "1px solid white",
+                  height: "17rem",
+                  top: "10%",
                 }}
                 onClick={e => {
                   e.stopPropagation();

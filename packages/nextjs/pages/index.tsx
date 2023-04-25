@@ -52,7 +52,7 @@ export default function Home() {
   const [travelStatus, setTravelStatus] = useState<"NoTarget" | "AcquiringTarget" | "TargetAcquired">("NoTarget");
   const [interplanetaryStatusReport, setInterplanetaryStatusReport] = useState("");
   const [selectedDescription, setSelectedDescription] = useState(description[selectedDescriptionIndex]);
-  const [modifiedPrompt, setModifiedPrompt] = useState("");
+  const [modifiedPrompt, setModifiedPrompt] = useState("ALLIANCE OF THE INFINITE UNIVERSE");
   const [warped, setWarped] = useState(false);
   const [warping, setWarping] = useState(false);
 
@@ -89,29 +89,42 @@ export default function Home() {
     const randomPlanet =
       "https://discovery.sndimg.com/content/dam/images/discovery/fullset/2022/9/alien%20planet%20GettyImages-913058614.jpg.rend.hgtvcom.406.406.suffix/1664497398007.jpeg";
     if (type === "background")
-      return `${randomPlanet} ${keyword} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${selectedDescription} ${niji} ${v} viewed from space`.trim();
+      return `${randomPlanet} ${keyword} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${selectedDescription} ${interplanetaryStatusReport} ${niji} ${v} viewed from space`.trim();
 
     return `${srcUrl} ${keyword} ${level} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${side} ${selectedDescription} ${interplanetaryStatusReport} ${niji} ${v}`.trim();
   }
 
   useEffect(() => {
-    if (selectedDescription !== undefined) {
-      // Step 2: Call your new API route to generate the report
+    // Step 2: Call your new API route to generate the report
+    if (travelStatus !== "NoTarget") {
       const fetchInterplanetaryStatusReport = async () => {
         try {
-          const response = await axios.post("/api/generate_report", {
-            selectedDescription,
-            metadata,
-          });
-          setInterplanetaryStatusReport(response.data.report);
+          if (modifiedPrompt !== "ALLIANCE OF THE INFINITE UNIVERSE") {
+            const response = await axios.post("/api/generate_report", {
+              selectedDescription: modifiedPrompt,
+
+              metadata,
+            });
+            console.log("normal prompt gpt");
+            setInterplanetaryStatusReport(response.data.report);
+          } else {
+            const response = await axios.post("/api/generate_report", {
+              selectedDescription,
+              metadata,
+            });
+            console.log("modified prompt gpt");
+            setInterplanetaryStatusReport(response.data.report);
+          }
         } catch (error) {
           console.error("Error fetching interplanetary status report:", error);
         }
       };
-
+      console.log("travel status", travelStatus);
+      console.time("fetchInterplanetaryStatusReport");
       fetchInterplanetaryStatusReport();
+      console.timeEnd("fetchInterplanetaryStatusReport");
     }
-  }, [selectedDescription]);
+  }, [travelStatus]);
 
   const submitPrompt = async (type: "character" | "background") => {
     let prompt = generatePrompt(

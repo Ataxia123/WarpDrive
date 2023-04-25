@@ -3,7 +3,7 @@ import React, { useState } from "react";
 // Import the CSS styles
 
 const SpaceshipInterface = () => {
-  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(true);
   const videoId = "MVPTGNGiI-4"; // Fix the videoId
 
   const toggleVideo = () => {
@@ -11,14 +11,22 @@ const SpaceshipInterface = () => {
   };
   const divStyle: React.CSSProperties = {
     pointerEvents: videoPlaying ? "auto" : "none",
-    opacity: videoPlaying ? 0.3 : 1,
+    opacity: videoPlaying ? 0.8 : 0.2,
+
+    left: "71%",
+    top: "19%",
+    width: "20%",
+    height: "20%",
+
+    position: "absolute",
+    transform: "rotateZ(11deg) rotateY(-49deg)skewX(8deg)skewY(-5deg)",
   };
 
   const iframeSrc = `https://www.youtube.com/embed/${videoId}?autoplay=${videoPlaying ? "1" : "0"}&mute=0`;
 
   return (
     <>
-      <div style={divStyle} className="spaceship-screen-display" onClick={toggleVideo}>
+      <div style={divStyle} className="spaceship-display-screen" onClick={toggleVideo}>
         <iframe
           className={`screen-border spaceship-interface ${videoPlaying ? "video-playing" : ""}`}
           id="ytplayer"
