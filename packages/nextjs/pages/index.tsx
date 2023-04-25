@@ -67,12 +67,6 @@ export default function Home() {
     setSelectedDescription(description[selectedDescriptionIndex]);
   }, [selectedDescriptionIndex]);
 
-  const configuration = new Configuration({
-    organization: "org-7cmuqricUOtf3dACGKD9Va7f",
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-  const openai = new OpenAIApi(configuration);
-
   function generatePrompt(
     type: "character" | "background",
     srcUrl: string | undefined,
@@ -97,7 +91,7 @@ export default function Home() {
     if (type === "background")
       return `${randomPlanet} ${keyword} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${selectedDescription} ${niji} ${v} viewed from space`.trim();
 
-    return `${srcUrl} ${keyword} ${level} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${side} ${selectedDescription} ${niji} ${v}`.trim();
+    return `${srcUrl} ${keyword} ${level} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${side} ${selectedDescription} ${interplanetaryStatusReport} ${niji} ${v}`.trim();
   }
 
   useEffect(() => {

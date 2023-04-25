@@ -95,7 +95,7 @@ position: fixed;
 }
 
 .screen-border:hover {
-  opacity: 0.8; /* Set the opacity value on hover */
+  opacity: 1; /* Set the opacity value on hover */
 }
 
 .prompt-utility-div-right{
@@ -261,13 +261,13 @@ z-index: -1;
   margin-left: 1rem;
   margin-top: 1rem;
   right: 5rem;
-  z-index: -2; /* Change the z-index to bring it up above other elements */
+  z-index: 200000000000000000000000000000000; /* Change the z-index to bring it up above other elements */
   opacity: 1;
   object-fit: fill;
   transition: transform 0.5s ease-in-out, top 0.5s ease-in-out, left 0.5s ease-in-out;
   animation: randomFlicker 1.65s infinite ease-in-out;
   border: #f2982f 1px solid;
-  border-style: dashed;
+  border-style: dashed; 
 }
 
 

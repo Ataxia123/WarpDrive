@@ -52,7 +52,7 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
   onModifiedPrompt,
   warped,
 }) => {
-  const excludedAttributes = ["srcUrl", "nijiFlag", "vFlag", "selectedDescription", "interplanetaryStatusReport"];
+  const excludedAttributes = [""];
   const [modifiedPrompt, setModifiedPrompt] = useState("ALLIANCEOFTHEINFINITEUNIVERSE");
   const [isExpanded, setIsExpanded] = useState(false);
   const [extraText, setExtraText] = useState("");
@@ -165,7 +165,14 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
                   {stringToHex(modifiedPrompt)}
                   {stringToHex(modifiedPrompt)}
                 </div>
-                {modifiedPrompt}
+                <p
+                  style={{
+                    padding: "20px",
+                    color: "white",
+                  }}
+                >
+                  {modifiedPrompt}
+                </p>
                 <br />
                 <button
                   className="description-text spaceship-display-screen"
@@ -193,6 +200,7 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
 
                     return (
                       <div
+                        style={{ overflow: "hidden" }}
                         key={attribute}
                         className={`switchboard-attribute ${isChecked ? "checked" : ""} spaceship-panel`}
                         onClick={e => {

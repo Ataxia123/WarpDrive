@@ -411,9 +411,9 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
           position: "absolute",
           height: "25%",
           width: "19%",
-          top: "19%",
-          left: "40.56%",
-          opacity: "0.11",
+          top: "20.4%",
+          left: "40.96%",
+          opacity: "0.15",
           zIndex: "1000000",
         }}
         src="/aiu.png"
@@ -498,7 +498,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                 </div>
               </div>
               <div
-                className="hex-data-revealer"
+                className="hex-data-revealer scroll-text"
                 style={{
                   width: "50%",
                   height: "50%",
@@ -511,20 +511,23 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
               </div>
               <br />
               <p
+                className="hex-display hex-prompt"
                 style={{
                   position: "absolute",
                   display: "flex",
                   flexDirection: "row",
                   justifyContent: "center",
-
-                  left: "35%",
-                  width: "50%",
+                  padding: "1rem",
+                  paddingRight: "2rem",
+                  left: "25%",
+                  width: "70%",
                   color: "white",
-                  top: "43%",
+                  top: "40%",
                   wordBreak: "break-all",
                   height: "50%",
                   fontSize: ".7rem",
                   overflowY: "auto",
+                  zIndex: 10000,
                 }}
               >
                 {" "}
@@ -535,18 +538,20 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
               <h3
                 style={{
                   position: "relative",
-                  left: "-5%",
-                  top: "-0%",
-                  width: "175%",
-                  height: "150%",
+                  left: "5%",
+                  top: "45%",
+                  width: "150%",
+                  height: "170%",
                 }}
-                className="description-text attributes"
+                className="description-text attributes spaceship-display-screen"
               >
                 <div
                   style={{
                     position: "relative",
                     left: "-15%",
-                    top: "30%",
+                    top: "0%",
+                    color: "white",
+                    fontWeight: "bold",
                   }}
                 >
                   {" "}
@@ -557,45 +562,66 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                 </div>
                 <div
                   style={{
-                    right: "60%",
-                    top: "40%",
+                    right: "70%",
+                    left: "-4%",
+                    top: "23%",
                     marginLeft: "20%",
-                    marginTop: "0%",
-                    height: "15%",
-                    width: "30%",
-                    bottom: "-10%",
+                    marginTop: "-8%",
+                    height: "100%",
+                    width: "40%",
+                    bottom: "-30%",
                     opacity: "1",
                     zIndex: "10000",
+                    position: "relative",
                   }}
                   className="hex-data-revealer hover: hover:opacity-10"
                 >
                   {" "}
                   {stringToHex(metadata ? metadata.description : "No Metadata")}
-                  {metadata?.attributes[4].value}
-                  <ul
-                    className="hex-prompt prompt-display"
-                    style={{
-                      position: "relative",
-                      padding: "0.5rem",
-                      color: "white",
-                      alignContent: "left",
-                      top: "-320%",
-                      left: "15%",
-                      width: "70%",
-                      height: "300%",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "left",
-                      alignItems: "left",
-                    }}
-                  >
-                    {metadata?.attributes.map((attribute: any, index: number) => (
-                      <li key={index}>
-                        {attribute.trait_type}: {attribute.value}
-                      </li>
-                    ))}
-                  </ul>
+                  {metadata?.attributes[4].value}{" "}
                 </div>{" "}
+                <ul
+                  className=""
+                  style={{
+                    position: "absolute",
+                    padding: "1rem",
+
+                    color: "white",
+                    justifyContent: "center",
+                    left: "13%",
+                    top: "6%",
+                    width: "100%",
+                    height: "90%",
+                    marginTop: "-10%",
+                    marginLeft: "5%",
+                    marginRight: "5%",
+                    marginBottom: "5%",
+                    fontSize: ".7rem",
+                    overflowY: "auto",
+                    zIndex: 10000,
+                  }}
+                >
+                  {metadata?.attributes.map((attribute: any, index: number) => (
+                    <li
+                      className="hex-prompt spaceship-button-text"
+                      style={{
+                        color: "white",
+                        fontSize: ".7rem",
+                        textAlign: "center",
+                        top: "30%",
+                        textEmphasisColor: "white",
+                        fontWeight: "bold",
+
+                        position: "relative",
+
+                        width: "30%",
+                      }}
+                      key={index}
+                    >
+                      {attribute.trait_type}: {attribute.value}
+                    </li>
+                  ))}
+                </ul>
               </h3>
               <br />
             </div>
@@ -603,7 +629,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
               className="spaceship-display-screen"
               style={{
                 bottom: "50%",
-                top: "10%",
+                top: "43%",
                 position: "relative",
                 height: "140%",
                 width: "50%",
@@ -618,34 +644,41 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                 className=""
                 style={{
                   color: "white",
-                  padding: "2rem",
+                  padding: "1rem",
+                  zIndex: 100000000000000000000000000000,
+                  position: "absolute",
+                  fontWeight: "bold",
+                  fontSize: "1.1rem",
+                  top: "0%",
                 }}
               >
-                <h1
-                  style={{
-                    color: "white",
-                    fontSize: "1.2rem",
-                    textAlign: "center",
-
-                    textEmphasisColor: "white",
-                    fontWeight: "bold",
-                  }}
-                >
-                  INTERPLANETARY STATUS REPORT
-                </h1>
+                INTERPLANETARY STATUS REPORT
                 <h2
+                  className="scroll-text"
                   style={{
+                    alignContent: "center",
+                    left: "0%",
+                    top: "-10%",
                     height: "60%",
-                    width: "100%",
+                    width: "90%",
                     position: "relative",
                     marginBottom: "17rem",
                     fontSize: "0.9rem",
+                    zIndex: 111111111111111,
                   }}
                 >
                   {interplanetaryStatusReport}
                 </h2>
               </div>
-              <div className="hex-data"> {stringToHex(metadata ? metadata.description : "No Metadata")}</div>
+              <div
+                style={{
+                  zIndex: 11111111111111,
+                }}
+                className="hex-data"
+              >
+                {" "}
+                {stringToHex(metadata ? metadata.description : "No Metadata")}
+              </div>
             </div>
             <img
               style={{

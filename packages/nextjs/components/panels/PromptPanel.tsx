@@ -87,8 +87,10 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
     "Alignment1",
     "Alignment2",
     "Side",
-    "InterplanetaryStatusReport",
-    "Description",
+    "interplanetaryStatusReport",
+    "selectedDescription",
+    "NijiFlag",
+    "VFlag",
   ];
   const [nijiFlag, setNijiFlag] = useState(false);
   const [vFlag, setVFlag] = useState(false);
@@ -136,9 +138,16 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
             </h1>
 
             {isFocused && (
-              <div className="spaceship-display-screen">
+              <div
+                style={{
+                  transform: "translate(1%)",
+                  opacity: 1,
+                  zIndex: -10,
+                }}
+                className="spaceship-display-screen"
+              >
                 {imageUrl ? (
-                  <img src={imageUrl} className="screen-border image-display " alt="nothing" />
+                  <img style={{ zIndex: 10 }} src={imageUrl} className="screen-border image-display " alt="nothing" />
                 ) : (
                   <img src={srcUrl} className="image-display screen-border" alt="nothing" />
                 )}
