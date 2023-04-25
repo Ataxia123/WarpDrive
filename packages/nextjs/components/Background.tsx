@@ -4,6 +4,7 @@ import styles from "./Background.module.css";
 import SpaceParticles from "./SpaceParticles";
 
 interface BackgroundProps {
+  scanning: boolean;
   warping: boolean;
   warped: boolean;
   dynamicImageUrl: string;
@@ -11,7 +12,14 @@ interface BackgroundProps {
   travelStatus: string;
 }
 
-const Background: React.FC<BackgroundProps> = ({ warping, dynamicImageUrl, warped, fixedImageUrl, travelStatus }) => {
+const Background: React.FC<BackgroundProps> = ({
+  warping,
+  dynamicImageUrl,
+  warped,
+  fixedImageUrl,
+  travelStatus,
+  scanning,
+}) => {
   const [bgPosition, setBgPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [warpSpeedOpacity, setWarpSpeedOpacity] = useState("0");
   const [lightSpeed, setLightSpeed] = useState(false);
@@ -27,7 +35,9 @@ const Background: React.FC<BackgroundProps> = ({ warping, dynamicImageUrl, warpe
     };
   }, []);
   useEffect(() => {
-    setLightSpeed(travelStatus === "TargetAcquired" ? true : false);
+    if (scanning !== true) {
+      setLightSpeed(travelStatus === "TargetAcquired" ? true : false);
+    }
   }, [warping, travelStatus]);
   return (
     <div className={styles.background}>

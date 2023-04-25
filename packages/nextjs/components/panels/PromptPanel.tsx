@@ -12,6 +12,7 @@ type Metadata = {
   Alignment2: string;
   Side: string;
   interplanetaryStatusReport: string;
+  selectedDescription: string;
 };
 
 interface PromptPanelProps {

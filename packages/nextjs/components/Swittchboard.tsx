@@ -36,6 +36,7 @@ interface SwitchboardProps {
     Alignment2: string;
     Side: string;
     interplanetaryStatusReport: string;
+    selectedDescription: string;
   };
   selectedAttributes: string[];
 }

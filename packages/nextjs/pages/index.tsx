@@ -23,6 +23,7 @@ type Metadata = {
   Alignment2: string;
   Side: string;
   interplanetaryStatusReport: string;
+  selectedDescription: string;
 };
 
 export default function Home() {
@@ -59,19 +60,19 @@ export default function Home() {
 
   const handleEngaged = (engaged: boolean) => {
     if (engaged === true) {
-      setWarping(!warping);
       console.log("WARP DRIVE IS ENGAGED", { warping, engaged });
     }
   };
 
   const handleScanning = (scanning: boolean) => {
     if (scanning) {
-      setScanning(scanning);
+      setScanning(!scanning);
     }
   };
 
   useEffect(() => {
     setSelectedDescription(description[selectedDescriptionIndex]);
+    setScanning(true);
   }, [selectedDescriptionIndex]);
 
   function generatePrompt(
@@ -194,6 +195,7 @@ export default function Home() {
         setTravelStatus("NoTarget");
       } else {
         setTempUrl(imageUrl);
+        setScanning(false);
         setButtonMessageId(messageId);
       }
     } catch (e: any) {
@@ -311,7 +313,7 @@ export default function Home() {
   // add logic so that user can click instead of timeout
   useEffect(() => {
     if (scanning === true) {
-      submitPrompt("character");
+      submitPrompt("background");
       setTravelStatus("TargetAcquired");
     }
   }, [selectedDescription]);
@@ -357,6 +359,7 @@ export default function Home() {
     Alignment2: alignment2,
     Side: side,
     interplanetaryStatusReport: interplanetaryStatusReport,
+    selectedDescription: selectedDescription,
   };
 
   const handleImageSrcReceived = (imageSrc: string) => {
@@ -383,6 +386,7 @@ export default function Home() {
         <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
         <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
           <Dashboard
+            scanning={scanning}
             response={response}
             error={error}
             warping={warping}
@@ -421,6 +425,7 @@ export default function Home() {
               travelStatus={travelStatus}
             />
             <DescriptionPanel
+              scanning={scanning}
               handleScanning={handleScanning}
               travelStatus={travelStatus}
               interplanetaryStatusReport={interplanetaryStatusReport}

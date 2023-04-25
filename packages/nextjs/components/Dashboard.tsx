@@ -5,6 +5,7 @@ import { MarqueePanel } from "./panels/MarqueePannel";
 import { Header } from "~~/components/Header";
 
 interface DashboardProps {
+  scanning: boolean;
   response: string;
   error: string;
   warping: boolean;
@@ -49,6 +50,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   travelStatus,
   dynamicImageUrl,
   loading,
+  scanning,
 }) => {
   return (
     <>
@@ -68,6 +70,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           buttonMessageId={buttonMessageId}
         />
         <Background
+          scanning={scanning}
           warping={warping}
           warped={warped}
           travelStatus={travelStatus}

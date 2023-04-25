@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
 interface DescriptionPanelProps {
+  scanning: boolean;
   handleScanning: (scanning: boolean) => void;
   travelStatus: string;
   description: string[];
@@ -13,6 +14,7 @@ interface DescriptionPanelProps {
 }
 
 export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
+  scanning,
   handleScanning,
   travelStatus,
   interplanetaryStatusReport,
@@ -23,7 +25,6 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
   selectedTokenId,
 }) => {
   const [focused, setFocused] = useState(false);
-  const [scanning, setScanning] = useState(false);
   const [descriptionIndex, setDescriptionIndex] = useState<number>(0);
   const [waitingForDescription, setWaitingForDescription] = useState<boolean>(false);
 
@@ -39,20 +40,15 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
 
   const handleScanClick = () => {
     handleScanning(true);
-    setScanning(true);
     handleDescribeClick();
   };
 
   const handleButtonClick = () => {
-    setScanning(true);
     setDescriptionIndex(prevIndex => (prevIndex + 1) % description.length);
   };
 
   useEffect(() => {
     if (travelStatus === "TargetAcquired" && description.length > 0) {
-      handleScanning(false);
-      setScanning(false);
-      setWaitingForDescription(false);
     }
   }, [travelStatus, interplanetaryStatusReport]);
 
@@ -90,7 +86,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
         }}
       >
         {" "}
-        AI-UNIVERSE
+        AI-UNIVERSE {scanning && <span className="blinking-cursor">_</span>}
         <p
           className=""
           style={{
@@ -221,7 +217,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
               position: "absolute",
             }}
           >
-            {!scanning && description[0] ? (
+            {description[0] ? (
               <div
                 style={{
                   fontWeight: "bold",
@@ -258,7 +254,6 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                       onClick={e => {
                         e.stopPropagation();
                         handleButtonClick();
-                        setWaitingForDescription(!waitingForDescription);
                       }}
                     >
                       <div

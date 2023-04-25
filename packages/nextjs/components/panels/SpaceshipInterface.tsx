@@ -17,13 +17,12 @@ const SpaceshipInterface: React.FC<SpaceshipInterfaceProps> = ({ travelStatus })
     pointerEvents: videoPlaying ? "auto" : "none",
     opacity: videoPlaying ? 0.8 : 0.2,
 
-    left: "71%",
+    left: "73%",
     top: "19%",
-    width: "20%",
+    width: "15.5%",
     height: "20%",
-
     position: "absolute",
-    transform: "rotateZ(11deg) rotateY(-49deg)skewX(8deg)skewY(-5deg)",
+    transform: "perspective(1000px) rotateZ(-20deg) rotateY(-10deg) rotateX(5deg)skewX(-12deg)skewY(16deg)",
   };
 
   useEffect(() => {
@@ -39,6 +38,9 @@ const SpaceshipInterface: React.FC<SpaceshipInterfaceProps> = ({ travelStatus })
       <div style={divStyle} className="spaceship-display-screen" onClick={toggleVideo}>
         <iframe
           className={`screen-border spaceship-interface ${videoPlaying ? "video-playing" : ""}`}
+          style={{
+            width: "100%",
+          }}
           id="ytplayer"
           src={iframeSrc}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -48,20 +50,20 @@ const SpaceshipInterface: React.FC<SpaceshipInterfaceProps> = ({ travelStatus })
         className="screen-border spaceship-pannel spaceship-display-screen"
         style={{
           position: "absolute",
-          height: "10%",
-          width: "5%",
+          height: "8%",
+          width: "4%",
 
           fontSize: ".8rem",
           display: "flex",
           justifyContent: "center",
           border: "1px solid #fff",
           alignItems: "center",
-          top: "62%",
+          top: "63%",
           left: "63%",
           marginRight: "5%",
           padding: "1.5rem",
           zIndex: 1,
-          transform: "rotateZ(10deg) rotateY(-30deg)skewX(5deg)skewY(-3deg)",
+          transform: "rotateZ(8deg) rotateY(-30deg)skewX(5deg)skewY(-3deg)",
           animation: "pulse 15s infinite",
         }}
       >
