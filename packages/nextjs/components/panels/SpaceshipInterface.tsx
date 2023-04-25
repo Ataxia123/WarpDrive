@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // Import the CSS styles
 
-const SpaceshipInterface = () => {
-  const [videoPlaying, setVideoPlaying] = useState(true);
+interface SpaceshipInterfaceProps {
+  travelStatus: string;
+}
+
+const SpaceshipInterface: React.FC<SpaceshipInterfaceProps> = ({ travelStatus }) => {
+  const [videoPlaying, setVideoPlaying] = useState(false);
   const videoId = "MVPTGNGiI-4"; // Fix the videoId
 
   const toggleVideo = () => {
@@ -21,6 +25,12 @@ const SpaceshipInterface = () => {
     position: "absolute",
     transform: "rotateZ(11deg) rotateY(-49deg)skewX(8deg)skewY(-5deg)",
   };
+
+  useEffect(() => {
+    if (travelStatus === "TargetAcquired") {
+      setVideoPlaying(true);
+    }
+  }, [travelStatus]);
 
   const iframeSrc = `https://www.youtube.com/embed/${videoId}?autoplay=${videoPlaying ? "1" : "0"}&mute=0`;
 

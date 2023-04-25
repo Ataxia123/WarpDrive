@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
 interface DescriptionPanelProps {
+  handleScanning: (scanning: boolean) => void;
   travelStatus: string;
   description: string[];
   selectedDescriptionIndex: number;
@@ -12,6 +13,7 @@ interface DescriptionPanelProps {
 }
 
 export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
+  handleScanning,
   travelStatus,
   interplanetaryStatusReport,
   description,
@@ -31,30 +33,15 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
     }
   }, [descriptionIndex]);
 
-  const { address } = useAccount();
-
-  const handleMouseEnter = () => {
-    setFocused(false);
-  };
-
   const handleClick = () => {
     setFocused(!focused);
   };
 
   const handleScanClick = () => {
+    handleScanning(true);
     setScanning(true);
     handleDescribeClick();
   };
-
-  const handleFocus = () => {
-    if (!focused) setFocused(true);
-  };
-
-  useEffect(() => {
-    if (description.length > 0 || travelStatus === "TargetAcquired") {
-      setScanning(false);
-    }
-  }, [selectedTokenId, description, interplanetaryStatusReport]);
 
   const handleButtonClick = () => {
     setScanning(true);
@@ -62,7 +49,9 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
   };
 
   useEffect(() => {
-    if (travelStatus === "TargetAcquired") {
+    if (travelStatus === "TargetAcquired" && description.length > 0) {
+      handleScanning(false);
+      setScanning(false);
       setWaitingForDescription(false);
     }
   }, [travelStatus, interplanetaryStatusReport]);

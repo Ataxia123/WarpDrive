@@ -7,6 +7,8 @@ import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth/useScaffoldEventHistory";
 
 interface ReadAIUProps {
+  handleScanning: (scanning: boolean) => void;
+  scanning: boolean;
   handleButtonClick: (button: string, type: "character" | "background") => Promise<void>;
   buttonMessageId: string | "";
   engaged: boolean;
@@ -27,6 +29,8 @@ interface ReadAIUProps {
 }
 
 export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
+  handleScanning,
+  scanning,
   handleButtonClick,
   buttonMessageId,
   engaged: engagedProp,
@@ -153,8 +157,11 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
       setEngaged(true);
       return;
     }
-    if (engaged === true && travelStatus === "AcquiringTarget") {
+    if (engaged === true && travelStatus === "AcquiringTarget" && scanning === false) {
       onSubmit("character");
+      setTravelStatus("TargetAcquired");
+      setWarping(true);
+    } else if (engaged === true && travelStatus === "TargetAcquired" && scanning === true) {
       setTravelStatus("TargetAcquired");
       setWarping(true);
     } else {
@@ -450,7 +457,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
           top: "20.4%",
           left: "40.96%",
           opacity: "0.15",
-          zIndex: "1000000",
+          zIndex: 1000000,
         }}
         src="/aiu.png"
         onClick={() => {
@@ -616,40 +623,21 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                   {stringToHex(metadata ? metadata.description : "No Metadata")}
                   {metadata?.attributes[4].value}{" "}
                 </div>{" "}
-                <ul
-                  className=""
-                  style={{
-                    position: "absolute",
-                    padding: "1rem",
-
-                    color: "white",
-                    justifyContent: "center",
-                    left: "13%",
-                    top: "6%",
-                    width: "100%",
-                    height: "90%",
-                    marginTop: "-10%",
-                    marginLeft: "5%",
-                    marginRight: "5%",
-                    marginBottom: "5%",
-                    fontSize: ".7rem",
-                    overflowY: "auto",
-                    zIndex: 10000,
-                  }}
-                >
+                <ul className="hex-data" style={{}}>
                   {metadata?.attributes.map((attribute: any, index: number) => (
                     <li
                       className="hex-prompt spaceship-button-text"
                       style={{
                         color: "white",
-                        fontSize: ".7rem",
+                        fontSize: "0.8rem",
                         textAlign: "center",
-                        top: "30%",
+                        top: "15%",
                         textEmphasisColor: "white",
                         fontWeight: "bold",
-
+                        left: "21%",
                         position: "relative",
-
+                        scale: "1.2",
+                        marginBottom: "0.2rem",
                         width: "30%",
                       }}
                       key={index}
@@ -694,15 +682,16 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                   className="hex-prompt"
                   style={{
                     alignContent: "center",
-                    left: "5%",
-                    padding: "1rem",
+                    left: "-0%",
+                    padding: "1.2rem",
+                    paddingLeft: "2,2rem",
                     top: "125%",
-                    height: "130%",
-                    width: "90%",
+                    height: "220%",
+                    width: "100%",
                     position: "absolute",
                     marginBottom: "17rem",
-                    fontSize: "0.9rem",
-
+                    fontSize: "1.2rem",
+                    overflowX: "hidden",
                     overflowY: "auto",
                     pointerEvents: "auto",
                   }}
@@ -720,19 +709,21 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                 {stringToHex(metadata ? metadata.description : "No Metadata")}
               </div>
             </div>
-            <img
-              style={{
-                borderRadius: "50%",
-                position: "absolute",
-                height: "70%",
-                width: "28%",
-                top: "-45%",
-                left: "37%",
-                border: "12px solid #000000",
-                zIndex: 10000100,
-              }}
-              src={imageSrc}
-            ></img>
+            {imageSrc && (
+              <img
+                style={{
+                  borderRadius: "50%",
+                  position: "absolute",
+                  height: "70%",
+                  width: "28%",
+                  top: "-45%",
+                  left: "37%",
+                  border: "12px solid #000000",
+                  zIndex: 10000100,
+                }}
+                src={imageSrc}
+              ></img>
+            )}
           </div>
         </div>
       </div>

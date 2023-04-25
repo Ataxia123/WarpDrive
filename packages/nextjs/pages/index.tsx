@@ -55,11 +55,18 @@ export default function Home() {
   const [modifiedPrompt, setModifiedPrompt] = useState("ALLIANCE OF THE INFINITE UNIVERSE");
   const [warped, setWarped] = useState(false);
   const [warping, setWarping] = useState(false);
+  const [scanning, setScanning] = useState(false);
 
   const handleEngaged = (engaged: boolean) => {
     if (engaged === true) {
       setWarping(!warping);
       console.log("WARP DRIVE IS ENGAGED", { warping, engaged });
+    }
+  };
+
+  const handleScanning = (scanning: boolean) => {
+    if (scanning) {
+      setScanning(scanning);
     }
   };
 
@@ -303,23 +310,20 @@ export default function Home() {
   };
   // add logic so that user can click instead of timeout
   useEffect(() => {
-    if (travelStatus === "AcquiringTarget" && srcUrl !== "") {
-      //await 5 seconds
-      setTimeout(() => {
-        submitPrompt("background");
-      }, 5000);
-
-      console.log("waiting for 10 seconds");
+    if (scanning === true) {
+      submitPrompt("character");
+      setTravelStatus("TargetAcquired");
     }
-    return console.log("Tried to Generate new background but", { travelStatus, srcUrl });
-  }, [selectedDescriptionIndex]);
+  }, [selectedDescription]);
+
+  // HandleWarping
 
   useEffect(() => {
-    if (travelStatus == "AcquiringTarget" && tempUrl !== "") {
+    if (travelStatus == "TargetAcquired" && scanning === false) {
       handleButtonClick("U1", "background");
     }
-    return console.log("Tried to Upscale new background but", { travelStatus, tempUrl });
-  }, [tempUrl]);
+    return console.log("Tried to Upscale new background but", { travelStatus, scanning });
+  }, [scanning]);
 
   const handleMetadataReceived = (metadata: any) => {
     console.log("Metadata received in the parent component:", metadata);
@@ -395,10 +399,12 @@ export default function Home() {
             travelStatus={travelStatus}
             dynamicImageUrl={backgroundImageUrl}
           >
-            <SpaceshipInterface />
+            <SpaceshipInterface travelStatus={travelStatus} />
             <AcquiringTarget loading={loading} travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
 
             <TokenSelectionPanel
+              handleScanning={handleScanning}
+              scanning={scanning}
               buttonMessageId={buttonMessageId}
               handleButtonClick={handleButtonClick}
               modifiedPrompt={modifiedPrompt}
@@ -415,6 +421,7 @@ export default function Home() {
               travelStatus={travelStatus}
             />
             <DescriptionPanel
+              handleScanning={handleScanning}
               travelStatus={travelStatus}
               interplanetaryStatusReport={interplanetaryStatusReport}
               selectedTokenId={selectedTokenId}

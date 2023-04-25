@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import ReadAIU from "../ReadAIU";
 
 interface TokenSelectionPanelProps {
+  handleScanning: (scanning: boolean) => void;
+  scanning: boolean;
   handleButtonClick: (button: string, type: "character" | "background") => Promise<void>;
   buttonMessageId: string | "";
   modifiedPrompt: string;
@@ -19,6 +21,8 @@ interface TokenSelectionPanelProps {
 }
 
 const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
+  scanning,
+  handleScanning,
   handleButtonClick,
   buttonMessageId,
   engaged,
@@ -45,15 +49,11 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
     setIsMinimized(true);
   };
 
-  useEffect(() => {
-    if (engaged === true) {
-      handleEngaged(true);
-    }
-  }, [engaged]);
-
   return (
     <>
       <ReadAIU
+        handleScanning={handleScanning}
+        scanning={scanning}
         handleButtonClick={handleButtonClick}
         buttonMessageId={buttonMessageId}
         engaged={engaged}
