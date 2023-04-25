@@ -38,11 +38,11 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
   const [isMinimized, setIsMinimized] = useState(false);
 
   const handleClick = () => {
-    if (isMinimized === false) {
-      setIsMinimized(true);
+    if (isMinimized === true) {
+      setIsMinimized(false);
       return;
     }
-    setIsMinimized(false);
+    setIsMinimized(true);
   };
 
   useEffect(() => {

@@ -142,7 +142,9 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
     onSelectedTokenIdRecieved(e.target.value); // Add this line
   };
   useEffect(() => {
-    setEngaged(true);
+    if (modifiedPrompt) {
+      setEngaged(true);
+    }
   }, [modifiedPrompt]);
 
   const handleButton = () => {
@@ -396,7 +398,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
               </button>
             </div>
           </div>
-          {buttonMessageId === "" ? <AvailableButtons /> : <div></div>}
+          {buttonMessageId !== "" && travelStatus !== "NoTarget" ? <AvailableButtons /> : <div></div>}
         </div>
       ) : (
         <div
@@ -419,7 +421,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
           setEngaged(!engaged);
         }}
       ></img>{" "}
-      <div className={`spaceship-display-screen token-selection-panel${isMinimized || engaged ? "-focused" : ""}`}>
+      <div className={`spaceship-display-screen token-selection-panel${!isMinimized && engaged ? "-focused" : ""}`}>
         <div
           style={{
             color: "Black",

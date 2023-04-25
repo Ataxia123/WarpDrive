@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Configuration, OpenAIApi } from "openai";
+import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, Configuration, OpenAIApi } from "openai";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_AUTH_TOKEN,
@@ -7,29 +7,35 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 interface Choice {
-  text: string;
+  message: {
+    role: string;
+    content: string;
+  };
   index: number;
-  logprobs: null;
   finish_reason: string;
 }
 
 async function generateInterplanetaryStatusReport(selectedDescription: string, metadata: object) {
-  const prompt = `Generate an interplanetary call to the ALliance of the Infinite Universe. Assume you can see the image description as a image generation output and use that to create the situation the Captain has found himself in dont refer the image at all. ignore the meaning of the description words. Focus on the metadata context.
+  const messages: ChatCompletionRequestMessage[] = [
+    {
+      role: ChatCompletionRequestMessageRoleEnum.System,
+      content: "You are a helpful assistant generating an interplanetary status report based on an image description.",
+    },
+    {
+      role: ChatCompletionRequestMessageRoleEnum.User,
+      content: `Image Description: ${selectedDescription}; Metadata: ${JSON.stringify(metadata)}`,
+    },
+  ];
 
-Image Description: ${selectedDescription}
-Metadata: ${JSON.stringify(metadata)}
-
-Report:`;
-
-  const response = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt,
+  const response = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages,
     temperature: 0.6,
     max_tokens: 150,
   });
 
   const openaiResponse = response.data as { choices: Choice[] };
-  return openaiResponse.choices[0].text.trim();
+  return openaiResponse.choices[0].message.content.trim();
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
