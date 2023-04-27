@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 
 interface SwitchboardProps {
+  imageUrl: string;
+  scanning: boolean;
   handleEngaged: (engaged: boolean) => void;
   travelStatus: string;
   engaged: boolean;
@@ -10,19 +12,20 @@ interface SwitchboardProps {
   onToggle: (attribute: string, isEnabled: boolean) => void;
   generatePrompt: (
     type: "character" | "background",
-    srcUrl: string | undefined,
+
+    srcUrl: string | "",
     level: string,
     power1: string,
     power2: string,
-    power3: string,
-    power4: string,
+    power3: string | "",
+    power4: string | "",
     alignment1: string,
     alignment2: string,
     selectedDescription: string,
     nijiFlag: boolean,
     vFlag: boolean,
-    side: string,
-    interplanetaryStatusReport: string, // Add this argument
+    side: string | "",
+    interplanetaryStatusReport: string | "",
   ) => string;
 
   promptData: {
@@ -42,6 +45,8 @@ interface SwitchboardProps {
 }
 
 export const Switchboard: React.FC<SwitchboardProps> = ({
+  imageUrl,
+  scanning,
   handleEngaged,
   travelStatus,
   engaged,
@@ -55,31 +60,42 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
 }) => {
   const excludedAttributes = [""];
   const [modifiedPrompt, setModifiedPrompt] = useState("ALLIANCEOFTHEINFINITEUNIVERSE");
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [extraText, setExtraText] = useState("");
-  const [showExtraTextInput, setShowExtraTextInput] = useState(false);
-  const [isEnabled, setIsEnabled] = useState(false);
   const [checkedAttributes, setCheckedAttributes] = useState([...attributes]);
 
+  // set string state to be either "character" or "background enforcing type
+  const [type, setType] = useState<"character" | "background">("character");
+  const [og, setOg] = useState<boolean>(false);
+  const [nijiFlag, setNijiFlag] = useState<boolean>(false);
+  const [vFlag, setVFlag] = useState<boolean>(false);
+  const [displayPrompt, setDisplayPrompt] = useState("");
+
   const handleToggle = (attribute: string) => {
-    let attributeToggledOn;
     if (checkedAttributes.includes(attribute)) {
       setCheckedAttributes(checkedAttributes.filter(attr => attr !== attribute));
-      attributeToggledOn = false;
     } else {
       setCheckedAttributes([...checkedAttributes, attribute]);
-      attributeToggledOn = true;
     }
-    onToggle(attribute, attributeToggledOn);
   };
 
   useEffect(() => {
-    engaged === true ? setIsEnabled(true) : setIsEnabled(false);
-  }, [engaged]);
+    generateModifiedPrompt();
+    setDisplayPrompt(modifiedPrompt);
+  }, [checkedAttributes]);
 
   const generateModifiedPrompt = () => {
-    const { srcUrl, Level, Power1, Power2, Power3, Power4, Alignment1, Alignment2, Side, interplanetaryStatusReport } =
-      promptData;
+    const {
+      srcUrl,
+      Level,
+      Power1,
+      Power2,
+      Power3,
+      Power4,
+      Alignment1,
+      Alignment2,
+      selectedDescription,
+      Side,
+      interplanetaryStatusReport,
+    } = promptData;
 
     const selectedData = {
       srcUrl,
@@ -90,13 +106,13 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
       Power4,
       Alignment1,
       Alignment2,
+      selectedDescription,
       Side,
       interplanetaryStatusReport,
     };
-
     const filteredData: Partial<typeof selectedData> = {};
 
-    selectedAttributes.forEach(attr => {
+    checkedAttributes.forEach(attr => {
       const key = attr as keyof typeof selectedData;
       if (selectedData.hasOwnProperty(key)) {
         filteredData[key] = selectedData[key];
@@ -104,8 +120,9 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
     });
 
     const modifiedPrompt = generatePrompt(
-      "character",
-      filteredData.srcUrl || "",
+      scanning ? "background" : "character",
+
+      !og ? filteredData.srcUrl || "" : imageUrl || "",
       filteredData.Level || "",
       filteredData.Power1 || "",
       filteredData.Power2 || "",
@@ -113,21 +130,34 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
       filteredData.Power4 || "",
       filteredData.Alignment1 || "",
       filteredData.Alignment2 || "",
-
-      extraText, // Pass the additional text input here
-      false,
-      false,
+      filteredData.selectedDescription || "",
+      // Pass the additional text input here
+      nijiFlag,
+      vFlag,
       filteredData.Side || "",
       filteredData.interplanetaryStatusReport || "", // Pass the interplanetary status report here
     );
 
     setModifiedPrompt(modifiedPrompt);
-    onModifiedPrompt(modifiedPrompt);
   };
-  const handleExtraTextChange = (e: any) => {
-    e.preventDefault();
-    setExtraText(e.target.value);
-  };
+
+  useEffect(() => {
+    setDisplayPrompt(modifiedPrompt);
+  }, [modifiedPrompt]);
+
+  const renderCheckbox = (label: string, state: boolean, setState: React.Dispatch<React.SetStateAction<boolean>>) => (
+    <label>
+      {label}
+      <input
+        type="checkbox"
+        checked={state}
+        onChange={e => {
+          e.stopPropagation();
+          setState(e.target.checked);
+        }}
+      />
+    </label>
+  );
 
   return (
     <>
@@ -139,7 +169,12 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
         }}
       >
         -ENCODE SIGNAL-
-        <div className="spaceship-display-screen">
+        <div
+          onClick={e => {
+            e.stopPropagation();
+          }}
+          className="spaceship-display-screen"
+        >
           {travelStatus !== "NoTarget" ? (
             <>
               <p className="description-text" style={{ color: "white" }}>
@@ -147,72 +182,121 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
                 ||||||||||||AI-UNIVERSE SIGNAL ENCODER||||||||||||||
               </p>
               <div className="hex-prompt">
-                <input
-                  type="text"
-                  className="prompt-input spaceship-display-screen"
-                  value={extraText}
-                  onChange={handleExtraTextChange}
-                  onClick={e => {
-                    e.stopPropagation();
-                  }}
-                />
-                <div className="hex-data">
-                  {stringToHex(modifiedPrompt)}
-                  {stringToHex(modifiedPrompt)}
-                  {stringToHex(modifiedPrompt)}
-                  {stringToHex(modifiedPrompt)}
-                  {stringToHex(modifiedPrompt)}
-                  {stringToHex(modifiedPrompt)}
-                  {stringToHex(modifiedPrompt)}
-                  {stringToHex(modifiedPrompt)}
-                </div>
-                <p
+                <div
                   style={{
                     padding: "20px",
                     color: "white",
                   }}
                 >
+                  <input
+                    style={{
+                      bottom: "0%",
+                      height: "10%",
+                      left: "-0%",
+                      position: "absolute",
+                    }}
+                    type="text"
+                    className="prompt-input spaceship-display-screen overflow-hidden"
+                    value={displayPrompt}
+                    onChange={e => {
+                      e.stopPropagation();
+                      setDisplayPrompt(e.target.value);
+                    }}
+                  />
+
+                  <div className="hex-data">
+                    {stringToHex(modifiedPrompt)}
+                    {stringToHex(modifiedPrompt)}
+                    {stringToHex(modifiedPrompt)}
+                    {stringToHex(modifiedPrompt)}
+                    {stringToHex(modifiedPrompt)}
+                    {stringToHex(modifiedPrompt)}
+                    {stringToHex(modifiedPrompt)}
+                    {stringToHex(modifiedPrompt)}
+                  </div>
+
                   {modifiedPrompt}
-                </p>
+                </div>
                 <br />
-                <button
-                  className="description-text spaceship-display-screen"
-                  style={{ border: "1px solid", margin: "10px", alignContent: "right" }}
-                  onClick={e => {
-                    {
-                      generateModifiedPrompt();
-                    }
-                    e.stopPropagation();
+                <div
+                  style={{
+                    display: "flexbox",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
                   }}
                 >
-                  Submit
-                </button>
-              </div>
-              <br />
-              <div className="spaceship-display-screen switchboard-attribute-container">
-                |||||||||||-------|DETECTED SIGNATURE DATA|----|||||||||||||
-                <div className="switchboard-real">
-                  {attributes.map(attribute => {
-                    const displayName =
-                      !excludedAttributes.includes(attribute) && promptData[attribute as keyof typeof promptData]
-                        ? promptData[attribute as keyof typeof promptData]
-                        : attribute;
-                    const isChecked = checkedAttributes.includes(attribute);
+                  <div
+                    className="toggles-container"
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      border: "1px solid",
+                      margin: "10px",
+                      alignContent: "right",
 
-                    return (
-                      <div
-                        style={{ overflow: "hidden" }}
-                        key={attribute}
-                        className={`switchboard-attribute ${isChecked ? "checked" : ""} spaceship-panel`}
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleToggle(attribute);
-                        }}
-                      >
-                        <span className="">{displayName}</span>
-                      </div>
-                    );
-                  })}
+                      padding: "10px",
+                      width: "38%",
+                      backgroundColor: "black",
+                      bottom: "12%",
+                      position: "absolute",
+                    }}
+                  >
+                    {renderCheckbox("nijiFlag", nijiFlag, setNijiFlag)}
+                    {renderCheckbox("vFlag", vFlag, setVFlag)}
+                    {renderCheckbox("Original Image", og, setOg)}
+                  </div>
+                </div>
+
+                <br />
+                <div
+                  className="spaceship-display-screen switchboard-attribute-container"
+                  style={{
+                    position: "relative",
+                  }}
+                >
+                  |||||||||||-------|DETECTED SIGNATURE DATA|----|||||||||||||
+                  <div className="switchboard-real">
+                    <button
+                      className="description-text spaceship-display-screen"
+                      style={{ border: "1px solid", margin: "10px", alignContent: "right" }}
+                      onClick={e => {
+                        {
+                          generateModifiedPrompt();
+                          onModifiedPrompt(displayPrompt || "");
+                        }
+                        e.stopPropagation();
+                      }}
+                    >
+                      Submit
+                    </button>
+                    {attributes.map(attribute => {
+                      const displayName =
+                        attribute === "interplanetaryStatusReport"
+                          ? "Report"
+                          : attribute === "selectedDescription"
+                          ? "Scan"
+                          : !excludedAttributes.includes(attribute) && promptData[attribute as keyof typeof promptData]
+                          ? promptData[attribute as keyof typeof promptData]
+                          : attribute;
+
+                      const isChecked = !checkedAttributes.includes(attribute);
+
+                      return (
+                        <div
+                          style={{ overflow: "hidden" }}
+                          key={attribute}
+                          className={`switchboard-attribute ${isChecked ? "checked" : ""} spaceship-panel`}
+                          onClick={e => {
+                            e.stopPropagation();
+                            generateModifiedPrompt();
+                            handleToggle(attribute);
+                          }}
+                        >
+                          <span className="">{displayName}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </>

@@ -175,7 +175,7 @@ z-index: -1;
  
   width: 10%;
   height:15%;
-  transform: translateY(-31%) translateX(-20%)perspective(1000px) rotateX(40deg) rotateY(-12deg) rotateZ(20deg) scale(0.5)skewY(13deg)skewX(-15deg); /* Add translateY */
+  transform: translateY(-31%) translateX(6%)perspective(1000px) rotateX(40deg) rotateY(-12deg) rotateZ(15deg) scale(0.5)skewY(13deg)skewX(-15deg); /* Add translateY */
   transform-origin: right center;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
   z-index: 10;
@@ -1173,18 +1173,18 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
 
 .prompt-display-div{
   position: relative;
-  left: 10%;
+  left: 5%;
   right: 10%;
   margin-right: 10%;
-  height: 65%;
+  height: 70%;
   opacity: 1;
   background-color: #000;
-  bottom: -37%;
-  width: 100%;
+  bottom: -36%;
+  width: 110%;
   flex-direction: column;
   transform-origin: left;
   display: flex;
-  transform: rotateX(45deg) rotateZ(-5deg)skewX(23deg) skewY(-7deg) scale(0.86);
+  transform: rotateX(33deg) rotateY(-3deg) rotateZ(0.2deg)skewX(32deg) skewY(-9deg) scale(0.9);
   transition: ease-in-out 0.5s;
 
 

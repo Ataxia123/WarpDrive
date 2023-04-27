@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Switchboard from "../Swittchboard";
 
 type Metadata = {
-  srcUrl: string | undefined;
+  srcUrl: string | "";
   Level: string;
   Power1: string;
   Power2: string;
@@ -13,9 +13,12 @@ type Metadata = {
   Side: string;
   interplanetaryStatusReport: string;
   selectedDescription: string;
+  nijiFlag: boolean;
+  vFlag: boolean;
 };
 
 interface PromptPanelProps {
+  scanning: boolean;
   handleEngaged: (engaged: boolean) => void;
   travelStatus: string;
   warping: boolean;
@@ -25,7 +28,7 @@ interface PromptPanelProps {
   interplanetaryStatusReport: string;
   buttonMessageId: string | "";
   imageUrl: string;
-  srcUrl: string | undefined;
+  srcUrl: string | "";
   loading: boolean;
   metadata: Metadata;
   onSubmitPrompt: (type: "character" | "background") => Promise<void>;
@@ -34,19 +37,20 @@ interface PromptPanelProps {
   //Type '(type: "character" | "background", srcURL: string | undefined, level: string, power1: string, power2: string, power3: string, power4: string, alignment1: string, alignment2: string, selectedDescription: string, nijiFlag: boolean, vFlag: boolean, side: string) => string' is not assignable to type '() => void'.
   generatePrompt: (
     type: "character" | "background",
-    srcUrl: string | undefined,
+
+    srcUrl: string | "",
     level: string,
     power1: string,
     power2: string,
-    power3: string,
-    power4: string,
+    power3: string | "",
+    power4: string | "",
     alignment1: string,
     alignment2: string,
     selectedDescription: string,
     nijiFlag: boolean,
     vFlag: boolean,
-    side: string,
-    interplanetaryStatusReport: string, // Add this argument
+    side: string | "",
+    interplanetaryStatusReport: string | "",
   ) => string;
 }
 
@@ -54,6 +58,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
   handleEngaged,
   travelStatus,
   warping,
+  scanning,
   engaged,
   setModifiedPrompt,
   imageUrl,
@@ -88,13 +93,10 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
     "Alignment1",
     "Alignment2",
     "Side",
+
     "interplanetaryStatusReport",
     "selectedDescription",
-    "NijiFlag",
-    "VFlag",
   ];
-  const [nijiFlag, setNijiFlag] = useState(false);
-  const [vFlag, setVFlag] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
   const [selectedAttributes, setSelectedAttributes] = useState<string[]>([]);
@@ -116,13 +118,6 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
       setSelectedAttributes(prevState => prevState.filter(attr => attr !== attribute));
     }
   };
-  function stringToHex(str: string): string {
-    let hex = "";
-    for (let i = 0; i < str.length; i++) {
-      hex += str.charCodeAt(i).toString(16);
-    }
-    return hex;
-  }
 
   return (
     <div className={`prompt-panel${isFocused ? "" : "-closed"}`} onClick={handleClick}>
@@ -163,6 +158,8 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
       <>
         <>
           <Switchboard
+            imageUrl={imageUrl}
+            scanning={scanning}
             handleEngaged={handleEngaged}
             travelStatus={travelStatus}
             engaged={engaged}
@@ -181,3 +178,13 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
 };
 
 export default PromptPanel;
+
+//helper hex function
+
+function stringToHex(str: string): string {
+  let hex = "";
+  for (let i = 0; i < str.length; i++) {
+    hex += str.charCodeAt(i).toString(16);
+  }
+  return hex;
+}

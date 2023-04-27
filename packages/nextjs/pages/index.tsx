@@ -1,6 +1,5 @@
 // index.tsx
 import { useEffect, useState } from "react";
-import Background from "../components/Background";
 import Dashboard from "../components/Dashboard";
 import AcquiringTarget from "../components/panels/AcquiringTarget";
 import DescriptionPanel from "../components/panels/DescriptionPanel";
@@ -11,7 +10,7 @@ import axios from "axios";
 import GraphemeSplitter from "grapheme-splitter";
 
 type Metadata = {
-  srcUrl: string | undefined;
+  srcUrl: string | "";
   Level: string;
   Power1: string;
   Power2: string;
@@ -22,6 +21,8 @@ type Metadata = {
   Side: string;
   interplanetaryStatusReport: string;
   selectedDescription: string;
+  nijiFlag: boolean;
+  vFlag: boolean;
 };
 
 export default function Home() {
@@ -54,6 +55,8 @@ export default function Home() {
     modifiedPrompt: "ALLIANCE OF THE INFINITE UNIVERSE",
     warping: false,
     scanning: false,
+    preExtraText: "",
+    AfterExtraText: "",
   });
 
   const {
@@ -85,10 +88,12 @@ export default function Home() {
     modifiedPrompt,
     warping,
     scanning,
+    preExtraText,
+    AfterExtraText,
   } = appState;
 
   const metadata: Metadata = {
-    srcUrl: srcUrl,
+    srcUrl: srcUrl || "",
     Level: level,
     Power1: power1,
     Power2: power2,
@@ -99,6 +104,8 @@ export default function Home() {
     Side: side,
     interplanetaryStatusReport: interplanetaryStatusReport,
     selectedDescription: selectedDescription,
+    nijiFlag: nijiFlag,
+    vFlag: vFlag,
   };
 
   const updateState = (key: string, value: any) => {
@@ -143,16 +150,10 @@ export default function Home() {
     console.log("SCANNING", { scanning });
   };
 
-  useEffect(() => {
-    if (travelStatus == "TargetAcquired" && scanning === false) {
-      handleButtonClick("U1", "background");
-    }
-    return console.log("Tried to Upscale new background but", { travelStatus, scanning });
-  }, [scanning]);
-
   function generatePrompt(
     type: "character" | "background",
-    srcUrl: string | undefined,
+
+    srcUrl: string | undefined = "",
     level: string,
     power1: string,
     power2: string,
@@ -164,7 +165,7 @@ export default function Home() {
     nijiFlag: boolean,
     vFlag: boolean,
     side: string | "",
-    interplanetaryStatusReport: string | "",
+    interplanetaryStatusReport: string,
   ): string {
     const niji = nijiFlag ? "--niji 5" : "";
     const v = vFlag ? "--v 5" : "";
@@ -463,6 +464,7 @@ export default function Home() {
               handleDescribeClick={handleDescribeClick}
             />
             <PromptPanel
+              scanning={scanning}
               warping={warping}
               handleEngaged={handleEngaged}
               travelStatus={travelStatus}
@@ -471,7 +473,7 @@ export default function Home() {
               imageUrl={imageUrl}
               interplanetaryStatusReport={interplanetaryStatusReport}
               description={selectedDescription ? selectedDescription : "No Description"}
-              srcUrl={srcUrl}
+              srcUrl={srcUrl || ""}
               onSubmitPrompt={submitPrompt}
               onSubmit={submitPrompt}
               handleButtonClick={handleButtonClick}
