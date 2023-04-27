@@ -139,7 +139,8 @@ export default function Home() {
   };
 
   const handleScanning = (scanning: boolean) => {
-    updateState("scanning", scanning);
+    updateState("scanning", !scanning);
+    console.log("SCANNING", { scanning });
   };
 
   useEffect(() => {
@@ -280,7 +281,6 @@ export default function Home() {
         updateState("tempUrl", imageUrl);
         updateState("travelStatus", "TargetAcquired");
         updateState("buttonMessageId", messageId);
-        updateState("scanning", false);
       }
     } catch (e: any) {
       console.log(e);
@@ -387,6 +387,7 @@ export default function Home() {
       });
 
       updateState("description", cleanedDescription);
+      handleScanning(false);
     } catch (e: any) {
       console.log(e);
       updateState("error", e.message);

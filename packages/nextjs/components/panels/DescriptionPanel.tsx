@@ -27,7 +27,6 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
   const [focused, setFocused] = useState(false);
   const [descriptionIndex, setDescriptionIndex] = useState<number>(0);
   const [waitingForDescription, setWaitingForDescription] = useState<boolean>(false);
-  const [scanStatus, setScanStatus] = useState<"scanning" | "idle">("idle");
 
   useEffect(() => {
     if (selectedDescriptionIndex !== descriptionIndex) {
@@ -40,18 +39,18 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
   };
 
   useEffect(() => {
-    if (scanning === false) {
-      setScanStatus("idle");
-    }
+    setWaitingForDescription(scanning);
   }, [scanning]);
 
   const handleScanClick = () => {
     handleScanning(true);
-    setScanStatus("scanning");
+
     handleDescribeClick();
   };
 
   const handleButtonClick = () => {
+    handleScanning(true);
+    setWaitingForDescription(true);
     setDescriptionIndex(prevIndex => (prevIndex + 1) % description.length);
   };
 
@@ -93,14 +92,21 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
           overflowX: "hidden",
         }}
       >
-        {" "}
-        AI-UNIVERSE {scanning && <span className="blinking-cursor">_</span>}
         <p
           className=""
           style={{
+            scale: "1.6",
+          }}
+        >
+          {" "}
+          AI-UNIVERSE
+        </p>
+        <p
+          style={{
             color: "white",
-            marginBottom: "1.4rem",
-            paddingBottom: "1.4rem",
+            scale: "0.6",
+            marginTop: "-5%",
+            marginBottom: "-5%",
           }}
         >
           {" "}
@@ -110,7 +116,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
         <>
           {travelStatus === "NoTarget" && <>TARGETING SYSTEM NOT ENGAGED</>}
 
-          {travelStatus === "AcquiringTarget" && selectedTokenId && description.length == 0 && (
+          {travelStatus === "AcquiringTarget" && selectedTokenId && !scanning && (
             <div
               style={{
                 display: "flex",
@@ -137,12 +143,12 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
               </button>
             </div>
           )}
-          {description.length > 0 && travelStatus !== "NoTarget" ? (
+          {description.length > 0 && travelStatus !== "NoTarget" ? ( //wip
             <>
               <p
                 className="description-text"
                 style={{
-                  top: "17%",
+                  top: "19%",
                   position: "absolute",
                 }}
               >
@@ -161,7 +167,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                   padding: "15px",
                   paddingLeft: "3rem",
                   marginBottom: "-6rem",
-                  top: "-10%",
+                  top: "12%",
                   bottom: "20%",
                   width: "110%",
                   left: "0%",
@@ -169,15 +175,6 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                   scale: "1.1",
                 }}
               >
-                <h2
-                  className="scroll-text"
-                  style={{
-                    color: "white",
-                    fontWeight: "bold",
-                  }}
-                >
-                  <br />
-                </h2>
                 <div
                   className="hex-data"
                   style={{
@@ -225,7 +222,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
               position: "absolute",
             }}
           >
-            {description[0] ? (
+            {!scanning ? (
               <div
                 style={{
                   fontWeight: "bold",
@@ -235,18 +232,18 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                 }}
               >
                 {" "}
-                {travelStatus !== "NoTarget" && (
-                  <div
-                    className="spaceship-screen-display"
-                    style={{
-                      position: "absolute",
-                      display: "flex",
-                      flexDirection: "row",
-                      scale: "1",
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  >
+                <div
+                  className="spaceship-screen-display"
+                  style={{
+                    position: "absolute",
+                    display: "flex",
+                    flexDirection: "row",
+                    scale: "1",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                >
+                  {travelStatus !== "NoTarget" && (
                     <button
                       className={`spaceship-button ${waitingForDescription ? "active" : ""}`}
                       style={{
@@ -280,7 +277,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                       >
                         {travelStatus === "TargetAcquired" ? (
                           <p className={"spaceship-button-text"} style={{ color: "white", scale: "0.8" }}>
-                            NEXT TRANSMISSION
+                            CONFIGURE TARGETING COMPUTER
                           </p>
                         ) : interplanetaryStatusReport ? (
                           <div
@@ -300,40 +297,40 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                         )}
                       </div>
                     </button>
-                    <div
-                      className="spaceship-display-screen"
-                      style={{
-                        position: "absolute",
-                        display: "flex",
-                        flexDirection: "column",
-                        scale: ".6",
-                        padding: "0.4rem",
-                        paddingLeft: "-1.4rem",
-                        margin: "0.5rem",
-                        marginRight: "-2.6rem",
-                        width: "83%",
-                        height: "180%",
-                        left: "31%",
-                        top: "-80%",
-                        bottom: "25%",
-                        marginBottom: "0rem",
-                      }}
-                    >
-                      <br /> STATUS
-                      <br />
-                      {travelStatus}
-                      <br /> DECODED ID : {selectedTokenId}
-                      <br />
-                      {travelStatus === "TargetAcquired" ? (
-                        <>|COORDINATES SET|</>
-                      ) : interplanetaryStatusReport ? (
-                        <>COMPUTING COORDINATES</>
-                      ) : (
-                        <>SETTING COODRINATES</>
-                      )}
-                    </div>
+                  )}
+                  <div
+                    className="spaceship-display-screen"
+                    style={{
+                      position: "absolute",
+                      display: "flex",
+                      flexDirection: "column",
+                      scale: ".6",
+                      padding: "0.4rem",
+                      paddingLeft: "-1.4rem",
+                      margin: "0.5rem",
+                      marginRight: "-2.6rem",
+                      width: "83%",
+                      height: "180%",
+                      left: "31%",
+                      top: "-80%",
+                      bottom: "25%",
+                      marginBottom: "0rem",
+                    }}
+                  >
+                    <br /> STATUS
+                    <br />
+                    {travelStatus}
+                    <br /> DECODED ID : {selectedTokenId}
+                    <br />
+                    {travelStatus === "TargetAcquired" ? (
+                      <>|COORDINATES SET|</>
+                    ) : interplanetaryStatusReport ? (
+                      <>COMPUTING COORDINATES</>
+                    ) : (
+                      <>SETTING COODRINATES</>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             ) : scanning ? (
               <>
@@ -352,22 +349,3 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
 };
 
 export default DescriptionPanel;
-
-// {!selectedTokenId && (
-//   <>
-//     <br />
-//     SELECT A SIGNAL ID {} <>{selectedTokenId}</>
-//     <br />
-//     <button
-//       className={"py-2 px-4 rounded font-bold text-white  hover:bg-blue-700"}
-//       onClick={e => {
-//         e.stopPropagation();
-
-//         handleScanClick();
-//       }}
-//     >
-//       {}
-//       SCAN
-//     </button>{" "}
-//   </>
-// )}

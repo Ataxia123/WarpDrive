@@ -153,20 +153,16 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   }, [modifiedPrompt]);
 
   const handleButton = () => {
-    if (travelStatus === "AcquiringTarget" && engaged === false) {
-      setEngaged(true);
-      return;
-    }
-    if (engaged === true && travelStatus === "AcquiringTarget") {
+    if (travelStatus === "AcquiringTarget") {
       onSubmit("character");
       setTravelStatus("TargetAcquired");
-    } else if (engaged === true && travelStatus === "TargetAcquired" && scanning === true) {
+    } else if (travelStatus === "TargetAcquired" && scanning === true) {
       setTravelStatus("TargetAcquired");
-
       handleScanning(false);
     } else {
       if (selectedTokenId && travelStatus === "NoTarget") {
         setTravelStatus("AcquiringTarget");
+        setEngaged(true);
       }
     }
   };
