@@ -62,29 +62,16 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
   engaged,
   setModifiedPrompt,
   imageUrl,
-  loading,
   srcUrl,
-  onSubmit,
-  handleButtonClick,
   metadata,
-  buttonMessageId,
-  description,
-  interplanetaryStatusReport,
+
   generatePrompt,
 }) => {
-  const [isMouseOver, setIsMouseOver] = useState(false);
-
-  const handleMouseEnter = () => {
-    setIsFocused(false);
-    setIsZoomed(false); // Add this line // Add this line
-    !isMouseOver && setIsMouseOver(true);
-  };
-
-  const handleMouseLeave = () => {
-    console.log("Mouse left");
-  };
   const attributes = [
     "srcUrl",
+
+    "interplanetaryStatusReport",
+    "selectedDescription",
     "Level",
     "Power1",
     "Power2",
@@ -93,12 +80,8 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
     "Alignment1",
     "Alignment2",
     "Side",
-
-    "interplanetaryStatusReport",
-    "selectedDescription",
   ];
   const [isFocused, setIsFocused] = useState(false);
-  const [isZoomed, setIsZoomed] = useState(false);
   const [selectedAttributes, setSelectedAttributes] = useState<string[]>([]);
 
   function handleModifiedPrompt(modifiedPrompt: any) {
@@ -121,7 +104,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
 
   return (
     <div className={`prompt-panel${isFocused ? "" : "-closed"}`} onClick={handleClick}>
-      <div className={`spaceship-display-screen${travelStatus !== "NoTarget" ? "" : "-off"}`}>
+      <div className={`spaceship-display-screen${engaged ? "" : "-off"}`}>
         <div className="spaceship-display-screen animated-floating">
           <div className="display-border">
             <h1 className="description-text">

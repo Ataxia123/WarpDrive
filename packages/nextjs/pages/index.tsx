@@ -211,7 +211,7 @@ export default function Home() {
       console.timeEnd("fetchInterplanetaryStatusReport");
     }
   }, [travelStatus]);
-
+  // handler for Generating images
   const submitPrompt = async (type: "character" | "background") => {
     let prompt = generatePrompt(
       type,
@@ -235,7 +235,7 @@ export default function Home() {
       return;
     }
     updateState("waitingForWebhook", true);
-    if (type === "character") {
+    if (modifiedPrompt !== "ALLIANCE OF THE INFINITE UNIVERSE") {
       prompt = modifiedPrompt;
 
       updateState("warping", true);
@@ -283,6 +283,7 @@ export default function Home() {
     updateState("waitingForWebhook", false);
   };
 
+  // handler for upscaling images
   const handleButtonClick = async (button: string, type: "character" | "background") => {
     if (waitingForWebhook) {
       console.log("Already waiting for webhook, please wait for response.");
@@ -324,7 +325,6 @@ export default function Home() {
         updateState("imageUrl", imageUrl);
         updateState("warping", false);
         updateState("buttonMessageId", buttonId);
-        updateState("travelStatus", "NoTarget");
       } else {
         updateState("backgroundImageUrl", imageUrl);
       }
@@ -338,7 +338,9 @@ export default function Home() {
       updateState("error", e.message);
     }
     updateState("waitingForWebhook", false);
+    handleDescribeClick();
   };
+  // handler for describing images
   const handleDescribeClick = async () => {
     console.log(`Submitting image URL: ${srcUrl}`);
     updateState("loading", true);
@@ -350,7 +352,9 @@ export default function Home() {
 
     updateState("waitingForWebhook", true);
     try {
-      const r = await axios.post("/api/postDescription", { srcUrl });
+      const r = await axios.post("/api/postDescription", {
+        srcUrl: scanning ? backgroundImageUrl || srcUrl : imageUrl || srcUrl,
+      });
 
       console.log("response", r.data);
       updateState("response", JSON.stringify(r.data, null, 2));

@@ -190,7 +190,7 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
                 >
                   <input
                     style={{
-                      bottom: "0%",
+                      top: "10%",
                       height: "10%",
                       left: "-0%",
                       position: "absolute",
@@ -224,28 +224,7 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
                     flexDirection: "column",
                     justifyContent: "space-between",
                   }}
-                >
-                  <div
-                    className="toggles-container"
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      border: "1px solid",
-                      margin: "10px",
-                      alignContent: "right",
-
-                      padding: "10px",
-                      width: "38%",
-                      backgroundColor: "black",
-                      bottom: "12%",
-                      position: "absolute",
-                    }}
-                  >
-                    {renderCheckbox("nijiFlag", nijiFlag, setNijiFlag)}
-                    {renderCheckbox("vFlag", vFlag, setVFlag)}
-                    {renderCheckbox("Original Image", og, setOg)}
-                  </div>
-                </div>
+                ></div>
 
                 <br />
                 <div
@@ -269,6 +248,26 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
                     >
                       Submit
                     </button>
+                    <div
+                      className="toggles-container"
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        border: "1px solid",
+                        margin: "10px",
+                        alignContent: "right",
+
+                        padding: "10px",
+                        width: "38%",
+                        backgroundColor: "black",
+                        top: "0%",
+                        position: "relative",
+                      }}
+                    >
+                      {renderCheckbox("nijiFlag", nijiFlag, setNijiFlag)}
+                      {renderCheckbox("vFlag", vFlag, setVFlag)}
+                      {renderCheckbox("Original Image", og, setOg)}
+                    </div>
                     {attributes.map(attribute => {
                       const displayName =
                         attribute === "interplanetaryStatusReport"

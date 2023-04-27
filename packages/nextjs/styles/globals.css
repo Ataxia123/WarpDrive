@@ -264,7 +264,7 @@ z-index: -1;
   opacity: 1;
   object-fit: fill;
   transition: transform 0.5s ease-in-out, top 0.5s ease-in-out, left 0.5s ease-in-out;
-  animation: randomFlicker 1.65s infinite ease-in-out;
+ 
   border: #f2982f 1px solid;
   border-style: dashed; 
 }
@@ -341,14 +341,10 @@ transform: translateY(50%);
 }
 
 .image-display:hover{
+  margin-top: 25%;
   transform:
   perspective(1000px)
- scale(1.5) 
- rotateX(-0deg) 
- rotateY(-30deg) 
- skewX(10deg) 
- skewY(-15deg)
- rotateZ(10deg) translateX(40%) translateY(10%) scaleX(1);
+  scale(1.5);
  z-index: 90000000000000000000000000000000000000000000000000000000000000000000;
  transition: ease-in-out 0.5s;
 
@@ -1261,14 +1257,21 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
   backdrop-filter: blur(8px);
   align-items: center;
   font-family: "Orbitron", sans-serif;
-  opacity: .8;
+  opacity: 1;
   text-shadow: 0 0 20px #000000, 0 0 40px #000000, 0 0 60px #000000;;
   border: #030000 10px solid;/* Adjust the color to your preference */
   background-size: auto;
   background-repeat: no-repeat;
   z-index: 11111100000000000000000000000000000000000; /* Higher z-index to bring it up above other elements */
   /* Center the screen and scale it up */
-  pointer-events: none;
+ 
+}
+.spaceship-display-screen-off:hover{
+  scale: 1.2;
+  position: relative;
+  left: 30%;
+  perspective: 700px;
+  transform: rotateX(0deg) rotateZ(-0deg) rotateY(0deg)skewX(00deg) skewY(0deg) scale(1);
 }
 .prompt-span{
 display: flex;
