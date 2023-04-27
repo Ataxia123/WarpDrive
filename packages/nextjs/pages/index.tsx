@@ -139,16 +139,9 @@ export default function Home() {
   };
 
   const handleScanning = (scanning: boolean) => {
-    updateState("scanning", !scanning);
+    updateState("scanning", scanning);
     console.log("SCANNING", { scanning });
   };
-
-  useEffect(() => {
-    updateState("setlectedDescription", description[selectedDescriptionIndex]);
-    if (scanning === true) {
-      submitPrompt("background");
-    }
-  }, [selectedDescriptionIndex]);
 
   useEffect(() => {
     if (travelStatus == "TargetAcquired" && scanning === false) {
@@ -393,8 +386,8 @@ export default function Home() {
       updateState("error", e.message);
 
       updateState("loading", false);
-      updateState("waitingForWebhook", false);
     }
+    updateState("waitingForWebhook", false);
   };
   // make an array out of the metadata attributes
 
@@ -458,6 +451,7 @@ export default function Home() {
               travelStatus={travelStatus}
             />
             <DescriptionPanel
+              handleSubmit={submitPrompt}
               scanning={scanning}
               handleScanning={handleScanning}
               travelStatus={travelStatus}
