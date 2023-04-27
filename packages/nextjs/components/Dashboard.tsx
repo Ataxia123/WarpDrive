@@ -9,7 +9,6 @@ interface DashboardProps {
   response: string;
   error: string;
   warping: boolean;
-  warped: boolean;
   interplanetaryStatusReport: string;
   children: React.ReactNode;
   travelStatus: string;
@@ -37,7 +36,6 @@ const Dashboard: React.FC<DashboardProps> = ({
   response,
   error,
   warping,
-  warped,
   interplanetaryStatusReport,
   imageUrl,
   srcUrl,
@@ -72,7 +70,6 @@ const Dashboard: React.FC<DashboardProps> = ({
         <Background
           scanning={scanning}
           warping={warping}
-          warped={warped}
           travelStatus={travelStatus}
           dynamicImageUrl={dynamicImageUrl}
           fixedImageUrl="assets/view.png"

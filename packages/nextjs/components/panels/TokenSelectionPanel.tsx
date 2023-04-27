@@ -7,7 +7,6 @@ interface TokenSelectionPanelProps {
   handleButtonClick: (button: string, type: "character" | "background") => Promise<void>;
   buttonMessageId: string | "";
   modifiedPrompt: string;
-  setWarping: (warping: boolean) => void;
   setTravelStatus: (type: "NoTarget" | "AcquiringTarget" | "TargetAcquired") => void;
   handleEngaged: (engaged: boolean) => void;
   onMetadataReceived: (metadata: any) => void;
@@ -27,7 +26,6 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
   buttonMessageId,
   engaged,
   modifiedPrompt,
-  setWarping,
   setTravelStatus,
   handleEngaged,
   onMetadataReceived,
@@ -59,7 +57,6 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
         engaged={engaged}
         modifiedPrompt={modifiedPrompt}
         interplanetaryStatusReport={interplanetaryStatusReport}
-        setWarping={setWarping}
         setTravelStatus={setTravelStatus}
         handleEngaged={handleEngaged}
         travelStatus={travelStatus}

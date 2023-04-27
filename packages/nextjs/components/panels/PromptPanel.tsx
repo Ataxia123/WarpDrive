@@ -18,7 +18,7 @@ type Metadata = {
 interface PromptPanelProps {
   handleEngaged: (engaged: boolean) => void;
   travelStatus: string;
-  warped: boolean;
+  warping: boolean;
   engaged: boolean;
   setModifiedPrompt: (modifiedPrompt: string) => void;
   description: string;
@@ -53,7 +53,7 @@ interface PromptPanelProps {
 export const PromptPanel: React.FC<PromptPanelProps> = ({
   handleEngaged,
   travelStatus,
-  warped,
+  warping,
   engaged,
   setModifiedPrompt,
   imageUrl,
@@ -166,7 +166,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
             handleEngaged={handleEngaged}
             travelStatus={travelStatus}
             engaged={engaged}
-            warped={warped}
+            warped={warping}
             onModifiedPrompt={handleModifiedPrompt}
             attributes={attributes}
             onToggle={handleToggle}

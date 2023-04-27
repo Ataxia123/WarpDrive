@@ -27,6 +27,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
   const [focused, setFocused] = useState(false);
   const [descriptionIndex, setDescriptionIndex] = useState<number>(0);
   const [waitingForDescription, setWaitingForDescription] = useState<boolean>(false);
+  const [scanStatus, setScanStatus] = useState<"scanning" | "idle">("idle");
 
   useEffect(() => {
     if (selectedDescriptionIndex !== descriptionIndex) {
@@ -38,8 +39,15 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
     setFocused(!focused);
   };
 
+  useEffect(() => {
+    if (scanning === false) {
+      setScanStatus("idle");
+    }
+  }, [scanning]);
+
   const handleScanClick = () => {
     handleScanning(true);
+    setScanStatus("scanning");
     handleDescribeClick();
   };
 
@@ -114,9 +122,9 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                   "py-2 px-4 rounded font-bold text-white  hover:bg-green-700 description-text spaceship-text screen-border"
                 }
                 style={{
-                  border: "1px solid white",
-                  height: "17rem",
-                  top: "10%",
+                  border: "25px solid black",
+                  height: "30%",
+                  top: "31%",
                 }}
                 onClick={e => {
                   e.stopPropagation();

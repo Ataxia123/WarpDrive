@@ -15,19 +15,17 @@ interface Choice {
   finish_reason: string;
 }
 
-async function generateInterplanetaryStatusReport(selectedDescription: string, metadata: object) {
+async function generateInterplanetaryStatusReport(selectedDescription: string, metadata: object, extraText: string) {
   const messages: ChatCompletionRequestMessage[] = [
     {
       role: ChatCompletionRequestMessageRoleEnum.System,
-      content: `You are a the targeting computer of a ship owned by an ally of ${JSON.stringify(
+      content: `You are  ${JSON.stringify(
         metadata,
-      )} in the alliance of the infinite universe. You're recieving signal requests from Captains of the alliance that you must interpret as mission assignments.`,
+      )} in the alliance of the infinite universe. You're sending Interplanetary Signals to the alliance detailing your current status. Be engaging and descriptive and  use this description as context ${selectedDescription} but dont mention it. make sure the message ends with OVER`,
     },
     {
       role: ChatCompletionRequestMessageRoleEnum.User,
-      content: `Metadata: Signal Identified: CREATE A MISSION SCENARIO AN STORY HOOK FOR ${selectedDescription};  ${JSON.stringify(
-        metadata,
-      )}`,
+      content: `Metadata: Signal Identified: Previous Transmission: ${extraText}. REPORT MISSION SCENARIO STATUS AND CURRENT VIEW FOR ${selectedDescription}`,
     },
   ];
 
@@ -44,9 +42,9 @@ async function generateInterplanetaryStatusReport(selectedDescription: string, m
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const { selectedDescription, metadata } = req.body;
+    const { selectedDescription, metadata, extraText } = req.body;
     try {
-      const report = await generateInterplanetaryStatusReport(selectedDescription, metadata);
+      const report = await generateInterplanetaryStatusReport(selectedDescription, metadata, extraText);
 
       res.status(200).json({ report });
     } catch (error) {

@@ -1,5 +1,6 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import { BigNumber, Contract, ethers } from "ethers";
+import { wrap } from "module";
 import { useAccount, useProvider } from "wagmi";
 import { Balance, BlockieAvatar } from "~~/components/scaffold-eth";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
@@ -14,7 +15,7 @@ interface ReadAIUProps {
   engaged: boolean;
   modifiedPrompt: string;
   interplanetaryStatusReport: string;
-  setWarping: (warping: boolean) => void;
+
   setTravelStatus: (type: "NoTarget" | "AcquiringTarget" | "TargetAcquired") => void;
   handleEngaged: (engaged: boolean) => void;
   onSelectedTokenIdRecieved: (selectedTokenId: string) => void;
@@ -36,7 +37,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   engaged: engagedProp,
   modifiedPrompt,
   interplanetaryStatusReport,
-  setWarping,
+
   setTravelStatus,
   handleEngaged,
   travelStatus,
@@ -153,17 +154,15 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
 
   const handleButton = () => {
     if (travelStatus === "AcquiringTarget" && engaged === false) {
-      setWarping(false);
       setEngaged(true);
       return;
     }
-    if (engaged === true && travelStatus === "AcquiringTarget" && scanning === false) {
+    if (engaged === true && travelStatus === "AcquiringTarget") {
       onSubmit("character");
       setTravelStatus("TargetAcquired");
-      setWarping(true);
     } else if (engaged === true && travelStatus === "TargetAcquired" && scanning === true) {
       setTravelStatus("TargetAcquired");
-      setWarping(true);
+
       handleScanning(false);
     } else {
       if (selectedTokenId && travelStatus === "NoTarget") {
@@ -391,6 +390,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                     color: "white",
                   }}
                   className="description-text hex-prompt"
+                  onClick={() => handleButton()}
                 >
                   ENGAGE
                 </div>
@@ -494,19 +494,21 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
             >
               <div
                 style={{
-                  left: "30%",
-                  marginLeft: "-23%",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  top: "10%",
+                  left: "90%",
+                  marginLeft: "50%",
+                  padding: "1.1rem",
+                  justifyContent: "right",
+                  top: "19%",
                   position: "absolute",
-                  width: "100%",
-                  height: "20%",
+                  width: "40%",
+                  height: "45%",
+                  zIndex: 1000000000000000,
+                  fontSize: "0.9rem",
                 }}
                 className="display-text hex-prompt"
               >
-                {travelStatus}
+                {scanning === true && <>SCANNING</>}
+                <br /> {engaged && <>ENGAGED</>}
               </div>
               <div
                 className="prompt-display"
