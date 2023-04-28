@@ -59,9 +59,9 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
   };
 
   const handleButtonClick = () => {
+    handleScanning(true);
     handleSubmit("background");
     setToggle(!toggle);
-    handleScanning(true);
   };
 
   useEffect(() => {

@@ -6,6 +6,7 @@ import DescriptionPanel from "../components/panels/DescriptionPanel";
 import PromptPanel from "../components/panels/PromptPanel";
 import SpaceshipInterface from "../components/panels/SpaceshipInterface";
 import TokenSelectionPanel from "../components/panels/TokenSelectionPanel";
+import { useAppStore } from "../services/store/store";
 import axios from "axios";
 import GraphemeSplitter from "grapheme-splitter";
 
@@ -23,6 +24,12 @@ type Metadata = {
   selectedDescription: string;
   nijiFlag: boolean;
   vFlag: boolean;
+};
+
+type StoreState = {
+  interplanetaryStatusReports: string[];
+  scanningResults: string[][];
+  imagesStored: string[];
 };
 
 export default function Home() {
@@ -50,6 +57,7 @@ export default function Home() {
     nijiFlag: false,
     vFlag: false,
     travelStatus: "NoTarget",
+    prevTravelStatus: "",
     interplanetaryStatusReport: "",
     selectedDescription: "",
     modifiedPrompt: "ALLIANCE OF THE INFINITE UNIVERSE",
@@ -62,6 +70,7 @@ export default function Home() {
 
   const {
     loading,
+    prevTravelStatus,
     error,
     response,
     imageUrl,
@@ -93,11 +102,57 @@ export default function Home() {
     AfterExtraText,
   } = appState;
 
-  type StoreState = {
-    interplanetaryStatusReports: string[];
-    scanningResults: string[][];
-    imagesStored: string[];
-  };
+  const setTravels = useAppStore(state => state.setTravels);
+  const setBackgroundImageUrl = useAppStore(state => state.setBackgroundImageUrl);
+  const handleApiResponse = useAppStore(state => state.handleApiResponse);
+  const setMetadata = useAppStore(state => state.setMetadata);
+  const travels = useAppStore(state => state.travels);
+
+  function updateTravelMetadata() {
+    // Collect all the required information for the travel metadata
+
+    // Update the metadata state in the Zustand store
+    setMetadata(metadata);
+  }
+  function createTravelResult() {
+    // Collect all the required information for the travel result
+
+    updateTravelMetadata();
+    const travelResult = {
+      metadata: metadata,
+      backgroundImageUrl: backgroundImageUrl,
+      apiResponses: error ? error : response,
+      timestamp: new Date(),
+    };
+
+    return travelResult;
+  }
+
+  function updateAllData() {
+    // Update travels state
+    const newTravelResult = createTravelResult();
+    setTravels(newTravelResult);
+
+    // Update apiResponses and errors state
+
+    handleApiResponse(response, error);
+
+    // Update backgroundImageUrl state
+    const imageUrl = "exampleImageUrl";
+    const type = "background";
+    setBackgroundImageUrl(imageUrl, type);
+  }
+
+  useEffect(() => {
+    updateState("prevTravelStatus", travelStatus);
+  }, [travelStatus]);
+
+  useEffect(() => {
+    if (travelStatus === "NoTarget" && prevTravelStatus === "TargetAcquired") {
+      updateAllData();
+      console.log(travels);
+    }
+  }, [travelStatus]);
 
   const handleActiveSate = (imageUrl: string, selectedDescription: string, interplanetaryStatusReport: string) => {
     setAppState(prevState => ({
@@ -286,12 +341,14 @@ export default function Home() {
       return;
     }
     updateState("waitingForWebhook", true);
-    updateState("warping", true);
+    if (type === "character") {
+      updateState("warping", true);
+      console.log("WARP DRIVE IS CHARACTER IN ENGAGED", { warping, prompt });
+    }
+
     if (modifiedPrompt !== "ALLIANCE OF THE INFINITE UNIVERSE") {
       prompt = modifiedPrompt;
     }
-
-    console.log("WARP DRIVE IS CHARACTER IN ENGAGED", { warping, prompt });
 
     try {
       const r = await axios.post("/api/apiHandler", { text: prompt });
@@ -330,6 +387,8 @@ export default function Home() {
     } catch (e: any) {
       console.log(e);
       updateState("error", e.message);
+      updateState("warping", false);
+      updateState("travelStatus", "NoTarget");
     }
     updateState("waitingForWebhook", false);
   };
@@ -387,6 +446,8 @@ export default function Home() {
     } catch (e: any) {
       console.log(e);
       updateState("error", e.message);
+      updateState("warping", false);
+      updateState("travelStatus", "NoTarget");
     }
     updateState("waitingForWebhook", false);
     handleDescribeClick();
@@ -441,6 +502,8 @@ export default function Home() {
     } catch (e: any) {
       console.log(e);
       updateState("error", e.message);
+      updateState("warping", false);
+      updateState("travelStatus", "NoTarget");
 
       updateState("loading", false);
     }

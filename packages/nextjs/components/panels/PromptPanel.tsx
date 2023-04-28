@@ -121,12 +121,11 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
                 style={{
                   transform: "translate(1%)",
                   opacity: 1,
-                  zIndex: -10,
                 }}
                 className="spaceship-display-screen"
               >
                 {imageUrl ? (
-                  <img style={{ zIndex: 10 }} src={imageUrl} className="screen-border image-display " alt="nothing" />
+                  <img src={imageUrl} className="screen-border image-display " alt="nothing" />
                 ) : (
                   <img src={srcUrl} className="image-display screen-border" alt="nothing" />
                 )}

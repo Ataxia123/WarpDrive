@@ -505,10 +505,6 @@ opacity: 1;
   width: 25%;
   bottom: 47%;
   height: 50%;
-
-  
-
-
 transform:
 perspective(500px)
  scale(0.9) 
@@ -520,6 +516,9 @@ perspective(500px)
   animation: randomFlicker 20s infinite ;
 }
 
+.prompt-pannel:hover{
+  transform: translateX(10%) translateY(-5%)
+}
 
 .prompt-panel-closed {
   position: absolute;
