@@ -58,6 +58,7 @@ export default function Home() {
     preExtraText: "",
     AfterExtraText: "",
   });
+  //session storage
 
   const {
     loading,
@@ -91,6 +92,56 @@ export default function Home() {
     preExtraText,
     AfterExtraText,
   } = appState;
+
+  type StoreState = {
+    interplanetaryStatusReports: string[];
+    scanningResults: string[][];
+    imagesStored: string[];
+  };
+
+  const handleActiveSate = (imageUrl: string, selectedDescription: string, interplanetaryStatusReport: string) => {
+    setAppState(prevState => ({
+      ...prevState,
+      imageUrl: imageUrl,
+      selectedDescription: selectedDescription,
+      interplanetaryStatusReport: interplanetaryStatusReport,
+    }));
+  };
+
+  const [storeState, setStoreState] = useState<StoreState>({
+    interplanetaryStatusReports: [],
+    scanningResults: [],
+    imagesStored: [],
+  });
+
+  const handleClearAppState = () => {
+    setStoreState({
+      interplanetaryStatusReports: [],
+      scanningResults: [],
+      imagesStored: [],
+    });
+  };
+
+  useEffect(() => {
+    setStoreState(prevState => ({
+      ...prevState,
+      interplanetaryStatusReports: [...prevState.interplanetaryStatusReports, interplanetaryStatusReport],
+    }));
+  }, [interplanetaryStatusReport]);
+
+  useEffect(() => {
+    setStoreState(prevState => ({
+      ...prevState,
+      scanningResults: [...prevState.scanningResults, description],
+    }));
+  }, [description]);
+
+  useEffect(() => {
+    setStoreState(prevState => ({
+      ...prevState,
+      imagesStored: [...prevState.imagesStored, imageUrl],
+    }));
+  }, [imageUrl]);
 
   const metadata: Metadata = {
     srcUrl: srcUrl || "",
@@ -385,6 +436,7 @@ export default function Home() {
       });
 
       updateState("description", cleanedDescription);
+      updateState("selectedDescription", cleanedDescription[0]);
       handleScanning(false);
     } catch (e: any) {
       console.log(e);
@@ -456,6 +508,9 @@ export default function Home() {
               travelStatus={travelStatus}
             />
             <DescriptionPanel
+              handleClearAppState={handleClearAppState}
+              handleActiveState={handleActiveSate}
+              storeState={storeState}
               handleSubmit={submitPrompt}
               scanning={scanning}
               handleScanning={handleScanning}
@@ -464,7 +519,6 @@ export default function Home() {
               selectedTokenId={selectedTokenId}
               description={description}
               onDescriptionIndexChange={newDescription => updateState("setSelectedDescription", newDescription)}
-              selectedDescriptionIndex={selectedDescriptionIndex}
               handleDescribeClick={handleDescribeClick}
             />
             <PromptPanel

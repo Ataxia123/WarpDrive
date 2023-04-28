@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import LogViewer from "../LogViewer";
+
+interface StoreState {
+  interplanetaryStatusReports: string[];
+  scanningResults: string[][];
+  imagesStored: string[];
+}
 
 interface DescriptionPanelProps {
+  handleClearAppState: () => void;
+  handleActiveState: (imageUrl: string, selectedDescription: string, interplanetaryStatusReport: string) => void;
+
+  storeState: StoreState;
   scanning: boolean;
   handleScanning: (scanning: boolean) => void;
   travelStatus: string;
   description: string[];
-  selectedDescriptionIndex: number;
+
   onDescriptionIndexChange: (index: number) => void;
   selectedTokenId: string | undefined;
   handleDescribeClick: () => void;
@@ -15,28 +25,24 @@ interface DescriptionPanelProps {
 }
 
 export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
+  handleClearAppState,
+  handleActiveState,
   handleSubmit,
   scanning,
   handleScanning,
   travelStatus,
   interplanetaryStatusReport,
   description,
-  selectedDescriptionIndex,
+
   handleDescribeClick,
   onDescriptionIndexChange,
   selectedTokenId,
+  storeState,
 }) => {
   const [focused, setFocused] = useState(false);
-  const [descriptionIndex, setDescriptionIndex] = useState<number>(0);
+
   const [waitingForDescription, setWaitingForDescription] = useState<boolean>(false);
   const [toggle, setToggle] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (selectedDescriptionIndex !== descriptionIndex) {
-      setDescriptionIndex(selectedDescriptionIndex);
-      onDescriptionIndexChange(descriptionIndex);
-    }
-  }, [descriptionIndex]);
 
   const handleClick = () => {
     setFocused(!focused);
@@ -102,7 +108,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
         <p
           className=""
           style={{
-            scale: "2.6",
+            scale: "2.3",
           }}
         >
           {" "}
@@ -123,12 +129,12 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
         <>
           {travelStatus === "NoTarget" && <>TARGETING SYSTEM NOT ENGAGED</>}
 
-          {interplanetaryStatusReport && travelStatus !== "NoTarget" ? ( //wip
+          {storeState && travelStatus !== "NoTarget" ? ( //wip
             <>
               <p
                 className="description-text"
                 style={{
-                  top: "56%",
+                  top: "71%",
                   position: "absolute",
                 }}
               >
@@ -143,11 +149,11 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                   display: "flex",
                   flexDirection: "column",
                   position: "relative",
-                  height: "600%",
+                  height: "45%",
                   padding: "15px",
                   paddingLeft: "3rem",
                   marginBottom: "-6rem",
-                  top: "12%",
+                  top: "8%",
                   bottom: "20%",
                   width: "110%",
                   left: "0%",
@@ -165,19 +171,17 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                 >
                   {description}
                 </div>
-                <h3>
-                  <br />{" "}
-                  <p
-                    className={"scroll-text"}
-                    style={{
-                      padding: "0.2rem",
-                      marginRight: "1.2rem",
-                      color: "white",
-                    }}
-                  >
-                    {interplanetaryStatusReport}
-                  </p>
-                </h3>
+                <div
+                  onClick={e => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <LogViewer
+                    storeState={storeState}
+                    handleActiveState={handleActiveState}
+                    handleClearAppState={handleClearAppState}
+                  />
+                </div>
               </div>
             </>
           ) : (
@@ -191,9 +195,9 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
           <div
             className="screen-border"
             style={{
-              height: "30%",
+              height: "20%",
               width: "100%",
-              top: "65%",
+              top: "78%",
               left: "0%",
 
               flexDirection: "row",
@@ -235,7 +239,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                           "py-2 px-4 rounded font-bold  hover:bg-green-700 description-text spaceship-text screen-border"
                         }
                         style={{
-                          border: "25px solid black",
+                          border: "15px solid black",
                           width: "50%",
                           height: "100%",
                           margin: "0.2rem",
@@ -254,7 +258,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                       </button>
                     </div>
                   )}
-                  {travelStatus !== "NoTarget" && toggle !== false && (
+                  {travelStatus !== "NoTarget" && !toggle === false && (
                     <button
                       className={`spaceship-button ${waitingForDescription ? "active" : ""}`}
                       style={{
@@ -277,7 +281,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                         style={{
                           margin: "0rem",
                           position: "absolute",
-                          top: "0%",
+                          top: "12%",
                           left: "0%",
                           width: "100%",
                           height: "160%",
@@ -287,7 +291,10 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                         }}
                       >
                         {travelStatus === "TargetAcquired" ? (
-                          <p className={"spaceship-button-text"} style={{ color: "white", scale: "0.8" }}>
+                          <p
+                            className={"spaceship-button-text"}
+                            style={{ color: "white", scale: "0.8", position: "relative" }}
+                          >
                             COORDINATES SET
                           </p>
                         ) : (
@@ -297,7 +304,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                               pointerEvents: "none",
                               color: "white",
                               scale: "0.8",
-                              marginTop: "15%",
+                              marginTop: "10%",
                             }}
                           >
                             SET COORDINATES
@@ -332,7 +339,6 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                     </p>
                     SCANNING: {scanning ? "ON" : "OFF"}
                     <br />
-                    Signal Index {descriptionIndex}
                     <br />
                     {travelStatus === "TargetAcquired" ? (
                       <>|COORDINATES SET|</>
