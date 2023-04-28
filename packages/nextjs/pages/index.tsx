@@ -286,12 +286,12 @@ export default function Home() {
       return;
     }
     updateState("waitingForWebhook", true);
+    updateState("warping", true);
     if (modifiedPrompt !== "ALLIANCE OF THE INFINITE UNIVERSE") {
       prompt = modifiedPrompt;
-
-      updateState("warping", true);
-      console.log("WARP DRIVE IS CHARACTER IN ENGAGED", { warping });
     }
+
+    console.log("WARP DRIVE IS CHARACTER IN ENGAGED", { warping, prompt });
 
     try {
       const r = await axios.post("/api/apiHandler", { text: prompt });

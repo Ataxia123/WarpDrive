@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import DescriptionPanel from "./panels/DescriptionPanel";
 
 // Dummy data for demonstration purposes
 interface StoreState {
@@ -25,7 +24,7 @@ const LogViewer: React.FC<LogViewerProps> = ({ storeState, handleActiveState }) 
       case 1:
         return <div>{interplanetaryStatusReports[currentIndex]}</div>;
       case 2:
-        return scanningResults[currentIndex].join(", ");
+        return <div>{scanningResults.length > 1 && scanningResults.join(", ")}</div>;
       case 3:
         return (
           <img
@@ -80,7 +79,7 @@ const LogViewer: React.FC<LogViewerProps> = ({ storeState, handleActiveState }) 
   };
 
   const handleSendTweet = (selectedLog: string, selectedImage: string) => {
-    const tweetText = `Check out my log: ${selectedLog} ${selectedImage}`;
+    const tweetText = `|-AI-U INTERGALACTIC COMMUNICATIONS-|\n https://xn--0civ138ml7ayzbx3f.y.at\n: ${selectedLog} ${selectedImage}\n  #AIU_SIGNAL_BREAK `;
     const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
 
     window.open(tweetUrl, "_blank");
@@ -90,20 +89,19 @@ const LogViewer: React.FC<LogViewerProps> = ({ storeState, handleActiveState }) 
     <div className=" spaceship-screen-display ">
       <div className=" spaceship-screen-display" style={{ padding: "1rem" }}>
         <span>
-          {currentIndex + 1}/{interplanetaryStatusReports.length}
           || <button onClick={() => setCurrentSection(1)}>Reports</button>||
           <button onClick={() => setCurrentSection(2)}>Scanning Results</button>||
           <button onClick={() => setCurrentSection(3)}>Images</button>||
         </span>
       </div>
-
       <div>{displayContent()}</div>
-
+      {currentIndex + 1}/{interplanetaryStatusReports.length}
+      <br />
       <div
         style={{
-          left: "33%",
-          position: "absolute",
-          bottom: "0",
+          left: "0%",
+          position: "relative",
+          bottom: "10%",
           padding: "1rem",
         }}
         className="spaceship-screen-display"
@@ -111,7 +109,6 @@ const LogViewer: React.FC<LogViewerProps> = ({ storeState, handleActiveState }) 
         ||- <button onClick={handlePrevious}>Previous</button>-||-
         <button onClick={handleNext}>Next</button>-||
       </div>
-
       <div className="spaceship-screen-display" style={{}}>
         ||-{" "}
         <button
@@ -119,7 +116,7 @@ const LogViewer: React.FC<LogViewerProps> = ({ storeState, handleActiveState }) 
             handleSetActiveState(
               imagesStored[currentIndex],
               interplanetaryStatusReports[currentIndex],
-              scanningResults[currentIndex].join(", "),
+              scanningResults[currentIndex] === undefined ? "" : scanningResults[currentIndex].join(", "),
             );
           }}
         >
@@ -131,7 +128,6 @@ const LogViewer: React.FC<LogViewerProps> = ({ storeState, handleActiveState }) 
         <button
           style={{
             fontWeight: "bold",
-
             marginTop: "1rem",
             marginLeft: "-3%",
             color: "rgb(29, 161, 242)",

@@ -129,7 +129,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
         <>
           {travelStatus === "NoTarget" && <>TARGETING SYSTEM NOT ENGAGED</>}
 
-          {storeState && travelStatus !== "NoTarget" ? ( //wip
+          {description && travelStatus !== "NoTarget" ? ( //wip
             <>
               <p
                 className="description-text"
@@ -243,7 +243,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                           width: "50%",
                           height: "100%",
                           margin: "0.2rem",
-                          marginTop: "-1.4rem",
+                          marginTop: "-1.6rem",
                           fontSize: "1.8rem",
                           fontWeight: "bold",
                         }}
@@ -304,7 +304,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                               pointerEvents: "none",
                               color: "white",
                               scale: "0.8",
-                              marginTop: "10%",
+                              marginTop: "8%",
                             }}
                           >
                             SET COORDINATES
