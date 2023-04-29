@@ -104,6 +104,7 @@ export default function Home() {
 
   const setTravels = useAppStore(state => state.setTravels);
   const setBackgroundImageUrl = useAppStore(state => state.setBackgroundImageUrl);
+  const setDisplayImageUrl = useAppStore(state => state.setdisplayImageUrl);
   const handleApiResponse = useAppStore(state => state.handleApiResponse);
   const setMetadata = useAppStore(state => state.setMetadata);
   const travels = useAppStore(state => state.travels);
@@ -140,7 +141,6 @@ export default function Home() {
     // Update backgroundImageUrl state
     const imageUrl = "exampleImageUrl";
     const type = "background";
-    setBackgroundImageUrl(imageUrl, type);
   }
 
   useEffect(() => {
@@ -450,6 +450,8 @@ export default function Home() {
       updateState("travelStatus", "NoTarget");
     }
     updateState("waitingForWebhook", false);
+    setBackgroundImageUrl(imageUrl, type);
+    setDisplayImageUrl(imageUrl, type);
     handleDescribeClick();
   };
   // handler for describing images
@@ -465,7 +467,7 @@ export default function Home() {
     updateState("waitingForWebhook", true);
     try {
       const r = await axios.post("/api/postDescription", {
-        srcUrl: scanning ? backgroundImageUrl || srcUrl : imageUrl || srcUrl,
+        srcUrl: scanning ? (backgroundImageUrl ? backgroundImageUrl : srcUrl) : imageUrl ? imageUrl : srcUrl,
       });
 
       console.log("response", r.data);
@@ -498,12 +500,13 @@ export default function Home() {
 
       updateState("description", cleanedDescription);
       updateState("selectedDescription", cleanedDescription[0]);
-      handleScanning(false);
+      updateState("scanning", false);
     } catch (e: any) {
       console.log(e);
       updateState("error", e.message);
       updateState("warping", false);
       updateState("travelStatus", "NoTarget");
+      updateState("scanning", false);
 
       updateState("loading", false);
     }

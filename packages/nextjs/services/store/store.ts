@@ -60,8 +60,8 @@ export const useAppStore = create<TAppStore>(set => ({
     set(state => (type === "background" ? { backgroundImageUrl } : state)),
 
   displayImageUrl: "",
-  setdisplayImageUrl: (backgroundImageUrl: string, type: string) =>
-    set(state => (type === "background" ? { backgroundImageUrl } : state)),
+  setdisplayImageUrl: (displayImageUrl: string, type: string) =>
+    set(state => (type === "character" ? { displayImageUrl } : state)),
 
   metadata: {
     // Initialize with default values

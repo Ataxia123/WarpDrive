@@ -32,13 +32,11 @@ interface LogViewerProps {
   handleActiveState: (imageUrl: string, selectedDescription: string, interplanetaryStatusReport: string) => void;
 }
 
-const testImage = "/aiu.png";
-const extraImage = "/assets/testOutput.jpeg";
-const reportFrame = "/reportFrame.png";
-const metatest =
-  "Level: Captain; Power1: Dark; Power2: Cybernetic; Power3: Insectoid; Power4: N/A; Alignment1: Lawful; Alignment2: Good; Side: Superhero;";
-
 const LogViewer: React.FC<LogViewerProps> = ({ storeState, handleActiveState }) => {
+  const testImage = "/aiu.png";
+
+  const reportFrame = "/reportFrame.png";
+
   const { interplanetaryStatusReports, scanningResults, imagesStored } = storeState;
 
   const [currentSection, setCurrentSection] = useState(1);
