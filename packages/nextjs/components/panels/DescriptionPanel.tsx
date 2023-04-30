@@ -77,20 +77,22 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
       style={{
         transition: "all 0.5s ease-in-out",
         padding: "0.2rem",
-        height: "40%",
-        width: "30%",
-        left: "66%",
+        height: "50%",
+        width: "23%",
+        left: "70%",
+        top: "30%",
       }}
       onClick={handleClick}
     >
       <img
         style={{
+          top: "10%",
           position: "absolute",
-          height: "100%",
+          height: "80%",
           width: "100%",
           objectFit: "fill",
           left: "4%",
-          padding: "1.2rem",
+          padding: "5.5rem",
         }}
         src="aiu.png"
       ></img>
@@ -206,7 +208,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
               position: "absolute",
             }}
           >
-            {!scanning ? (
+            {travelStatus !== "NoTarget" && (
               <div
                 style={{
                   fontWeight: "bold",
@@ -258,7 +260,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                       </button>
                     </div>
                   )}
-                  {travelStatus !== "NoTarget" && !toggle === false && (
+                  {toggle && (
                     <button
                       className={`spaceship-button ${waitingForDescription ? "active" : ""}`}
                       style={{
@@ -350,15 +352,8 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                   </div>
                 </div>
               </div>
-            ) : scanning ? (
-              <>
-                <div className="spaceship-display-screen">
-                  <p className="description-text screen-border">Scanning...</p>
-                </div>
-              </>
-            ) : (
-              travelStatus === "NoTarget" && <div className="description-text">SCANNER OFFLINE</div>
             )}
+            <div className={"spaceship-display-screen"}>{travelStatus === "NoTarget" && <>NO TARGETS AVAILABLE</>}</div>
           </div>
         </>
       </div>

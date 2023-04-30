@@ -175,11 +175,11 @@ z-index: -1;
  
   width: 10%;
   height:15%;
-  transform: translateY(-31%) translateX(6%)perspective(1000px) rotateX(40deg) rotateY(-12deg) rotateZ(15deg) scale(0.5)skewY(13deg)skewX(-15deg); /* Add translateY */
+  transform: translateY(41%) translateX(6%)perspective(1000px) rotateX(40deg) rotateY(-12deg) rotateZ(15deg) scale(0.5)skewY(13deg)skewX(-15deg); /* Add translateY */
   transform-origin: right center;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 8px 0px;
   z-index: 10;
-  animation: randomFlicker 2.65s infinite ease-in-out;
+  animation: randomFlicker 12.65s infinite ease-in-out;
 }
 
 
@@ -1028,12 +1028,14 @@ input:checked + .slider:before {
   left: 80%;
   height: 30%;
   width: 15%;
+
 transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skewY(-5deg)skewX(-10deg)scale(1);
    /* Apply the 3D transformations */
    
    transform-origin: center center;
   z-index: 100;
-  animation: randomFlicker 10.65s infinite ease-in-out;
+  animation: randomFlicker 0.5s infinite;
+
 }
 
 /* Default button styles */
@@ -1168,19 +1170,22 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
 
 .prompt-display-div{
   position: relative;
-  left: 5%;
+  top: 44%;
+  left: 15%;
   right: 10%;
   margin-right: 10%;
-  height: 70%;
+  height: 55%;
   opacity: 1;
   background-color: #000;
   bottom: -36%;
-  width: 110%;
+  width: 130%;
+  perspective: 400px;
   flex-direction: column;
   transform-origin: left;
   display: flex;
-  transform: rotateX(33deg) rotateY(-3deg) rotateZ(0.2deg)skewX(32deg) skewY(-9deg) scale(0.9);
+  transform: rotateX(13deg) rotateY(-13deg) rotateX(5deg)rotateZ(4.2deg)skewX(35deg) skewY(-11deg) scale(0.9);
   transition: ease-in-out 0.5s;
+  z-index: -10;
 
 
    
@@ -1213,13 +1218,14 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
 
 .prompt-display-div:hover{
   position: relative;
-  left: 10%;
+  left: 0%;
   right: 10%;
   margin-right: 10%;
-  height: 75%;
+  height: 80%;
   opacity: 1;
   background-color: #000;
-  bottom: -2%;
+  bottom: 10%;
+  top: -10%;
   width: 200%;
   flex-direction: column;
   transform-origin: left;
@@ -1227,8 +1233,8 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
   transition: ease-in-out 0.5s;
   animation:none;
   color:white;
-  z-index: 10000000000000000000000000000000;
-  transform: rotateX(0deg) rotateZ(-10deg) rotateY(30deg)skewX(00deg) skewY(10deg) scale(1.3);
+  z-index: 10;
+  transform: rotateX(0deg) rotateZ(-10deg) rotateY(-20deg)skewX(00deg) skewY(10deg) scale(1.3);
 
 
 

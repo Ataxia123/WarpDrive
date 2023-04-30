@@ -16,13 +16,14 @@ const SpaceshipInterface: React.FC<SpaceshipInterfaceProps> = ({ travelStatus })
   const divStyle: React.CSSProperties = {
     pointerEvents: videoPlaying ? "auto" : "none",
     opacity: videoPlaying ? 0.8 : 0.2,
+    zIndex: -1,
 
-    left: "73%",
-    top: "19%",
-    width: "15.5%",
+    left: "70.3%",
+    top: "18.6%",
+    width: "26.5%",
     height: "20%",
     position: "absolute",
-    transform: "perspective(1000px) rotateZ(-20deg) rotateY(-10deg) rotateX(5deg)skewX(-12deg)skewY(16deg)",
+    transform: "perspective(1000px) rotateZ(-35deg) rotateY(-10deg) rotateX(5deg)skewX(-22deg)skewY(21deg)",
   };
 
   useEffect(() => {

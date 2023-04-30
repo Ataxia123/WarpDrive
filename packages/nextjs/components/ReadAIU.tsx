@@ -168,6 +168,9 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
       if (selectedTokenId && travelStatus === "NoTarget") {
         setTravelStatus("AcquiringTarget");
         setEngaged(true);
+      } else {
+        setTravelStatus("NoTarget");
+        setEngaged(false);
       }
     }
   };

@@ -368,7 +368,6 @@ export default function Home() {
 
       updateState("description", cleanedDescription);
       updateState("selectedDescription", cleanedDescription[0]);
-      updateState("scanning", false);
     } catch (e: any) {
       console.log(e);
       updateState("error", e.message);
@@ -495,7 +494,7 @@ export default function Home() {
             // Update loading state with progressData.progress
             console.log("Progress:", progressData.progress, progressData.response.buttonMessageId);
 
-            updateState("loading", progressData.progress);
+            updateState("loadingProgress", progressData.progress);
 
             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
           }
