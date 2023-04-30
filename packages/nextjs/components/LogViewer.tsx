@@ -288,9 +288,9 @@ const LogViewer: React.FC<LogViewerProps> = ({ storeState, handleActiveState }) 
     });
   }
 
-  async function handleSendTweet(selectedLog: string, selectedImage: string) {
+  async function handleSendTweet() {
     const formattedMetadata = stringifyMetadata(metadata);
-    const collageUrl = (await createWebcomic(testImage, reportFrame, formattedMetadata, displayImageUrl)) as string;
+    const collageUrl = (await createWebcomic(testImage, reportFrame, formattedMetadata, testImage)) as string;
     setCollageUrl(collageUrl);
   }
 
@@ -356,7 +356,7 @@ const LogViewer: React.FC<LogViewerProps> = ({ storeState, handleActiveState }) 
             color: "rgb(29, 161, 242)",
           }}
           onClick={e => {
-            handleSendTweet(interplanetaryStatusReports[currentIndex], imagesStored[currentIndex]);
+            handleSendTweet();
           }}
         >
           <img

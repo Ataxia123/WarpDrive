@@ -5,6 +5,7 @@ import { MarqueePanel } from "./panels/MarqueePannel";
 import { Header } from "~~/components/Header";
 
 interface DashboardProps {
+  loadingProgress: number;
   scanning: boolean;
   response: string;
   error: string;
@@ -33,6 +34,7 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
+  loadingProgress,
   response,
   error,
   warping,
@@ -68,6 +70,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           buttonMessageId={buttonMessageId}
         />
         <Background
+          loadingProgress={loadingProgress}
           scanning={scanning}
           warping={warping}
           travelStatus={travelStatus}

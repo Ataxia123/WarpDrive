@@ -2,8 +2,11 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Background.module.css";
 import SpaceParticles from "./SpaceParticles";
+import WarpSpeedCanvas from "./WarpSpeedCanvas";
+import WarpTunnel from "./WarpTunnel";
 
 interface BackgroundProps {
+  loadingProgress: number;
   scanning: boolean;
   warping: boolean;
   dynamicImageUrl: string;
@@ -11,10 +14,20 @@ interface BackgroundProps {
   travelStatus: string;
 }
 
-const Background: React.FC<BackgroundProps> = ({ warping, dynamicImageUrl, fixedImageUrl, travelStatus, scanning }) => {
+const Background: React.FC<BackgroundProps> = ({
+  warping,
+  dynamicImageUrl,
+  fixedImageUrl,
+  travelStatus,
+  scanning,
+  loadingProgress,
+}) => {
   const [bgPosition, setBgPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [warpSpeedOpacity, setWarpSpeedOpacity] = useState("0");
   const [lightSpeed, setLightSpeed] = useState(false);
+  const warpImage1 = React.useRef<HTMLDivElement>(null);
+  const warpImage2 = React.useRef<HTMLDivElement>(null);
+
   const handleMouseMove = (e: MouseEvent) => {
     const { clientX, clientY } = e;
     setBgPosition({ x: clientX / 50, y: clientY / 50 });
@@ -26,9 +39,19 @@ const Background: React.FC<BackgroundProps> = ({ warping, dynamicImageUrl, fixed
       window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
+
   useEffect(() => {
     setLightSpeed(warping);
   }, [warping]);
+
+  useEffect(() => {
+    if (warpImage1.current && warpImage2.current) {
+      const duration = 12 - 4 * (loadingProgress / 10);
+      warpImage1.current.style.animation = `zoomIn ${duration}s infinite linear`;
+      warpImage2.current.style.animation = `zoomIn ${duration}s infinite linear 0.5s`;
+    }
+  }, [loadingProgress]);
+
   return (
     <div className={styles.background}>
       <img
@@ -39,10 +62,9 @@ const Background: React.FC<BackgroundProps> = ({ warping, dynamicImageUrl, fixed
           transform: `translate(${bgPosition.x}px, ${bgPosition.y}px)`,
         }}
       />
-      <div className={`warpSpeedEffect ${lightSpeed ? "warpSpeedActive" : ""}`}>
-        <div className="warpImage warpImage1" />
-        <div className="warpImage warpImage2" />
-      </div>
+      <SpaceParticles />
+      <WarpTunnel loadingProgress={loadingProgress} active={warping} />
+      <WarpSpeedCanvas loadingProgress={loadingProgress} active={warping} />
     </div>
   );
 };

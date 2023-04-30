@@ -35,6 +35,7 @@ type StoreState = {
 export default function Home() {
   const [appState, setAppState] = useState({
     loading: false,
+    loadingProgress: 0,
     originatingMessageId: "",
     error: "",
     response: "",
@@ -70,6 +71,7 @@ export default function Home() {
   //session storage
 
   const {
+    loadingProgress,
     loading,
     prevTravelStatus,
     error,
@@ -223,6 +225,7 @@ export default function Home() {
   useEffect(() => {
     if (travelStatus == "TargetAcquired" && scanning === true) {
       handleButtonClick("U1", "background");
+      updateState("scanning", false);
     }
     return console.log("Tried to Upscale new background but", { travelStatus, scanning });
   }, [scanning]);
@@ -643,6 +646,7 @@ export default function Home() {
         <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
         <div className="container mx-auto h-screen flex flex-col items-center justify-center space-y-8">
           <Dashboard
+            loadingProgress={loadingProgress}
             scanning={scanning}
             response={response}
             error={error}

@@ -262,7 +262,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                   )}
                   {toggle && (
                     <button
-                      className={`spaceship-button ${waitingForDescription ? "active" : ""}`}
+                      className={`spaceship-button screen-border`}
                       style={{
                         position: "relative",
                         height: "110%",

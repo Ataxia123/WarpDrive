@@ -163,7 +163,6 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
       }
     } else if (travelStatus === "TargetAcquired" && scanning === true) {
       setTravelStatus("TargetAcquired");
-      handleScanning(false);
     } else {
       if (selectedTokenId && travelStatus === "NoTarget") {
         setTravelStatus("AcquiringTarget");

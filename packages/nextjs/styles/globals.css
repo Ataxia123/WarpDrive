@@ -1101,7 +1101,7 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
   width: 100%;
   height: 100%;
   object-fit: cover;
-  background-image: url("https://i.pinimg.com/originals/0d/a9/a5/0da9a5f9054b0ec2297269a44809257d.jpg");
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/6/66/Hyperspace-star-streaks-effect.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -1116,12 +1116,36 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
   }
 }
 
-.warpImage1 {
-  animation: zoomIn 5s infinite linear;
+/* WarpTunnel.css */
+.warpTunnel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0) 5%,
+    rgba(0, 0, 0, 0) 15%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+  background-size: 400% 400%;
+  transition: opacity 0.5s;
 }
 
-.warpImage2 {
-  animation: zoomIn 5s infinite linear 0.5s;
+.warpTunnelActive {
+  opacity: 1;
+  animation: warp 5s infinite linear;
+}
+
+@keyframes warp {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 400% 50%;
+  }
 }
 
 .acquiring-target-card {
