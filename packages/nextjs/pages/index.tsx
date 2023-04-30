@@ -35,6 +35,7 @@ type StoreState = {
 export default function Home() {
   const [appState, setAppState] = useState({
     loading: false,
+    originatingMessageId: "",
     error: "",
     response: "",
     imageUrl: "",
@@ -89,6 +90,7 @@ export default function Home() {
     side,
     buttonMessageId,
     backgroundImageUrl,
+    originatingMessageId,
     tempUrl,
     nijiFlag,
     vFlag,
@@ -219,7 +221,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (travelStatus == "TargetAcquired" && scanning === false) {
+    if (travelStatus == "TargetAcquired" && scanning === true) {
       handleButtonClick("U1", "background");
     }
     return console.log("Tried to Upscale new background but", { travelStatus, scanning });
@@ -317,146 +319,11 @@ export default function Home() {
       console.timeEnd("fetchInterplanetaryStatusReport");
     }
   }, [travelStatus]);
-  // handler for Generating images
-  const submitPrompt = async (type: "character" | "background") => {
-    let prompt = generatePrompt(
-      type,
-      srcUrl,
-      level,
-      power1,
-      power2,
-      power3,
-      power4,
-      alignment1,
-      alignment2,
-      description[selectedDescriptionIndex],
-      nijiFlag,
-      vFlag,
-      side,
-      interplanetaryStatusReport,
-    );
 
-    if (waitingForWebhook) {
-      console.log("Already waiting for webhook, please wait for response.");
-      return;
-    }
-    updateState("waitingForWebhook", true);
-    if (type === "character") {
-      updateState("warping", true);
-      console.log("WARP DRIVE IS CHARACTER IN ENGAGED", { warping, prompt });
-    }
-
-    if (modifiedPrompt !== "ALLIANCE OF THE INFINITE UNIVERSE") {
-      prompt = modifiedPrompt;
-    }
-
-    try {
-      const r = await axios.post("/api/apiHandler", { text: prompt });
-
-      console.log("response", r.data);
-      updateState("response", JSON.stringify(r.data, null, 2));
-      console.log("messageID", r.data.messageId);
-
-      // Poll the server to fetch the image URL from the cache
-      let imageUrl, ImagineCommandResponse, messageId;
-      while (!ImagineCommandResponse) {
-        try {
-          const fetchResponse = await axios.get(`/api/fetchImageUrl?messageId=${r.data.messageId}`);
-          ImagineCommandResponse = fetchResponse.data;
-          imageUrl = fetchResponse.data.imageUrl;
-          messageId = fetchResponse.data.buttonMessageId;
-        } catch (error: any) {
-          if (error.response.status !== 404) {
-            throw error;
-          }
-          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
-        }
-      }
-
-      // Set the appropriate state based on the type
-      if (type === "character") {
-        updateState("imageUrl", imageUrl);
-        updateState("buttonMessageId", messageId);
-        updateState("warping", false);
-        updateState("travelStatus", "NoTarget");
-      } else {
-        updateState("tempUrl", imageUrl);
-        updateState("travelStatus", "TargetAcquired");
-        updateState("buttonMessageId", messageId);
-      }
-    } catch (e: any) {
-      console.log(e);
-      updateState("error", e.message);
-      updateState("warping", false);
-      updateState("travelStatus", "NoTarget");
-    }
-    updateState("waitingForWebhook", false);
-  };
-
-  // handler for upscaling images
-  const handleButtonClick = async (button: string, type: "character" | "background") => {
-    if (waitingForWebhook) {
-      console.log("Already waiting for webhook, please wait for response.");
-      return;
-    }
-    updateState("waitingForWebhook", true);
-
-    try {
-      if (type === "background") {
-        console.log("buttonMessageId", buttonMessageId);
-        updateState("warping", true);
-      }
-      const r = await axios.post("/api/postButtonCommand", { button, buttonMessageId });
-
-      console.log("response", r.data);
-      if (travelStatus === "AcquiringTarget") {
-        updateState("travelStatus", "TargetAcquired");
-        updateState("warping", true);
-      }
-
-      // Poll the server to fetch the response from the cache
-      let buttonCommandResponse, buttonId, imageUrl;
-      while (!buttonCommandResponse) {
-        try {
-          const fetchResponse = await axios.get(
-            `/api/fetchButtonCommandResponse?originatingMessageId=${r.data.messageId}`,
-          );
-          buttonCommandResponse = fetchResponse.data;
-          buttonId = buttonCommandResponse.buttonMessageId;
-          imageUrl = buttonCommandResponse.imageUrl;
-        } catch (error: any) {
-          if (error.response.status !== 404) {
-            throw error;
-          }
-          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
-        }
-      }
-      if (type === "character") {
-        updateState("imageUrl", imageUrl);
-        updateState("warping", false);
-        updateState("buttonMessageId", buttonId);
-      } else {
-        updateState("backgroundImageUrl", imageUrl);
-      }
-      updateState("warping", false);
-      updateState("travelStatus", "NoTarget");
-      updateState("buttonMessageId", buttonId);
-
-      console.log("Button Command Response:", buttonCommandResponse);
-    } catch (e: any) {
-      console.log(e);
-      updateState("error", e.message);
-      updateState("warping", false);
-      updateState("travelStatus", "NoTarget");
-    }
-    updateState("waitingForWebhook", false);
-    setBackgroundImageUrl(imageUrl, type);
-    setDisplayImageUrl(imageUrl, type);
-    handleDescribeClick();
-  };
-  // handler for describing images
   const handleDescribeClick = async () => {
-    console.log(`Submitting image URL: ${srcUrl}`);
+    console.log(
+      `Submitting image URL: ${scanning && backgroundImageUrl ? backgroundImageUrl : imageUrl ? imageUrl : srcUrl}`,
+    );
     updateState("loading", true);
 
     if (waitingForWebhook) {
@@ -465,10 +332,11 @@ export default function Home() {
     }
 
     updateState("waitingForWebhook", true);
+
+    const url = scanning && backgroundImageUrl ? backgroundImageUrl : imageUrl ? imageUrl : srcUrl;
+    console.log("url", url);
     try {
-      const r = await axios.post("/api/postDescription", {
-        srcUrl: scanning ? (backgroundImageUrl ? backgroundImageUrl : srcUrl) : imageUrl ? imageUrl : srcUrl,
-      });
+      const r = await axios.post("/api/postDescription", { url: url });
 
       console.log("response", r.data);
       updateState("response", JSON.stringify(r.data, null, 2));
@@ -512,6 +380,245 @@ export default function Home() {
     }
     updateState("waitingForWebhook", false);
   };
+
+  type ProgressResponseType = {
+    progress: number | "incomplete";
+    response: {
+      createdAt?: string;
+      buttons?: string[];
+      imageUrl?: string;
+      buttonMessageId?: string;
+      originatingMessageId?: string;
+      content?: string;
+      ref?: string;
+      responseAt?: string;
+    };
+  };
+
+  async function fetchProgress(
+    messageId: string,
+    expireMins = 2,
+    retries = 3,
+    delay = 1000,
+  ): Promise<ProgressResponseType> {
+    try {
+      const response = await axios.get("/api/getProgress", {
+        params: {
+          messageId,
+          expireMins,
+        },
+      });
+
+      console.log("Response data:", response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error("Error details:", error);
+      console.error("Error response:", error.response);
+
+      if (retries > 0) {
+        console.log(`Retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+
+        return fetchProgress(messageId, expireMins, retries - 1, delay);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  // handler for Generating images
+  const submitPrompt = async (type: "character" | "background") => {
+    let prompt = generatePrompt(
+      type,
+      srcUrl,
+      level,
+      power1,
+      power2,
+      power3,
+      power4,
+      alignment1,
+      alignment2,
+      description[selectedDescriptionIndex],
+      nijiFlag,
+      vFlag,
+      side,
+      interplanetaryStatusReport,
+    );
+
+    if (waitingForWebhook) {
+      console.log("Already waiting for webhook, please wait for response.");
+      return;
+    }
+    updateState("waitingForWebhook", true);
+    if (type === "character") {
+      updateState("warping", true);
+      console.log("WARP DRIVE IS CHARACTER IN ENGAGED", { warping, prompt });
+    }
+
+    if (modifiedPrompt !== "ALLIANCE OF THE INFINITE UNIVERSE" && type === "character") {
+      prompt = modifiedPrompt;
+    }
+
+    try {
+      const r = await axios.post("/api/apiHandler", { text: prompt });
+
+      console.log("response", r.data);
+      updateState("response", JSON.stringify(r.data, null, 2));
+      console.log("messageID", r.data.messageId);
+      const ogMessage = r.data.messageId;
+      // Poll the server to fetch the image URL from the cache
+      let imageUrl, ImagineCommandResponse, messageId;
+      const taskComplete = false;
+      while (!taskComplete && !ImagineCommandResponse && ogMessage) {
+        try {
+          const progressData = await fetchProgress(ogMessage);
+          console.log(
+            "Progress:",
+            progressData.progress,
+            progressData.response.buttonMessageId,
+            progressData.response.originatingMessageId,
+          );
+          console.log(progressData);
+
+          // Check if the progress is 100 or the task is complete
+          if (progressData.progress === 100) {
+            ImagineCommandResponse = progressData;
+            imageUrl = progressData.response.imageUrl;
+            messageId = progressData.response.buttonMessageId;
+            updateState("buttonMessageId", messageId);
+            console.log(buttonMessageId);
+          } else if (progressData.progress === "incomplete") {
+            // Handle error case
+            console.error("Error: Task is incomplete");
+            break;
+          } else {
+            // Update loading state with progressData.progress
+            console.log("Progress:", progressData.progress, progressData.response.buttonMessageId);
+
+            updateState("loading", progressData.progress);
+
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
+          }
+        } catch (error: any) {
+          if (error.response.status !== 404) {
+            throw error;
+          }
+
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
+        }
+
+        // Set the appropriate state based on the type
+        if (type === "character") {
+          updateState("imageUrl", imageUrl);
+        } else {
+          updateState("tempUrl", imageUrl);
+        }
+      }
+    } catch (e: any) {
+      console.log(e);
+      updateState("error", e.message);
+      updateState("warping", false);
+      updateState("travelStatus", "NoTarget");
+    }
+    if (type === "character") {
+      updateState("warping", false);
+      updateState("travelStatus", "NoTarget");
+    } else {
+      updateState("travelStatus", "TargetAcquired");
+    }
+
+    updateState("waitingForWebhook", false);
+  };
+
+  // handler for upscaling images
+  const handleButtonClick = async (button: string, type: "character" | "background") => {
+    console.log("button", button, type);
+    if (waitingForWebhook) {
+      console.log("Already waiting for webhook, please wait for response.");
+      return;
+    }
+    updateState("waitingForWebhook", true);
+    if (type === "background") {
+      console.log("buttonMessageId", buttonMessageId);
+      updateState("warping", true);
+    } else if (travelStatus === "AcquiringTarget") {
+      console.log("buttonMessageId", buttonMessageId);
+      updateState("travelStatus", "TargetAcquired");
+      updateState("warping", true);
+    }
+
+    const bMessageId = buttonMessageId;
+
+    try {
+      console.log("button", button, bMessageId);
+      const r = await axios.post("/api/postButtonCommand", { button, buttonMessageId: bMessageId });
+
+      console.log("response", r);
+      updateState("response", JSON.stringify(r, null, 2));
+
+      const taskComplete = false;
+      let buttonCommandResponse, buttonId, imageUrl;
+      buttonId = r.data.messageId;
+
+      // Poll the server to fetch the response from the cache
+
+      while (!taskComplete && !buttonCommandResponse) {
+        console.log(r.data, "OG MESSAGE", buttonId);
+        try {
+          const progressData = (await fetchProgress(buttonId)) as ProgressResponseType;
+
+          console.log("Progress:", progressData.progress, progressData.response.buttonMessageId);
+          console.log(progressData);
+
+          // Check if the progress is 100 or the task is complete
+          if (progressData.progress === 100) {
+            buttonCommandResponse = progressData;
+            imageUrl = progressData.response.imageUrl;
+            buttonId = progressData.response.buttonMessageId;
+          } else if (progressData.progress === "incomplete") {
+            // Handle error case
+            console.error("Error: Task is incomplete");
+            break;
+          } else {
+            // Update loading state with progressData.progress
+            console.log("Progress:", progressData.progress, progressData.response.buttonMessageId);
+            updateState("buttonMessageId", buttonId);
+            updateState("loading", progressData.progress);
+
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
+          }
+        } catch (error: any) {
+          if (error.response.status !== 404) {
+            throw error;
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
+        }
+      }
+
+      if (type === "character") {
+        updateState("imageUrl", imageUrl);
+        updateState("warping", false);
+      } else {
+        updateState("backgroundImageUrl", imageUrl);
+      }
+      updateState("warping", false);
+      updateState("travelStatus", "NoTarget");
+
+      console.log("Button Command Response:", buttonCommandResponse);
+    } catch (e: any) {
+      console.log(e);
+      updateState("error", e.message);
+      updateState("warping", false);
+      updateState("travelStatus", "NoTarget");
+    }
+    updateState("waitingForWebhook", false);
+    updateState("travelStatus", "NoTarget");
+    setBackgroundImageUrl(imageUrl, type);
+    setDisplayImageUrl(imageUrl, type);
+    // handleDescribeClick();
+  };
+  // handler for describing images
+
   // make an array out of the metadata attributes
 
   const handleImageSrcReceived = (imageSrc: string) => {

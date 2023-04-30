@@ -1,5 +1,3 @@
-import { useState } from "react";
-import marquee from "vanilla-marquee";
 import { useEthPrice } from "~~/hooks/scaffold-eth";
 
 type Metadata = {

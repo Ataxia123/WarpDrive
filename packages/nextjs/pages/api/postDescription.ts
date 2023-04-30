@@ -3,11 +3,11 @@ import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const AUTH_TOKEN = process.env.MIDJOURNEY_AUTH_TOKEN;
-const endpoint = `https://api.thenextleg.io`;
+const endpoint = `https://api.thenextleg.io/v2/describe`;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { srcUrl } = req.body;
-  console.log("imageUrl", srcUrl);
+  const { url } = req.body;
+  console.log("imageUrl", url);
 
   try {
     const headers = {
@@ -19,8 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       `${endpoint}`,
       {
         cmd: "describe",
-        url: srcUrl,
-        webhookOverride: `${process.env.BASE_URL}/api/describeWebhook`,
+        url: url,
+        webhookOverride: `${process.env.BASE_URL}api/describeWebhook`,
       },
       { headers },
     );
