@@ -25,6 +25,8 @@ const Background: React.FC<BackgroundProps> = ({
   const [bgPosition, setBgPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [warpSpeedOpacity, setWarpSpeedOpacity] = useState("0");
   const [lightSpeed, setLightSpeed] = useState(false);
+  const [showDynamicImage, setShowDynamicImage] = useState(true);
+  const [showAlternateImage, setShowAlternateImage] = useState(false);
   const warpImage1 = React.useRef<HTMLDivElement>(null);
   const warpImage2 = React.useRef<HTMLDivElement>(null);
 
@@ -52,17 +54,36 @@ const Background: React.FC<BackgroundProps> = ({
     }
   }, [loadingProgress]);
 
+  useEffect(() => {
+    if (warping && travelStatus == "TargetAcquired") {
+      setShowAlternateImage(true);
+    } else {
+      setShowAlternateImage(false);
+    }
+  }, [warping, travelStatus]);
+
   return (
     <div className={styles.background}>
+      <SpaceParticles />
+
       <img
-        className={styles.dynamicImage}
+        className={`${styles.dynamicImage} ${!showAlternateImage ? styles.visible : styles.hidden}`}
         src={dynamicImageUrl}
         alt="Dynamic Image"
         style={{
           transform: `translate(${bgPosition.x}px, ${bgPosition.y}px)`,
         }}
       />
-      <SpaceParticles />
+
+      <img
+        className={`${styles.alternateImage} ${showAlternateImage ? styles.visible : styles.hidden}`}
+        src="https://www.popsci.com/uploads/2019/10/25/BROOAKO2AURRGAKZZ27N5IOCHM.jpg"
+        alt="Alternate Image"
+        style={{
+          transform: `translate(${bgPosition.x}px, ${bgPosition.y}px)`,
+          width: "110%",
+        }}
+      />
       <WarpTunnel loadingProgress={loadingProgress} active={warping} />
       <WarpSpeedCanvas loadingProgress={loadingProgress} active={warping} />
     </div>

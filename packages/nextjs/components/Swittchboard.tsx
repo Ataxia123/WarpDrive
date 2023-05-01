@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 interface SwitchboardProps {
+  playHolographicDisplay: () => void;
   imageUrl: string;
   scanning: boolean;
   handleEngaged: (engaged: boolean) => void;
@@ -45,6 +46,7 @@ interface SwitchboardProps {
 }
 
 export const Switchboard: React.FC<SwitchboardProps> = ({
+  playHolographicDisplay,
   imageUrl,
   scanning,
   handleEngaged,
@@ -200,6 +202,7 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
                     value={displayPrompt}
                     onChange={e => {
                       e.stopPropagation();
+                      playHolographicDisplay();
                       setDisplayPrompt(e.target.value);
                     }}
                   />
@@ -241,6 +244,7 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
                       onClick={e => {
                         {
                           generateModifiedPrompt();
+                          playHolographicDisplay();
                           onModifiedPrompt(displayPrompt || "");
                         }
                         e.stopPropagation();
@@ -287,6 +291,7 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
                           className={`switchboard-attribute ${isChecked ? "checked" : ""} spaceship-panel`}
                           onClick={e => {
                             e.stopPropagation();
+                            playHolographicDisplay();
                             generateModifiedPrompt();
                             handleToggle(attribute);
                           }}

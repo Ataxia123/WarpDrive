@@ -17,9 +17,15 @@ interface TokenSelectionPanelProps {
   interplanetaryStatusReport: string;
   engaged: boolean;
   travelStatus: string;
+  playHolographicDisplay: () => void;
+  playSpaceshipHum: () => void;
+  playWarpSpeed: () => void;
 }
 
 const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
+  playHolographicDisplay,
+  playSpaceshipHum,
+  playWarpSpeed,
   scanning,
   handleScanning,
   handleButtonClick,
@@ -50,6 +56,9 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
   return (
     <>
       <ReadAIU
+        playHolographicDisplay={playHolographicDisplay}
+        playSpaceshipHum={playSpaceshipHum}
+        playWarpSpeed={playWarpSpeed}
         handleScanning={handleScanning}
         scanning={scanning}
         handleButtonClick={handleButtonClick}

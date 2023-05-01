@@ -8,6 +8,7 @@ interface StoreState {
 }
 
 interface DescriptionPanelProps {
+  playHolographicDisplay: () => void;
   handleClearAppState: () => void;
   handleActiveState: (imageUrl: string, selectedDescription: string, interplanetaryStatusReport: string) => void;
 
@@ -25,6 +26,7 @@ interface DescriptionPanelProps {
 }
 
 export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
+  playHolographicDisplay,
   handleClearAppState,
   handleActiveState,
   handleSubmit,
@@ -45,6 +47,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
   const [toggle, setToggle] = useState<boolean>(false);
 
   const handleClick = () => {
+    playHolographicDisplay();
     setFocused(!focused);
   };
 
@@ -53,12 +56,14 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
   }, [scanning]);
 
   const handleScanClick = () => {
+    playHolographicDisplay();
     handleScanning(true);
     setToggle(!toggle);
     handleDescribeClick();
   };
 
   const handleButtonClick = () => {
+    playHolographicDisplay();
     handleScanning(true);
     handleSubmit("background");
     setToggle(!toggle);
@@ -179,6 +184,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                   }}
                 >
                   <LogViewer
+                    playHolographicDisplay={playHolographicDisplay}
                     storeState={storeState}
                     handleActiveState={handleActiveState}
                     handleClearAppState={handleClearAppState}
@@ -306,7 +312,6 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                               pointerEvents: "none",
                               color: "white",
                               scale: "0.8",
-                              marginTop: "8%",
                             }}
                           >
                             SET COORDINATES

@@ -1,5 +1,6 @@
 // index.tsx
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import AudioController from "../components/AudioController";
 import Dashboard from "../components/Dashboard";
 import AcquiringTarget from "../components/panels/AcquiringTarget";
 import DescriptionPanel from "../components/panels/DescriptionPanel";
@@ -11,7 +12,7 @@ import axios from "axios";
 import GraphemeSplitter from "grapheme-splitter";
 
 type Metadata = {
-  srcUrl: string | "";
+  srcUrl: string | undefined;
   Level: string;
   Power1: string;
   Power2: string;
@@ -33,6 +34,66 @@ type StoreState = {
 };
 
 export default function Home() {
+  type Sounds = {
+    spaceshipHum?: AudioBuffer | null;
+    spaceshipOn?: AudioBuffer | null;
+    holographicDisplay?: AudioBuffer | null;
+    warpSpeed?: AudioBuffer | null;
+  };
+
+  const [sounds, setSounds] = useState<Sounds>({});
+  const [audioController, setAudioController] = useState<AudioController | null>(null);
+  const [soundsLoaded, setSoundsLoaded] = useState<boolean>(false);
+  const loadSounds = useCallback(async () => {
+    const spaceshipOn = await audioController?.loadSound("/audio/spaceship-on.wav");
+    const spaceshipHum = await audioController?.loadSound("/audio/spaceship-hum.wav");
+    const holographicDisplay = await audioController?.loadSound("/audio/holographic-display.wav");
+    const warpSpeed = await audioController?.loadSound("/audio/warp-speed.wav");
+    if (spaceshipOn) {
+      audioController?.playSound(spaceshipOn, true); // Pass 'true' as the second argument to enable looping
+    }
+    setSounds({
+      spaceshipOn,
+      spaceshipHum,
+      holographicDisplay,
+      warpSpeed,
+    });
+
+    setSoundsLoaded(true);
+  }, [audioController, soundsLoaded]);
+
+  useEffect(() => {
+    setAudioController(new AudioController());
+  }, []);
+
+  useEffect(() => {
+    if (audioController && !soundsLoaded) {
+      loadSounds();
+    }
+  }, [audioController, soundsLoaded, loadSounds]);
+  useEffect(() => {
+    if (sounds.spaceshipOn) {
+      audioController?.playSound(sounds.spaceshipOn, true);
+    }
+  }, [sounds.spaceshipOn]);
+  function playSpaceshipHum() {
+    if (sounds.spaceshipHum) {
+      audioController?.playSound(sounds.spaceshipHum);
+    }
+  }
+
+  function playHolographicDisplay() {
+    if (sounds.holographicDisplay) {
+      audioController?.playSound(sounds.holographicDisplay);
+    }
+  }
+
+  function playWarpSpeed() {
+    if (sounds.warpSpeed) {
+      audioController?.playSound(sounds.warpSpeed);
+    }
+  }
+
   const [appState, setAppState] = useState({
     loading: false,
     loadingProgress: 0,
@@ -113,19 +174,12 @@ export default function Home() {
   const setMetadata = useAppStore(state => state.setMetadata);
   const travels = useAppStore(state => state.travels);
 
-  function updateTravelMetadata() {
-    // Collect all the required information for the travel metadata
-
-    // Update the metadata state in the Zustand store
-    setMetadata(metadata);
-  }
-  function createTravelResult() {
+  function createTravelResult(metadata: Metadata) {
     // Collect all the required information for the travel result
-
-    updateTravelMetadata();
     const travelResult = {
       metadata: metadata,
       backgroundImageUrl: backgroundImageUrl,
+      imageUrl: imageUrl,
       apiResponses: error ? error : response,
       timestamp: new Date(),
     };
@@ -133,18 +187,32 @@ export default function Home() {
     return travelResult;
   }
 
+  function createTravelMetadata(): Metadata {
+    return {
+      srcUrl,
+      Level: level,
+      Power1: power1,
+      Power2: power2,
+      Power3: power3,
+      Power4: power4,
+      Alignment1: alignment1,
+      Alignment2: alignment2,
+      Side: side,
+      interplanetaryStatusReport,
+      selectedDescription,
+      nijiFlag,
+      vFlag,
+    };
+  }
+
   function updateAllData() {
     // Update travels state
-    const newTravelResult = createTravelResult();
+    const metadata = createTravelMetadata();
+    const newTravelResult = createTravelResult(metadata);
     setTravels(newTravelResult);
 
     // Update apiResponses and errors state
-
     handleApiResponse(response, error);
-
-    // Update backgroundImageUrl state
-    const imageUrl = "exampleImageUrl";
-    const type = "background";
   }
 
   useEffect(() => {
@@ -222,14 +290,6 @@ export default function Home() {
     setAppState(prevState => ({ ...prevState, [key]: value }));
   };
 
-  useEffect(() => {
-    if (travelStatus == "TargetAcquired" && scanning === true) {
-      handleButtonClick("U1", "background");
-      updateState("scanning", false);
-    }
-    return console.log("Tried to Upscale new background but", { travelStatus, scanning });
-  }, [scanning]);
-
   const handleMetadataReceived = (metadata: any) => {
     console.log("Metadata received in the parent component:", metadata);
 
@@ -259,6 +319,10 @@ export default function Home() {
   const handleScanning = (scanning: boolean) => {
     updateState("scanning", scanning);
     console.log("SCANNING", { scanning });
+    if (travelStatus == "AcquiringTarget" && scanning === false) {
+      handleButtonClick("U1", "background");
+    }
+    return console.log("Tried to Upscale new background but", { travelStatus, scanning });
   };
 
   function generatePrompt(
@@ -452,10 +516,8 @@ export default function Home() {
       return;
     }
     updateState("waitingForWebhook", true);
-    if (type === "character") {
-      updateState("warping", true);
-      console.log("WARP DRIVE IS CHARACTER IN ENGAGED", { warping, prompt });
-    }
+    updateState("warping", true);
+    console.log("WARP DRIVE IS CHARACTER IN ENGAGED", { warping, prompt });
 
     if (modifiedPrompt !== "ALLIANCE OF THE INFINITE UNIVERSE" && type === "character") {
       prompt = modifiedPrompt;
@@ -526,10 +588,11 @@ export default function Home() {
       updateState("warping", false);
       updateState("travelStatus", "NoTarget");
     } else {
-      updateState("travelStatus", "TargetAcquired");
+      console.log("buttonMessageId", buttonMessageId);
     }
 
     updateState("waitingForWebhook", false);
+    updateState("loadingProgress", 0);
   };
 
   // handler for upscaling images
@@ -542,6 +605,7 @@ export default function Home() {
     updateState("waitingForWebhook", true);
     if (type === "background") {
       console.log("buttonMessageId", buttonMessageId);
+      updateState("travelStatus", "TargetAcquired");
       updateState("warping", true);
     } else if (travelStatus === "AcquiringTarget") {
       console.log("buttonMessageId", buttonMessageId);
@@ -617,6 +681,7 @@ export default function Home() {
     updateState("travelStatus", "NoTarget");
     setBackgroundImageUrl(imageUrl, type);
     setDisplayImageUrl(imageUrl, type);
+    updateState("loadingProgress", 0);
     // handleDescribeClick();
   };
   // handler for describing images
@@ -667,6 +732,9 @@ export default function Home() {
             <AcquiringTarget loading={loading} travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
 
             <TokenSelectionPanel
+              playHolographicDisplay={playHolographicDisplay}
+              playSpaceshipHum={playSpaceshipHum}
+              playWarpSpeed={playWarpSpeed}
               handleScanning={handleScanning}
               scanning={scanning}
               buttonMessageId={buttonMessageId}
@@ -684,6 +752,7 @@ export default function Home() {
               travelStatus={travelStatus}
             />
             <DescriptionPanel
+              playHolographicDisplay={playHolographicDisplay}
               handleClearAppState={handleClearAppState}
               handleActiveState={handleActiveSate}
               storeState={storeState}
@@ -698,6 +767,7 @@ export default function Home() {
               handleDescribeClick={handleDescribeClick}
             />
             <PromptPanel
+              playHolographicDisplay={playHolographicDisplay}
               scanning={scanning}
               warping={warping}
               handleEngaged={handleEngaged}

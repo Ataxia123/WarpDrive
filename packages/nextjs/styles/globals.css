@@ -520,6 +520,26 @@ perspective(500px)
   transform: translateX(10%) translateY(-5%)
 }
 
+.visible {
+  opacity: 1;
+  transition: opacity 1s;
+}
+
+.hidden {
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+.alternateImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
 .prompt-panel-closed {
   position: absolute;
   overflow: hidden;

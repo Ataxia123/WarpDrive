@@ -12,6 +12,7 @@ type Metadata = {
 };
 
 interface PromptPanelProps {
+  loadingProgress: number;
   response: string;
   error: string;
   interplanetaryStatusReport: string;
@@ -26,6 +27,8 @@ interface PromptPanelProps {
 }
 
 export const MarqueePanel: React.FC<PromptPanelProps> = ({
+  loading,
+  loadingProgress,
   response,
   error,
   metadata,
@@ -46,6 +49,22 @@ export const MarqueePanel: React.FC<PromptPanelProps> = ({
       <div className="marquee-container spaceship-display-screen">
         <h2 className="text-s font-bold marquee-title description-text">AI-U BROADCAST</h2>
         <div className="screen-border">
+          <div
+            style={{
+              position: "relative",
+              top: "0",
+              left: "5%",
+              width: "100%",
+              height: "100%",
+              zIndex: 1009000000000000000000000000000000000000000,
+              display: "flex",
+            }}
+            className="spaceship-screen-display"
+          >
+            Loading:{loadingProgress}
+            <br />
+            {response}
+          </div>
           <br />
 
           <p className="marquee-content" id="mc">

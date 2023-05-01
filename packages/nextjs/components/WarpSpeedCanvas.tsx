@@ -6,6 +6,57 @@ interface WarpSpeedCanvasProps {
   active: boolean;
 }
 
+function drawParticle(ctx: CanvasRenderingContext2D, particle: Particle) {
+  const radius = 2;
+  const x = (particle.x - ctx.canvas.width / 2) * (ctx.canvas.width / particle.z);
+  const y = (particle.y - ctx.canvas.height / 2) * (ctx.canvas.width / particle.z);
+  const size = radius * (ctx.canvas.width / particle.z);
+  const opacity = 1 - particle.z / ctx.canvas.width;
+
+  const gradient = ctx.createRadialGradient(
+    x + ctx.canvas.width / 2,
+    y + ctx.canvas.height / 2,
+    0,
+    x + ctx.canvas.width / 2,
+    y + ctx.canvas.height / 2,
+    size,
+  );
+
+  gradient.addColorStop(0, `rgba(242, 152, 47, ${opacity})`);
+  gradient.addColorStop(0.5, `rgba(242, 152, 47, ${opacity * 0.5})`);
+  gradient.addColorStop(1, `rgba(242, 152, 47, 0)`);
+
+  ctx.beginPath();
+  ctx.arc(x + ctx.canvas.width / 2, y + ctx.canvas.height / 2, size, 0, Math.PI * 2);
+  ctx.fillStyle = gradient;
+  ctx.fill();
+}
+
+class Particle {
+  x: number;
+  y: number;
+  z: number;
+  speed: number;
+
+  constructor() {
+    this.x = Math.random() * window.innerWidth;
+    this.y = Math.random() * window.innerHeight;
+    this.z = Math.random() * window.innerWidth;
+    this.speed = Math.random() * 2 + 0.5;
+  }
+
+  update(loadingProgress: number) {
+    this.z -= this.speed * (1 + loadingProgress / 100);
+    if (this.z <= 0) {
+      this.z = window.innerWidth;
+    }
+  }
+
+  draw(ctx: CanvasRenderingContext2D) {
+    drawParticle(ctx, this);
+  }
+}
+
 const WarpSpeedCanvas: React.FC<WarpSpeedCanvasProps> = ({ loadingProgress, active }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -22,53 +73,18 @@ const WarpSpeedCanvas: React.FC<WarpSpeedCanvasProps> = ({ loadingProgress, acti
     let animationFrameId: number;
 
     const particles = [] as Particle[];
-    const particleCount = 600;
-
-    class Particle {
-      x: number;
-      y: number;
-      z: number;
-      speed: number;
-
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.z = Math.random() * canvas.width;
-        this.speed = Math.random() * 2 + 0.5;
-      }
-
-      update() {
-        this.z -= this.speed * (1 + loadingProgress / 100);
-        if (this.z <= 0) {
-          this.z = canvas.width;
-        }
-      }
-
-      draw() {
-        const radius = 2;
-        const x = (this.x - canvas.width / 2) * (canvas.width / this.z);
-        const y = (this.y - canvas.height / 2) * (canvas.width / this.z);
-        const size = radius * (canvas.width / this.z);
-        const opacity = 1 - this.z / canvas.width;
-
-        ctx?.beginPath();
-        ctx?.arc(x + canvas.width / 2, y + canvas.height / 2, size, 0, Math.PI * 2);
-        //@ts-ignore
-        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-        ctx?.fill();
-      }
-    }
+    const particleCount = 2000;
 
     for (let i = 0; i < particleCount; i++) {
       particles.push(new Particle());
     }
 
     const render = () => {
-      ctx?.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       for (const particle of particles as Particle[]) {
-        particle?.update();
-        particle?.draw();
+        particle.update(loadingProgress); // Add this line to update particle positions
+        particle.draw(ctx);
       }
 
       animationFrameId = requestAnimationFrame(render);

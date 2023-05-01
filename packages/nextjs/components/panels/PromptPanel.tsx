@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Switchboard from "../Swittchboard";
 
 type Metadata = {
-  srcUrl: string | "";
+  srcUrl: string | undefined;
   Level: string;
   Power1: string;
   Power2: string;
@@ -18,6 +18,7 @@ type Metadata = {
 };
 
 interface PromptPanelProps {
+  playHolographicDisplay: () => void;
   scanning: boolean;
   handleEngaged: (engaged: boolean) => void;
   travelStatus: string;
@@ -55,6 +56,7 @@ interface PromptPanelProps {
 }
 
 export const PromptPanel: React.FC<PromptPanelProps> = ({
+  playHolographicDisplay,
   handleEngaged,
   travelStatus,
   warping,
@@ -92,6 +94,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
 
   const handleClick = () => {
     setIsFocused(!isFocused);
+    playHolographicDisplay();
   };
 
   const handleToggle = (attribute: string, isEnabled: boolean) => {
@@ -104,7 +107,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
 
   return (
     <div className={`prompt-panel${isFocused ? "" : "-closed"}`} onClick={handleClick}>
-      <div className={`spaceship-display-screen${engaged ? "" : "-off"}`}>
+      <div className={`spaceship-display-screen${isFocused! ? "" : "-off"}`}>
         <div className="spaceship-display-screen animated-floating">
           <div className="display-border">
             <h1 className="description-text">
@@ -140,6 +143,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
       <>
         <>
           <Switchboard
+            playHolographicDisplay={playHolographicDisplay}
             imageUrl={imageUrl}
             scanning={scanning}
             handleEngaged={handleEngaged}

@@ -56,7 +56,9 @@ const Dashboard: React.FC<DashboardProps> = ({
     <>
       <div className="dashboard">
         <img className="staticOverlay" src="assets/view.png" alt="Static Image Overlay" />
+
         <MarqueePanel
+          loadingProgress={loadingProgress}
           error={error}
           response={response}
           interplanetaryStatusReport={interplanetaryStatusReport}
@@ -79,7 +81,6 @@ const Dashboard: React.FC<DashboardProps> = ({
         ></Background>
 
         {children}
-        <Header />
       </div>
     </>
   );

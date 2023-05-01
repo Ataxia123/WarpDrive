@@ -20,6 +20,18 @@
   background-position: center;
   background-repeat: no-repeat;
 }
+/* Background.module.css */
+/* ... (existing CSS) ... */
+
+.visible {
+  opacity: 1;
+  transition: opacity 1s;
+}
+
+.hidden {
+  opacity: 0;
+  transition: opacity 1s;
+}
 
 /* Media query for tablets */
 @media (min-width: 768px) {

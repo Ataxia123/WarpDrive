@@ -1,4 +1,5 @@
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useCallback, useEffect, useState } from "react";
+import AudioController from "../components/AudioController";
 import { BigNumber, Contract, ethers } from "ethers";
 import { wrap } from "module";
 import { useAccount, useProvider } from "wagmi";
@@ -15,7 +16,9 @@ interface ReadAIUProps {
   engaged: boolean;
   modifiedPrompt: string;
   interplanetaryStatusReport: string;
-
+  playWarpSpeed: () => void;
+  playHolographicDisplay: () => void;
+  playSpaceshipHum: () => void;
   setTravelStatus: (type: "NoTarget" | "AcquiringTarget" | "TargetAcquired") => void;
   handleEngaged: (engaged: boolean) => void;
   onSelectedTokenIdRecieved: (selectedTokenId: string) => void;
@@ -30,6 +33,9 @@ interface ReadAIUProps {
 }
 
 export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
+  playWarpSpeed,
+  playHolographicDisplay,
+  playSpaceshipHum,
   handleScanning,
   scanning,
   handleButtonClick,
@@ -151,21 +157,34 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
       setEngaged(true);
     }
   }, [modifiedPrompt]);
-
+  //the important function
   const handleButton = () => {
+    playHolographicDisplay();
     if (travelStatus === "AcquiringTarget" && scanning === false) {
+      playWarpSpeed();
       try {
-        onSubmit("character");
-        setTravelStatus("TargetAcquired");
+        setTimeout(() => {
+          onSubmit("character");
+          setTravelStatus("TargetAcquired");
+        }, 2100);
       } catch (error) {
         setTravelStatus("NoTarget");
         console.log(error);
       }
-    } else if (travelStatus === "TargetAcquired" && scanning === true) {
-      setTravelStatus("TargetAcquired");
+    } else if (travelStatus === "AcquiringTarget" && scanning === true) {
+      playWarpSpeed();
+      try {
+        setTimeout(() => {
+          handleScanning(false);
+        }, 2100);
+      } catch (error) {
+        setTravelStatus("NoTarget");
+        console.log(error);
+      }
     } else {
       if (selectedTokenId && travelStatus === "NoTarget") {
         setTravelStatus("AcquiringTarget");
+        playSpaceshipHum();
         setEngaged(true);
       } else {
         setTravelStatus("NoTarget");
@@ -249,7 +268,17 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
               fontSize: "1.5rem",
               width: "3.5rem",
             }}
-            onClick={() => handleButtonClick(button, "character")}
+            onClick={() => {
+              playWarpSpeed();
+              try {
+                setTimeout(() => {
+                  handleButtonClick(button, "character");
+                }, 2100);
+              } catch (error) {
+                setTravelStatus("NoTarget");
+                console.log(error);
+              }
+            }}
           >
             {button}
           </button>
