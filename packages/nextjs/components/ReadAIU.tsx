@@ -9,6 +9,7 @@ import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth/useScaffoldEventHistory";
 
 interface ReadAIUProps {
+  playSpaceshipOn: () => void;
   handleScanning: (scanning: boolean) => void;
   scanning: boolean;
   handleButtonClick: (button: string, type: "character" | "background") => Promise<void>;
@@ -33,6 +34,7 @@ interface ReadAIUProps {
 }
 
 export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
+  playSpaceshipOn,
   playWarpSpeed,
   playHolographicDisplay,
   playSpaceshipHum,
@@ -150,6 +152,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
 
   const handleTokenIdChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedTokenId(e.target.value);
+    playSpaceshipOn();
     onSelectedTokenIdRecieved(e.target.value); // Add this line
   };
   useEffect(() => {

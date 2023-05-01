@@ -292,7 +292,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                           top: "12%",
                           left: "0%",
                           width: "100%",
-                          height: "160%",
+                          height: "100%",
                           paddingBottom: "-30%",
                           marginBottom: "-30%",
                           scale: "1.2",
@@ -311,7 +311,8 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                             style={{
                               pointerEvents: "none",
                               color: "white",
-                              scale: "0.8",
+                              scale: "0.9",
+                              height: "120%",
                             }}
                           >
                             SET COORDINATES

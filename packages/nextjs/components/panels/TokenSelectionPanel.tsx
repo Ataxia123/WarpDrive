@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReadAIU from "../ReadAIU";
 
 interface TokenSelectionPanelProps {
+  playSpaceshipOn: () => void;
   handleScanning: (scanning: boolean) => void;
   scanning: boolean;
   handleButtonClick: (button: string, type: "character" | "background") => Promise<void>;
@@ -23,6 +24,7 @@ interface TokenSelectionPanelProps {
 }
 
 const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
+  playSpaceshipOn,
   playHolographicDisplay,
   playSpaceshipHum,
   playWarpSpeed,
@@ -56,6 +58,7 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
   return (
     <>
       <ReadAIU
+        playSpaceshipOn={playSpaceshipOn}
         playHolographicDisplay={playHolographicDisplay}
         playSpaceshipHum={playSpaceshipHum}
         playWarpSpeed={playWarpSpeed}

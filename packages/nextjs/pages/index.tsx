@@ -82,6 +82,12 @@ export default function Home() {
     }
   }
 
+  function playSpaceshipOn() {
+    if (sounds.spaceshipOn) {
+      audioController?.playSound(sounds.spaceshipOn, true);
+    }
+  }
+
   function playHolographicDisplay() {
     if (sounds.holographicDisplay) {
       audioController?.playSound(sounds.holographicDisplay);
@@ -732,6 +738,7 @@ export default function Home() {
             <AcquiringTarget loading={loading} travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
 
             <TokenSelectionPanel
+              playSpaceshipOn={playSpaceshipOn}
               playHolographicDisplay={playHolographicDisplay}
               playSpaceshipHum={playSpaceshipHum}
               playWarpSpeed={playWarpSpeed}
