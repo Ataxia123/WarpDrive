@@ -64,7 +64,7 @@ const Background: React.FC<BackgroundProps> = ({
 
   return (
     <div className={styles.background}>
-      <SpaceParticles />
+      <WarpTunnel loadingProgress={loadingProgress} active={warping} />
 
       <img
         className={`${styles.dynamicImage} ${!showAlternateImage ? styles.visible : styles.hidden}`}
@@ -74,6 +74,8 @@ const Background: React.FC<BackgroundProps> = ({
           transform: `translate(${bgPosition.x}px, ${bgPosition.y}px)`,
         }}
       />
+      <SpaceParticles />
+      {warping && <WarpSpeedCanvas active={warping} progress={loadingProgress} />}
 
       <img
         className={`${styles.alternateImage} ${showAlternateImage ? styles.visible : styles.hidden}`}
@@ -84,8 +86,6 @@ const Background: React.FC<BackgroundProps> = ({
           width: "110%",
         }}
       />
-      <WarpTunnel loadingProgress={loadingProgress} active={warping} />
-      <WarpSpeedCanvas loadingProgress={loadingProgress} active={warping} />
     </div>
   );
 };

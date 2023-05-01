@@ -1,64 +1,52 @@
-// WarpSpeedCanvas.tsx
 import React, { useEffect, useRef } from "react";
 
 interface WarpSpeedCanvasProps {
-  loadingProgress: number;
   active: boolean;
+  progress: number;
 }
 
-function drawParticle(ctx: CanvasRenderingContext2D, particle: Particle) {
-  const radius = 2;
-  const x = (particle.x - ctx.canvas.width / 2) * (ctx.canvas.width / particle.z);
-  const y = (particle.y - ctx.canvas.height / 2) * (ctx.canvas.width / particle.z);
-  const size = radius * (ctx.canvas.width / particle.z);
-  const opacity = 1 - particle.z / ctx.canvas.width;
-
-  const gradient = ctx.createRadialGradient(
-    x + ctx.canvas.width / 2,
-    y + ctx.canvas.height / 2,
-    0,
-    x + ctx.canvas.width / 2,
-    y + ctx.canvas.height / 2,
-    size,
-  );
-
-  gradient.addColorStop(0, `rgba(242, 152, 47, ${opacity})`);
-  gradient.addColorStop(0.5, `rgba(242, 152, 47, ${opacity * 0.5})`);
-  gradient.addColorStop(1, `rgba(242, 152, 47, 0)`);
-
-  ctx.beginPath();
-  ctx.arc(x + ctx.canvas.width / 2, y + ctx.canvas.height / 2, size, 0, Math.PI * 2);
-  ctx.fillStyle = gradient;
-  ctx.fill();
-}
-
-class Particle {
+class Star {
   x: number;
   y: number;
-  z: number;
-  speed: number;
+  color: number;
+  normalizedProgress: number;
 
-  constructor() {
+  constructor(normalizedProgress: number) {
     this.x = Math.random() * window.innerWidth;
     this.y = Math.random() * window.innerHeight;
-    this.z = Math.random() * window.innerWidth;
-    this.speed = Math.random() * 2 + 0.5;
+    this.color = 0;
+    this.normalizedProgress = normalizedProgress;
   }
+  // ...
 
-  update(loadingProgress: number) {
-    this.z -= this.speed * (1 + loadingProgress / 100);
-    if (this.z <= 0) {
-      this.z = window.innerWidth;
+  update() {
+    const speedMult = 0.02 * (1 + this.normalizedProgress * 2);
+    this.x += (this.x - window.innerWidth / 2) * speedMult;
+    this.y += (this.y - window.innerHeight / 2) * speedMult;
+    this.updateColor();
+
+    if (this.x > window.innerWidth || this.x < 0) {
+      this.x = Math.random() * window.innerWidth;
+      this.color = 0;
+    }
+    if (this.y > window.innerHeight || this.y < 0) {
+      this.y = Math.random() * window.innerHeight;
+      this.color = 0;
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
-    drawParticle(ctx, this);
+  updateColor() {
+    if (this.color < 255) {
+      this.color += 5;
+    } else {
+      this.color = 255;
+    }
   }
 }
 
-const WarpSpeedCanvas: React.FC<WarpSpeedCanvasProps> = ({ loadingProgress, active }) => {
+const WarpSpeedCanvas: React.FC<WarpSpeedCanvasProps> = ({ active, progress }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const normalizedProgress = progress / 100;
 
   useEffect(() => {
     if (!canvasRef.current || !active) return;
@@ -72,32 +60,42 @@ const WarpSpeedCanvas: React.FC<WarpSpeedCanvasProps> = ({ loadingProgress, acti
 
     let animationFrameId: number;
 
-    const particles = [] as Particle[];
-    const particleCount = 2000;
+    const stars = [] as Star[];
+    const starCount = 500 + normalizedProgress * 1000; // Increase star count by up to 1000 when progress goes from 0 to 100
 
-    for (let i = 0; i < particleCount; i++) {
-      particles.push(new Particle());
+    for (let i = 0; i < starCount; i++) {
+      stars.push(new Star(normalizedProgress));
     }
 
-    const render = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const draw = () => {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      for (const particle of particles as Particle[]) {
-        particle.update(loadingProgress); // Add this line to update particle positions
-        particle.draw(ctx);
-      }
+      stars.forEach(star => {
+        ctx.fillStyle = `rgb(${star.color}, ${star.color}, ${star.color})`;
+        ctx.fillRect(star.x, star.y, star.color / 128, star.color / 128);
+        star.update();
+      });
 
-      animationFrameId = requestAnimationFrame(render);
+      animationFrameId = requestAnimationFrame(draw);
     };
 
-    render();
+    draw();
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    window.addEventListener("resize", handleResize);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", handleResize);
     };
-  }, [canvasRef, loadingProgress, active]);
+  }, [active]);
 
-  return <canvas ref={canvasRef} style={{ position: "absolute", top: 0, left: 0 }} />;
+  return <canvas style={{ opacity: 0.9 }} ref={canvasRef} />;
 };
 
 export default WarpSpeedCanvas;
