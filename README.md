@@ -24,15 +24,25 @@ On a terminal, start your NextJS app:
 `yarn start`
 
 Visit your app on: http://localhost:3000.
+
 ### These emojis represent the key aspects of the project:
 
 🚀: Space travel and exploration
+
 🌌: The infinite universe setting
+
 🔍: Scanning and analyzing images
+
 🎨: Image generation and modification
+
 🌠: Discovering new celestial objects or backgrounds
+
 🤖: AI-powered text and image processing
+
 🔄: Continuous cycle of scanning, modifying, and generating images
+
+
+## Project Overview
 
 The index page contains the home compenent which defines the functions that generate and display images based on the user's input. The component maintains several pieces of state, including loading status, error messages, image URLs, user input, and more. It interacts with a backend API to generate images and associated data based on user input, and it updates the user interface to display the results.
 
