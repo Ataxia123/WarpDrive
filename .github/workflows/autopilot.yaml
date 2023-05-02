@@ -1,2 +1,0 @@
-- name: Automatic Pull Request
-  uses: irgolic/AutoPR@v0.1.1
