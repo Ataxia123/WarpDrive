@@ -64,8 +64,6 @@ const Background: React.FC<BackgroundProps> = ({
 
   return (
     <div className={styles.background}>
-      <WarpTunnel loadingProgress={loadingProgress} active={warping} />
-
       <img
         className={`${styles.dynamicImage} ${!showAlternateImage ? styles.visible : styles.hidden}`}
         src={dynamicImageUrl}
@@ -75,17 +73,9 @@ const Background: React.FC<BackgroundProps> = ({
         }}
       />
       <SpaceParticles />
-      {warping && <WarpSpeedCanvas active={warping} progress={loadingProgress} />}
 
-      <img
-        className={`${styles.alternateImage} ${showAlternateImage ? styles.visible : styles.hidden}`}
-        src="https://www.popsci.com/uploads/2019/10/25/BROOAKO2AURRGAKZZ27N5IOCHM.jpg"
-        alt="Alternate Image"
-        style={{
-          transform: `translate(${bgPosition.x}px, ${bgPosition.y}px)`,
-          width: "110%",
-        }}
-      />
+      <WarpTunnel active={warping} loadingProgress={loadingProgress} />
+      {warping && <WarpSpeedCanvas active={warping} progress={loadingProgress} />}
     </div>
   );
 };

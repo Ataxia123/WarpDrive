@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import Background from "./Background";
 
 interface WarpSpeedCanvasProps {
   active: boolean;
@@ -61,7 +62,7 @@ const WarpSpeedCanvas: React.FC<WarpSpeedCanvasProps> = ({ active, progress }) =
     let animationFrameId: number;
 
     const stars = [] as Star[];
-    const starCount = 500 + normalizedProgress * 1000; // Increase star count by up to 1000 when progress goes from 0 to 100
+    const starCount = 500 + normalizedProgress * 5000; // Increase star count by up to 1000 when progress goes from 0 to 100
 
     for (let i = 0; i < starCount; i++) {
       stars.push(new Star(normalizedProgress));
@@ -95,7 +96,15 @@ const WarpSpeedCanvas: React.FC<WarpSpeedCanvasProps> = ({ active, progress }) =
     };
   }, [active]);
 
-  return <canvas style={{ opacity: 0.9 }} ref={canvasRef} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        opacity: 0.95,
+        backgroundImage: "url(https://www.popsci.com/uploads/2019/10/25/BROOAKO2AURRGAKZZ27N5IOCHM.jpg)",
+      }}
+    />
+  );
 };
 
 export default WarpSpeedCanvas;

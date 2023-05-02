@@ -216,11 +216,11 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
     const button = document.getElementById("spaceshipButton");
 
     if (travelStatus === "AcquiringTarget") {
-      button?.classList.add("loading");
-      button?.classList.remove("active");
-    } else if (travelStatus === "TargetAcquired") {
       button?.classList.add("active");
       button?.classList.remove("loading");
+    } else if (travelStatus === "TargetAcquired") {
+      button?.classList.add("loading");
+      button?.classList.remove("active");
     } else {
       button?.classList.remove("active");
       button?.classList.remove("loading");
