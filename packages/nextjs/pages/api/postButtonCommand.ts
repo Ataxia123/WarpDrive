@@ -11,16 +11,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${AUTH_TOKEN}`,
+      Authorization: `Bearer ${AUTH_TOKEN}`, // Use template literals instead of concatenation
     };
 
     const response = await axios.post(
-      `${endpoint}`,
+      `${endpoint}`, // Use template literals instead of concatenation
       {
-        button: button,
-        buttonMessageId: buttonMessageId,
+        button,
+        buttonMessageId,
         ref: "",
-        webhookOverride: `${process.env.BASE_URL}/api/buttonCommandWebhook`,
+        webhookOverride: `${process.env.BASE_URL}/api/buttonCommandWebhook`, // Use template literals instead of concatenation
       },
       { headers },
     );

@@ -2,6 +2,9 @@ import { useCallback } from "react";
 import { ethers } from "ethers";
 import { CommonInputProps, InputBase } from "~~/components/scaffold-eth";
 
+/**
+ * Renders an input field that converts a string to bytes32 format
+ */
 export const Bytes32Input = ({ value, onChange, name, placeholder }: CommonInputProps) => {
   const convertStringToBytes32 = useCallback(() => {
     if (!value) {
