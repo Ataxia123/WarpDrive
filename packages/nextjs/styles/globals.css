@@ -86,7 +86,7 @@ position: fixed;
   left: -5px;
   right: -5px;
   bottom: -5px;
-  border: 5px solid #f2982f; /* Adjust the color to your preference */
+  border: 2px solid #f2982f; /* Adjust the color to your preference */
   border-radius: 5px;
   box-shadow: 0 0 10px 2px #f2982f; /* Adjust the color to your preference */
   overflow: hidden;
@@ -1203,7 +1203,7 @@ transform: perspective(18rem) rotateY(-12deg) rotateX(12deg) rotateZ(12deg) skew
   border-color: #00000093;
   transform-origin: left;
   justify-content: right;
-  transform: rotateY(-20deg)rotateZ(-6deg)rotateX(03deg) scale(0.9);
+  transform: rotateY(-24deg)rotateZ(-8deg)rotateX(8deg) scale(0.9);
   animation: randomFlicker 1.65s infinite ease-in-out;
   z-index: 1;
 }

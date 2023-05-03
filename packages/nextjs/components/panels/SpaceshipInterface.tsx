@@ -17,13 +17,12 @@ const SpaceshipInterface: React.FC<SpaceshipInterfaceProps> = ({ travelStatus })
     pointerEvents: videoPlaying ? "auto" : "none",
     opacity: videoPlaying ? 0.8 : 0.2,
     zIndex: -1,
-
     left: "70.3%",
-    top: "18.6%",
-    width: "26.5%",
+    top: "19%",
+    width: "18.5%",
     height: "20%",
     position: "absolute",
-    transform: "perspective(1000px) rotateZ(-35deg) rotateY(-10deg) rotateX(5deg)skewX(-22deg)skewY(21deg)",
+    transform: "perspective(200px) rotateZ(-47deg) rotateY(-10deg) rotateX(5deg)skewX(-22deg)skewY(21deg)",
   };
 
   useEffect(() => {
@@ -65,6 +64,7 @@ const SpaceshipInterface: React.FC<SpaceshipInterfaceProps> = ({ travelStatus })
           padding: "1.5rem",
           zIndex: 1,
           transform: "rotateZ(8deg) rotateY(-30deg)skewX(5deg)skewY(-3deg)",
+          boxShadow: "0 0 10px 2px #fff",
           animation: "pulse 15s infinite",
         }}
       >
@@ -76,7 +76,7 @@ const SpaceshipInterface: React.FC<SpaceshipInterfaceProps> = ({ travelStatus })
             border: "none",
             opacity: 1,
 
-            fontSize: "0.9rem",
+            fontSize: "0.8rem",
             pointerEvents: "auto",
           }}
         >

@@ -23,18 +23,37 @@ const AcquiringTarget: React.FC<AcquiringTargetProps> = ({ travelStatus, selecte
   return (
     <>
       <div className="tokenid-display spaceship-display-screen">
-        <div className="screen-border">
+        <div
+          className="screen-border"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            fontSize: "0.8rem",
+          }}
+        >
           {!selectedTokenId && travelStatus == "NoTarget" ? (
             <div>
               Select <br /> Token ID
             </div>
           ) : (
-            <div style={{ color: "white", fontSize: "0.8rem", fontWeight: "bold" }}>
+            <div
+              style={{
+                color: "white",
+                fontSize: "0.8rem",
+                fontWeight: "bold",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
               TOKEN ID
               <div>
-                <p style={{ alignContent: "right", color: "white", fontSize: "1.1rem", fontWeight: "bold" }}>
+                <p style={{ alignContent: "right", color: "white", fontSize: "0.8rem", fontWeight: "bold", margin: 0 }}>
                   {" "}
-                  -| {selectedTokenId} |-
+                  -|&nbsp;{2}&nbsp;|-
                 </p>
               </div>
             </div>

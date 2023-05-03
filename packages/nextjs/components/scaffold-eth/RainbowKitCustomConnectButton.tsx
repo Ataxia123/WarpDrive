@@ -57,23 +57,23 @@ export const RainbowKitCustomConnectButton = () => {
                   }}
                 >
                   <div className="flex justify-center items-center screen-border">
-                    <div className="flex flex-row items-center">
+                    {/* <div className="flex flex-row items-center">
                       <Balance address={account.address} className="" />
                       <span className="text-xs" style={{ color: networkColor }}>
                         {chain.name}
                       </span>
-                    </div>
+                    </div> */}
 
                     <button
                       onClick={openAccountModal}
                       type="button"
                       className="flex screen-border"
-                      style={{
-                        zIndex: 1000000000000000000000000000000000000000000000000000000000000000000000,
-                      }}
+                      style={{ display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999999 }}
                     >
                       <BlockieAvatar address={account.address} size={24} ensImage={account.ensAvatar} />
-                      <span className="">{account.displayName}</span>
+                      <span className="" style={{ marginLeft: 8 }}>
+                        {account.displayName}
+                      </span>
                       <span>
                         <ChevronDownIcon className="" />
                       </span>

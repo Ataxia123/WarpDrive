@@ -351,7 +351,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                   padding: "0.1rem",
                   scale: "1",
                   width: "110%",
-                  top: "30%",
+                  top: "27%",
                   display: "flex",
                   flexDirection: "column",
                   position: "absolute",
@@ -365,10 +365,11 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                   fontSize: "0.8rem",
                   color: "white",
                   position: "absolute",
-                  top: "25%",
+                  top: "26%",
                   left: "11%",
                   justifyContent: "center",
                   alignItems: "center",
+                  textAlign: "center",
                 }}
               >
                 {" "}
@@ -538,7 +539,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                   width: "40%",
                   height: "45%",
                   zIndex: 1000000000000000,
-                  fontSize: "0.9rem",
+                  fontSize: "0.8rem",
                 }}
                 className="display-text hex-prompt"
               >

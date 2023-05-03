@@ -61,5 +61,5 @@
 
 .dynamicImage {
   z-index: -4;
-  transition: transform 0.1s linear;
+  /* transition: transform 0.1s linear; */
 }
