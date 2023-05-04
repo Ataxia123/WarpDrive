@@ -8,6 +8,7 @@ interface StoreState {
 }
 
 interface DescriptionPanelProps {
+  alienMessage: string;
   playHolographicDisplay: () => void;
   handleClearAppState: () => void;
   handleActiveState: (imageUrl: string, selectedDescription: string, interplanetaryStatusReport: string) => void;
@@ -26,6 +27,7 @@ interface DescriptionPanelProps {
 }
 
 export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
+  alienMessage,
   playHolographicDisplay,
   handleClearAppState,
   handleActiveState,
@@ -184,6 +186,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                   }}
                 >
                   <LogViewer
+                    alienMessage={alienMessage}
                     playHolographicDisplay={playHolographicDisplay}
                     storeState={storeState}
                     handleActiveState={handleActiveState}

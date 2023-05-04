@@ -1,7 +1,26 @@
 import React, { useEffect, useState } from "react";
 import ReadAIU from "../ReadAIU";
 
+type Metadata = {
+  srcUrl: string | undefined;
+  Level: string;
+  Power1: string;
+  Power2: string;
+  Power3: string;
+  Power4: string;
+  Alignment1: string;
+  Alignment2: string;
+  Side: string;
+  interplanetaryStatusReport: string;
+  selectedDescription: string;
+  nijiFlag: boolean;
+  vFlag: boolean;
+  scannerOutput: string[];
+};
 interface TokenSelectionPanelProps {
+  warping: boolean;
+  parsedMetadata: Metadata;
+  scannerOutput: string[];
   playSpaceshipOn: () => void;
   handleScanning: (scanning: boolean) => void;
   scanning: boolean;
@@ -24,6 +43,9 @@ interface TokenSelectionPanelProps {
 }
 
 const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
+  parsedMetadata,
+  warping,
+  scannerOutput,
   playSpaceshipOn,
   playHolographicDisplay,
   playSpaceshipHum,
@@ -58,6 +80,9 @@ const TokenSelectionPanel: React.FC<TokenSelectionPanelProps> = ({
   return (
     <>
       <ReadAIU
+        parsedMetadata={parsedMetadata}
+        warping={warping}
+        scannerOutput={scannerOutput}
         playSpaceshipOn={playSpaceshipOn}
         playHolographicDisplay={playHolographicDisplay}
         playSpaceshipHum={playSpaceshipHum}

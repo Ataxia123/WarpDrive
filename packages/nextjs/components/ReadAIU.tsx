@@ -8,7 +8,26 @@ import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaff
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth/useScaffoldEventHistory";
 
+type Metadata = {
+  srcUrl: string | undefined;
+  Level: string;
+  Power1: string;
+  Power2: string;
+  Power3: string;
+  Power4: string;
+  Alignment1: string;
+  Alignment2: string;
+  Side: string;
+  interplanetaryStatusReport: string;
+  selectedDescription: string;
+  nijiFlag: boolean;
+  vFlag: boolean;
+  scannerOutput: string[];
+};
 interface ReadAIUProps {
+  parsedMetadata: Metadata;
+  warping: boolean;
+  scannerOutput: any;
   playSpaceshipOn: () => void;
   handleScanning: (scanning: boolean) => void;
   scanning: boolean;
@@ -34,6 +53,9 @@ interface ReadAIUProps {
 }
 
 export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
+  parsedMetadata,
+  warping,
+  scannerOutput,
   playSpaceshipOn,
   playWarpSpeed,
   playHolographicDisplay,
@@ -69,6 +91,13 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   const [imageSrc, setImageSrc] = useState<string>();
   const [mouseTrigger, setMouseTrigger] = useState<boolean>(false);
   const [engaged, setEngaged] = useState<boolean>(false);
+  const [scanOutputIndex, setScanOutputIndex] = useState<number>(0);
+  const [scannerOptions, setScannerOptions] = useState<string[]>([
+    "abilities",
+    "healthAndStatus",
+    "equipment",
+    "funFact",
+  ]);
 
   const { data: transferEvents } = useScaffoldEventHistory({
     contractName: "WarpDrive",
@@ -85,6 +114,18 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   const fetchOwnedTokenIds = (transferEvents: any[] | undefined) => {
     if (!transferEvents) return [];
     return transferEvents.map(event => event.args.tokenId.toString());
+  };
+
+  const handlePrevious = () => {
+    if (scanOutputIndex > 0) {
+      setScanOutputIndex(scanOutputIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (scanOutputIndex < scannerOptions.length - 1) {
+      setScanOutputIndex(scanOutputIndex + 1);
+    }
   };
 
   const updateAppState = (userBalance: BigNumber, ownedTokenIds: string[]) => {
@@ -292,8 +333,9 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
 
   return (
     <>
+      {" "}
       <div
-        className="screen-border spaceship-display-screen thefinal overflow-auto"
+        className="spaceship-display-screen thefinal overflow-auto screen-border "
         style={{
           position: "absolute",
           height: "12%",
@@ -312,93 +354,116 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
           fontSize: "1rem",
         }}
       >
+        {" "}
         <a
           style={{
             position: "absolute",
             width: "100%",
-            height: "60%",
+            height: "100%",
+            top: "-2%",
+            left: "5%",
+            zIndex: 10000000000001000000000000000000,
+            pointerEvents: "auto",
           }}
           href="https://ai-universe.io/"
         >
-          <div
+          <div>AI-Universe</div>
+        </a>{" "}
+        <span
+          style={{
+            height: "50%",
+            width: "100%",
+            position: "absolute",
+            top: "-10%",
+            left: "-5%",
+            zIndex: 1000000000000000,
+            fontSize: "0.8rem",
+            padding: ".2rem",
+            paddingLeft: "0.5rem",
+            fontWeight: "bold",
+          }}
+        >
+          <RainbowKitCustomConnectButton />
+        </span>{" "}
+        <ul
+          style={{
+            marginTop: "40%",
+            top: "35%",
+            padding: "1.5rem",
+            fontSize: "0.8rem",
+            scale: "0.88",
+          }}
+        >
+          <li
             style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              scale: "1",
+              padding: "0.3rem",
             }}
-            className="spaceship-display-screen"
+            className="display-text hex-prompt"
           >
-            <ul
+            {" "}
+            SIGNALS INC:
+            <span
               style={{
-                display: "flex",
-                alignContent: "center",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-                width: "90%",
-
-                scale: "1",
+                color: "white",
               }}
             >
-              <li
-                style={{
-                  alignContent: "center",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: "-2rem",
-                  padding: "0.1rem",
-                  scale: "1",
-                  width: "110%",
-                  top: "27%",
-                  display: "flex",
-                  flexDirection: "column",
-                  position: "absolute",
-                }}
-              >
-                AI-Universe
-              </li>
+              {" "}
+              {balance?.toString()}
+            </span>{" "}
+          </li>
+          <li style={{}}> </li>{" "}
+          <li
+            style={{
+              alignContent: "left",
+              justifyItems: "left",
+              padding: "0.1rem",
+              fontSize: "0.8rem",
+              fontWeight: "bold",
 
-              <li
-                style={{
-                  fontSize: "0.8rem",
-                  color: "white",
-                  position: "absolute",
-                  top: "26%",
-                  left: "11%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                }}
-              >
+              color: "white",
+
+              overflow: "show",
+
+              width: "50%",
+            }}
+          >
+            {" "}
+            {scanning === true ? (
+              <>
                 {" "}
-                {balance?.toString()} SIGNALS INC<br></br>STATUS:{engaged ? "ENGAGED" : "OFF"}
-              </li>
-
-              <br />
-
-              <li
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  overflow: "show",
-                  top: "100%",
-                  alignContent: "center",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: "-2rem",
-                  padding: "0.1rem",
-                  scale: "1",
-                  width: "110%",
-                  height: "10rem",
-                  zIndex: 1000000000000000,
-                }}
-              ></li>
-            </ul>
-          </div>
-        </a>
-        <RainbowKitCustomConnectButton />
+                SCANNING:<span style={{ color: "yellow" }}>TRUE</span>{" "}
+              </>
+            ) : (
+              <>
+                {" "}
+                SCANNING:<span style={{ color: "red" }}>FALSE</span>{" "}
+              </>
+            )}{" "}
+            {engaged === true ? (
+              <>
+                {" "}
+                ENGAGED:<span style={{ color: "yellow" }}>TRUE</span>{" "}
+              </>
+            ) : (
+              <>
+                {" "}
+                ENGAGED:<span style={{ color: "red" }}>FALSE</span>{" "}
+              </>
+            )}{" "}
+            {warping === true ? (
+              <>
+                {" "}
+                WARPING:<span style={{ color: "yellow" }}>TRUE</span>{" "}
+              </>
+            ) : (
+              <>
+                {" "}
+                WARPING:<span style={{ color: "red" }}>FALSE</span>{" "}
+              </>
+            )}
+          </li>
+        </ul>
+        <br />
       </div>
       {balance?.toNumber() !== 0 ? (
         <div onMouseEnter={() => setMouseTrigger(true)} className="toggle-minimize-button spaceship-display-screen">
@@ -411,7 +476,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                 opacity: "0.8",
               }}
             >
-              {selectedTokenId && travelStatus == "NoTarget" && (
+              {selectedTokenId && travelStatus == "NoTarget" ? (
                 <div
                   style={{
                     fontWeight: "bold",
@@ -419,7 +484,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                     fontSize: "1rem",
                     position: "absolute",
                     top: "20%",
-                    height: "10%",
+                    height: "30%",
                     width: "100%",
                     padding: "0.1rem",
                     marginTop: "-2rem",
@@ -428,8 +493,31 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                   className="description-text hex-prompt"
                   onClick={() => handleButton()}
                 >
-                  ENGAGE
+                  |N.A.V.| COMPUTER
+                  <br />
+                  READY
                 </div>
+              ) : (
+                travelStatus == "AcquiringTarget" && (
+                  <div
+                    style={{
+                      fontWeight: "bold",
+
+                      fontSize: "1rem",
+                      position: "absolute",
+                      top: "20%",
+                      height: "30%",
+                      width: "100%",
+                      padding: "0.1rem",
+                      marginTop: "-2rem",
+                      color: "white",
+                    }}
+                    className="description-text hex-prompt"
+                    onClick={() => handleButton()}
+                  >
+                    ENGAGE WARP DRIVE{" "}
+                  </div>
+                )
               )}
               {!selectedTokenId && (
                 <div
@@ -515,10 +603,121 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
         >
           <div
             style={{
+              width: "22.5%",
+              height: "40.5%",
+              left: "5%",
+              top: "19%",
+              position: "absolute",
+              zIndex: 1000000000000000,
+              fontSize: ".91rem",
+              padding: ".3rem",
+              paddingBottom: "0.1rem",
+              paddingLeft: "0.8rem",
+              fontWeight: "bold",
+            }}
+            className="spaceship-display-screen"
+          >
+            <li
+              style={{
+                padding: "1.4rem",
+                paddingLeft: "4.2rem",
+                marginBottom: "1rem",
+                marginTop: "-1rem",
+                marginLeft: "2.1rem",
+                font: "Orbitron",
+                fontSize: ".70rem",
+              }}
+            >
+              {metadata?.name} METADATA
+            </li>{" "}
+            <ul
+              style={{
+                position: "absolute",
+                padding: "1.5rem",
+                paddingTop: "-0.001rem",
+                paddingLeft: "2.8rem",
+                width: "120%",
+                top: "25%",
+                left: "-12.5%",
+                scale: "0.9",
+              }}
+              className="spaceship-display-screen"
+            >
+              <br /> Type:{" "}
+              <span
+                style={{
+                  color: "white",
+                  fontWeight: "bold",
+                  paddingLeft: "0.8rem",
+                }}
+              >
+                {parsedMetadata?.Level}
+              </span>
+              <br />
+              Power1:{" "}
+              <span
+                style={{
+                  color: "white",
+                  fontWeight: "bold",
+                  paddingLeft: "0.8rem",
+                }}
+              >
+                {parsedMetadata?.Power1}
+              </span>
+              <br />
+              Power2:{" "}
+              <span
+                style={{
+                  color: "white",
+                  fontWeight: "bold",
+                  paddingLeft: "0.8rem",
+                }}
+              >
+                {parsedMetadata?.Power2}
+              </span>
+              <br />
+              Power3:{" "}
+              <span
+                style={{
+                  color: "white",
+                  fontWeight: "bold",
+                  paddingLeft: "0.8rem",
+                }}
+              >
+                {parsedMetadata?.Power3}
+              </span>
+              <br />
+              Side:{" "}
+              <span
+                style={{
+                  color: "white",
+                  fontWeight: "bold",
+                  paddingLeft: "0.1rem",
+                }}
+              >
+                {parsedMetadata?.Side}
+              </span>
+              <br />
+              Allignment:
+              <br />
+              <span
+                style={{
+                  color: "white",
+                  fontWeight: "bold",
+                  paddingLeft: "1.5rem",
+                }}
+              >
+                {parsedMetadata?.Alignment1} {parsedMetadata?.Alignment2}
+              </span>
+            </ul>
+          </div>{" "}
+          <div
+            style={{
               position: "absolute",
               height: "40%",
               width: "100%",
               top: "20%",
+              left: "0%",
               display: "flex",
               flexDirection: "row",
             }}
@@ -526,176 +725,13 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
           >
             <div
               className="spaceship-display-screen"
-              style={{ position: "relative", top: "-35%", height: "50%", width: "50%" }}
-            >
-              <div
-                style={{
-                  left: "90%",
-                  marginLeft: "50%",
-                  padding: "1.1rem",
-                  justifyContent: "right",
-                  top: "19%",
-                  position: "absolute",
-                  width: "40%",
-                  height: "45%",
-                  zIndex: 1000000000000000,
-                  fontSize: "0.8rem",
-                }}
-                className="display-text hex-prompt"
-              >
-                {scanning === true && <>SCANNING</>}
-                <br /> {engaged && <>ENGAGED</>}
-              </div>
-              <div
-                className="prompt-display"
-                style={{
-                  position: "absolute",
-                  left: "-15%",
-                  marginLeft: "45%",
-                  display: "flex",
-                  marginRight: "2180rem",
-                  right: "100%",
-                  padding: "1rem",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  top: "50%",
-                  width: "60%",
-                  height: "20%",
-                  fontSize: ".7rem",
-                  wordBreak: "break-all",
-                }}
-              >
-                {" "}
-                <div
-                  style={{
-                    position: "absolute",
-                    left: "15%",
-                    color: "white",
-                    top: "-130%",
-                    fontWeight: "bold",
-                  }}
-                  className="description-text"
-                >
-                  MODIFIED SIGNAL:
-                </div>
-              </div>
-              <div
-                className="hex-data-revealer scroll-text"
-                style={{
-                  width: "50%",
-                  height: "50%",
-                  scale: "1.2",
-                  top: "55%",
-                  left: "35%",
-                }}
-              >
-                {stringToHex(modifiedPrompt ? modifiedPrompt : "No SIGNAL")}
-              </div>
-              <br />
-              <p
-                className="hex-display hex-prompt"
-                style={{
-                  position: "absolute",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  padding: "1rem",
-                  paddingRight: "2rem",
-                  left: "25%",
-                  width: "70%",
-                  color: "white",
-                  top: "40%",
-                  wordBreak: "break-all",
-                  height: "50%",
-                  fontSize: ".7rem",
-                  overflowY: "auto",
-                  zIndex: 10000,
-                }}
-              >
-                {" "}
-                {modifiedPrompt}
-              </p>
-              <br />
-              Attributes:
-              <h3
-                style={{
-                  position: "relative",
-                  left: "5%",
-                  top: "45%",
-                  width: "150%",
-                  height: "170%",
-                }}
-                className="description-text attributes spaceship-display-screen"
-              >
-                <div
-                  style={{
-                    position: "relative",
-                    left: "-15%",
-                    top: "0%",
-                    color: "white",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {" "}
-                  {metadata?.attributes[1].value}
-                  {""}
-                  {metadata?.attributes[2].value} {""}
-                  {metadata?.attributes[3].value} {""}
-                </div>
-                <div
-                  style={{
-                    right: "70%",
-                    left: "-4%",
-                    top: "23%",
-                    marginLeft: "20%",
-                    marginTop: "-8%",
-                    height: "100%",
-                    width: "40%",
-                    bottom: "-30%",
-                    opacity: "1",
-                    zIndex: "10000",
-                    position: "relative",
-                  }}
-                  className="hex-data-revealer hover: hover:opacity-10"
-                >
-                  {" "}
-                  {stringToHex(metadata ? metadata.description : "No Metadata")}
-                  {metadata?.attributes[4].value}{" "}
-                </div>{" "}
-                <ul className="hex-data" style={{}}>
-                  {metadata?.attributes.map((attribute: any, index: number) => (
-                    <li
-                      className="hex-prompt spaceship-button-text"
-                      style={{
-                        color: "white",
-                        fontSize: "0.8rem",
-                        textAlign: "center",
-                        top: "15%",
-                        textEmphasisColor: "white",
-                        fontWeight: "bold",
-                        left: "21%",
-                        position: "relative",
-                        scale: "1.2",
-                        marginBottom: "0.2rem",
-                        width: "30%",
-                      }}
-                      key={index}
-                    >
-                      {attribute.trait_type}: {attribute.value}
-                    </li>
-                  ))}
-                </ul>
-              </h3>
-              <br />
-            </div>
-            <div
-              className="spaceship-display-screen"
               style={{
-                bottom: "50%",
-                top: "43%",
+                bottom: "60%",
+                top: "-3%",
+                left: "29%",
                 position: "relative",
-                height: "140%",
-                width: "50%",
+                height: "100%",
+                width: "70%",
                 display: "flex",
                 paddingTop: "11rem",
                 paddingRight: "4rem",
@@ -708,35 +744,156 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                 className=""
                 style={{
                   color: "white",
-                  padding: "1rem",
-                  zIndex: 100000000000000000000000000000,
+                  padding: "1.2rem",
+                  zIndex: 10000000000000000000,
                   position: "absolute",
                   fontWeight: "bold",
-                  fontSize: "1.1rem",
-                  top: "0%",
+                  fontSize: "1rem",
+                  height: "82%",
+                  top: "20%",
+                  width: "73.8%",
+                  left: "-2%",
                 }}
               >
                 INTERPLANETARY STATUS REPORT
-                <h2
-                  className="hex-prompt"
+                <div
                   style={{
-                    alignContent: "center",
-                    left: "-0%",
-                    padding: "1.2rem",
-                    paddingLeft: "2,2rem",
-                    top: "125%",
-                    height: "220%",
-                    width: "100%",
-                    position: "absolute",
-                    marginBottom: "17rem",
-                    fontSize: "1.2rem",
+                    color: "black",
+                    paddingLeft: "3.1rem",
+                    zIndex: 10000000000000000000,
+                    position: "relative",
+                    fontWeight: "bold",
+                    fontSize: "1.1rem",
+                    height: "95%",
                     overflowX: "hidden",
-                    overflowY: "auto",
-                    pointerEvents: "auto",
+                    overflowY: "scroll",
                   }}
+                  className="spaceship-display-screen"
                 >
-                  {interplanetaryStatusReport}
-                </h2>
+                  <div>
+                    {engaged === false ? (
+                      <> #---ENGAGE to ANALYZE---#</>
+                    ) : (
+                      <>
+                        {" "}
+                        {selectedTokenId == "" ? (
+                          <> #SELECT TOKEN to DECODE#</>
+                        ) : (
+                          <>
+                            {travelStatus === "NoTarget" ? (
+                              <> #ENABLE N.A.V. COMPUTER#</>
+                            ) : (
+                              <>
+                                {" "}
+                                {interplanetaryStatusReport !== "" ? (
+                                  <>
+                                    {" "}
+                                    |------ENGAGE SCANNER------|
+                                    <br />
+                                    |----------TO OBTAIN-----------|
+                                    <br />| -INTERPLANETARY REPORT-|
+                                  </>
+                                ) : (
+                                  <>
+                                    {" "}
+                                    <span
+                                      style={{
+                                        position: "relative",
+                                        marginLeft: "-5%",
+                                        left: "17%",
+                                        bottom: "10%",
+                                      }}
+                                      className="spaceship-display-screen"
+                                    >
+                                      TRANSMISSION FROM:
+                                      <br />
+                                      <br />
+                                      {parsedMetadata?.Level} {parsedMetadata?.Power1} {parsedMetadata?.Power2}
+                                    </span>{" "}
+                                  </>
+                                )}
+                              </>
+                            )}
+                          </>
+                        )}
+                      </>
+                    )}
+                    <br />
+                    <br />
+                    <br />
+                  </div>
+
+                  <p
+                    className=" prompt-data"
+                    style={{
+                      position: "relative",
+                      fontSize: "0.8rem",
+                      fontWeight: "normal",
+                      color: "white",
+
+                      justifyContent: "center",
+                      alignItems: "center",
+                      display: "flexbox",
+                      flexDirection: "column",
+
+                      zIndex: 10000000000000010000000000000000000000000000000000000000000000,
+
+                      top: "0.3rem",
+                      padding: "1rem",
+                      left: "-10.2%",
+                      height: "100%",
+                      width: "110%",
+
+                      pointerEvents: "auto",
+                    }}
+                  >
+                    {scannerOutput?.funFact ? (
+                      <span
+                        className="spaceship-display-screen"
+                        style={{
+                          position: "relative",
+
+                          top: "1rem",
+                          left: "-0.3rem",
+                          width: "110%",
+                          height: "110%",
+                          paddingLeft: "0rem",
+                          paddingRight: ".8rem",
+                          fontSize: "0.7rem",
+                          fontWeight: "bold",
+                          color: "white",
+                          paddingTop: "0rem",
+                        }}
+                      >
+                        <br /> FUN FACT: <br />
+                        <br />
+                        {scannerOutput.funFact}
+                      </span>
+                    ) : (
+                      <span
+                        style={{
+                          position: "absolute",
+
+                          marginLeft: "26%",
+                          width: "40%",
+                          marginRight: "22%",
+                          height: "0%",
+                          top: "0%",
+                          paddingLeft: "1.2rem",
+                          marginBottom: "20%",
+
+                          fontSize: "0.8rem",
+                          fontWeight: "normal",
+                        }}
+                        className="spaceship-display-screen"
+                      >
+                        ENGAGE N.A.V. COMPUTER TO DECODE DATA
+                        <br />
+                      </span>
+                    )}
+                    <br />
+                  </p>
+                </div>
               </div>
               <div
                 style={{
@@ -744,9 +901,97 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                 }}
                 className="hex-data"
               >
-                {" "}
+                <div
+                  className="spaceship-display-screen"
+                  style={{
+                    position: "absolute",
+                    top: "17%",
+                    left: "68.2%",
+                    height: "85%",
+                    width: "35%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    pointerEvents: "none",
+                  }}
+                >
+                  {" "}
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "2%",
+                      left: "27%",
+                      fontSize: "1.2rem",
+                      pointerEvents: "auto",
+                      zIndex: 10000000,
+                    }}
+                  >
+                    {" "}
+                    <span onClick={() => handlePrevious}> {`<<`} </span> ||
+                    <span onClick={() => handleNext}> {`>>`} </span>
+                  </div>
+                  <div
+                    style={{
+                      marginTop: "7%",
+                      marginLeft: "-1rem",
+                      padding: "1rem",
+                      paddingRight: "3.2rem",
+
+                      height: "90%",
+                      width: "90%",
+                      fontSize: "0.8rem",
+                      pointerEvents: "auto",
+                      overflowY: "scroll",
+                    }}
+                    className="hex-prompt display-border"
+                  >
+                    <span
+                      className="spaceship-display-screen"
+                      style={{
+                        position: "absolute",
+                        top: "1.5rem",
+                        width: "60%",
+                        left: "1.4rem",
+                        fontSize: "0.85rem",
+                        pointerEvents: "auto",
+                        height: "18%",
+                        lineHeight: "0.8rem",
+                      }}
+                    >
+                      SCANNER
+                      <br />
+                      OUTPUT: <br />
+                      {scanOutputIndex + 1}/{scannerOptions.length}
+                      <br />
+                    </span>{" "}
+                    <span
+                      className="spaceship-display-screen"
+                      style={{
+                        position: "absolute",
+                        top: "5rem",
+                        width: "85%",
+                        paddingTop: ".5rem",
+                        paddingInline: "0rem",
+                        left: "0rem",
+                        fontSize: "0.70rem",
+                        lineHeight: "0.8rem",
+                        pointerEvents: "auto",
+                        height: "66%",
+                        display: "flex",
+                        padding: "0.5rem",
+                        overflowY: "scroll",
+                        flexDirection: "column",
+                        color: "white",
+                      }}
+                    >
+                      <span className="hex-prompt">{scannerOptions[scanOutputIndex]}:</span> <br />
+                      {scannerOutput[scannerOptions[scanOutputIndex]]}
+                    </span>
+                  </div>{" "}
+                </div>
                 {stringToHex(metadata ? metadata.description : "No Metadata")}
-              </div>
+              </div>{" "}
             </div>
             {imageSrc && (
               <img

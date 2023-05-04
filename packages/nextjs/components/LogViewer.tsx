@@ -26,12 +26,18 @@ interface StoreState {
 }
 
 interface LogViewerProps {
+  alienMessage: string;
   playHolographicDisplay: () => void;
   storeState: StoreState;
   handleClearAppState: () => void;
   handleActiveState: (imageUrl: string, selectedDescription: string, interplanetaryStatusReport: string) => void;
 }
-const LogViewer: React.FC<LogViewerProps> = ({ storeState, handleActiveState, playHolographicDisplay }) => {
+const LogViewer: React.FC<LogViewerProps> = ({
+  storeState,
+  handleActiveState,
+  playHolographicDisplay,
+  alienMessage,
+}) => {
   const useAppStoreData = () => {
     const { travels } = useAppStore();
 
@@ -357,6 +363,8 @@ const LogViewer: React.FC<LogViewerProps> = ({ storeState, handleActiveState, pl
   return (
     <div className=" spaceship-screen-display ">
       <div className=" spaceship-screen-display" style={{ padding: "1rem" }}>
+        {alienMessage}
+        <br /> <br />
         <span>
           || <button onClick={() => setCurrentTravelSection(1)}>Reports</button>||
           <button onClick={() => setCurrentTravelSection(2)}>Scanning Results</button>||

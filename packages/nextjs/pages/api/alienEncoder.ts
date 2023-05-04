@@ -1,3 +1,4 @@
+// /pages/api/generateAlienLanguage.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, Configuration, OpenAIApi } from "openai";
 
@@ -32,29 +33,23 @@ type Metadata = {
   scannerOutput: string[];
 };
 
-async function generateInterplanetaryStatusReport(scannerOutput: object, metadata: Metadata, alienMessage: string) {
+async function generateAlienLanguage(englishMessage: string, metadata: any) {
   const messages: ChatCompletionRequestMessage[] = [
     {
       role: ChatCompletionRequestMessageRoleEnum.System,
-      content: `"You are the targetting computer of a ship in the Alliance of the Infinite Universe. You have just recieved a transmission from  ${
-        metadata.Level
-      } ${metadata.Power1} ${metadata.Power2} ${
-        metadata.Power3
-      }. You have scanned their current Situation ${JSON.stringify(
-        scannerOutput,
-      )} and need decode the incoming InterplanetaryMissionReport. THe mission report should be a story vignette detailing the latest adventure of the Target in question. "`,
+      content: `"You are the targetting computer of a ship in the Alliance of the Infinite Universe. You have just recieved a transmission from  ${metadata.Level} ${metadata.Power1} ${metadata.Power2} ${metadata.Power3}. and need to triangulate the following information: Coordinates, Sistem and Planet name, An enviromental analysis and a historical fact about the location in question. Use the Message information to come up with the report using your creativity."`,
     },
     {
       role: ChatCompletionRequestMessageRoleEnum.User,
-      content: `"Scanning Results Recieved ${alienMessage}. Awaiting Interplanetary Status Report."`,
+      content: `"Scanning Results Recieved ${metadata}${englishMessage}. Scan target location."`,
     },
   ];
 
   const response = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages,
-    temperature: 0.3,
-    max_tokens: 500,
+    temperature: 0.06,
+    max_tokens: 150,
   });
 
   const openaiResponse = response.data as { choices: Choice[] };
@@ -63,13 +58,13 @@ async function generateInterplanetaryStatusReport(scannerOutput: object, metadat
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const { selectedDescription, metadata, extraText } = req.body;
+    const { englishMessage, metadata } = req.body;
     try {
-      const report = await generateInterplanetaryStatusReport(selectedDescription, metadata, extraText);
+      const alienMessage = await generateAlienLanguage(englishMessage, metadata);
 
-      res.status(200).json({ report });
+      res.status(200).json({ alienMessage });
     } catch (error) {
-      res.status(500).json({ error: "Error generating interplanetary status report." });
+      res.status(500).json({ error: "Error generating alien language." });
     }
   } else {
     res.status(405).json({ error: "Method not allowed." });

@@ -25,6 +25,7 @@ type Metadata = {
   selectedDescription: string;
   nijiFlag: boolean;
   vFlag: boolean;
+  scannerOutput: string[];
 };
 
 type StoreState = {
@@ -101,6 +102,8 @@ export default function Home() {
   }
 
   const [appState, setAppState] = useState({
+    alienMessage: "",
+    scannerOutput: [],
     loading: false,
     loadingProgress: 0,
     originatingMessageId: "",
@@ -138,6 +141,8 @@ export default function Home() {
   //session storage
 
   const {
+    alienMessage,
+    scannerOutput,
     loadingProgress,
     loading,
     prevTravelStatus,
@@ -208,6 +213,7 @@ export default function Home() {
       selectedDescription,
       nijiFlag,
       vFlag,
+      scannerOutput,
     };
   }
 
@@ -290,7 +296,30 @@ export default function Home() {
     selectedDescription: selectedDescription,
     nijiFlag: nijiFlag,
     vFlag: vFlag,
+    scannerOutput: scannerOutput,
   };
+
+  useEffect(() => {
+    const fetchStatusReport = async () => {
+      try {
+        if (travelStatus === "AcquiringTarget") {
+          console.log(metadata);
+          const response = await axios.post("/api/scanning_result", {
+            metadata: metadata,
+          });
+          console.log("modified prompt gpt");
+          updateState("interplanetaryStatusReport", response.data.scannerOutput.healthAndStatus);
+          updateState("scannerOutput", response.data.scannerOutput);
+          console.log("scannerOutput", response.data.scannerOutput);
+        }
+      } catch (error) {
+        console.error("Error fetching interplanetary status report:", error);
+      }
+    };
+    console.log("travel status", travelStatus);
+
+    fetchStatusReport();
+  }, [travelStatus]);
 
   const updateState = (key: string, value: any) => {
     setAppState(prevState => ({ ...prevState, [key]: value }));
@@ -327,10 +356,33 @@ export default function Home() {
     console.log("SCANNING", { scanning });
     if (travelStatus == "AcquiringTarget" && scanning === false) {
       handleButtonClick("U1", "background");
+    } else if (travelStatus == "AcquiringTarget" && scanning === true) {
+      const fetchStatusReport = async () => {
+        try {
+          if (travelStatus === "AcquiringTarget") {
+            console.log(metadata);
+            const response = await axios.post("/api/alienEncoder", {
+              englishMessage: JSON.stringify(scannerOutput),
+              metadata: metadata,
+            });
+            console.log("modified prompt gpt");
+            updateState("alienMessage", response.data.alienMessage);
+
+            console.log("alienMessage", response.data.alienMessage);
+          }
+        } catch (error) {
+          console.error("Error fetching interplanetary status report:", error);
+        }
+      };
+      console.log("travel status", travelStatus);
+
+      fetchStatusReport();
     }
+
     return console.log("Tried to Upscale new background but", { travelStatus, scanning });
   };
 
+  useEffect;
   function generatePrompt(
     type: "character" | "background",
 
@@ -366,21 +418,22 @@ export default function Home() {
         try {
           if (modifiedPrompt !== "ALLIANCE OF THE INFINITE UNIVERSE") {
             const response = await axios.post("/api/generate_report", {
-              selectedDescription,
-              extraText: modifiedPrompt,
-
-              metadata,
+              scannerOutput: scannerOutput,
+              metadata: metadata,
+              alienMessage: alienMessage,
             });
             console.log("normal prompt gpt");
             updateState("interplanetaryStatusReport", response.data.report);
           } else {
             const response = await axios.post("/api/generate_report", {
-              selectedDescription,
-              metadata,
-              extraText: modifiedPrompt,
+              scannerOutput: scannerOutput,
+              metadata: metadata,
+              alienMessage: alienMessage,
             });
             console.log("modified prompt gpt");
             updateState("interplanetaryStatusReport", response.data.report);
+            updateState("scannerOutput", response.data.scannerOutput);
+            console.log("interplanetaryStatusReport", response.data.report);
           }
         } catch (error) {
           console.error("Error fetching interplanetary status report:", error);
@@ -389,7 +442,6 @@ export default function Home() {
       console.log("travel status", travelStatus);
 
       fetchInterplanetaryStatusReport();
-      console.timeEnd("fetchInterplanetaryStatusReport");
     }
   }, [travelStatus]);
 
@@ -738,6 +790,9 @@ export default function Home() {
             <AcquiringTarget loading={loading} travelStatus={travelStatus} selectedTokenId={selectedTokenId} />
 
             <TokenSelectionPanel
+              parsedMetadata={metadata}
+              warping={warping}
+              scannerOutput={scannerOutput}
               playSpaceshipOn={playSpaceshipOn}
               playHolographicDisplay={playHolographicDisplay}
               playSpaceshipHum={playSpaceshipHum}
@@ -759,6 +814,7 @@ export default function Home() {
               travelStatus={travelStatus}
             />
             <DescriptionPanel
+              alienMessage={alienMessage}
               playHolographicDisplay={playHolographicDisplay}
               handleClearAppState={handleClearAppState}
               handleActiveState={handleActiveSate}
