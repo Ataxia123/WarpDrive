@@ -37,7 +37,7 @@ export const MarqueePanel: React.FC<PromptPanelProps> = ({
 }) => {
   const ethPrice = useEthPrice();
   function stringToHex(str: string): string {
-    let hex = "";
+    let hex = "ALLIANCEOFTHEINFINITEUNIVERSE";
     for (let i = 0; i < str.length; i++) {
       hex += str.charCodeAt(i).toString(16);
     }
@@ -68,8 +68,9 @@ export const MarqueePanel: React.FC<PromptPanelProps> = ({
           <br />
 
           <p className="marquee-content" id="mc">
-            {stringToHex(error ? error : metadata.Level)} RESPONSE------ {stringToHex(response)} INTERPLANETARY STATUS
-            REPORT: {interplanetaryStatusReport} ESTABLISHING CONNECTION WITH: {metadata.Level} {metadata.Power1}
+            {stringToHex(error ? error : metadata.Level ? metadata.Level : "")} RESPONSE------ {stringToHex(response)}{" "}
+            INTERPLANETARY STATUS REPORT: {interplanetaryStatusReport} ESTABLISHING CONNECTION WITH: {metadata.Level}{" "}
+            {metadata.Power1}
             {metadata.Power2} {metadata.Power3} {metadata.Power4} SCAN TO DECODE ETHEREUM PRICE IS {ethPrice}
           </p>
         </div>

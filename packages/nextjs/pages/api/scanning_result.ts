@@ -60,8 +60,8 @@ async function generateScannerOutput(metadata: Metadata) {
   const openaiResponse = response.data as { choices: Choice[] };
   const rawOutput = openaiResponse.choices[0].message.content.trim();
 
-  const healthAndStatusMatch = rawOutput.match(/(?:Current Health and Status: *)([^;\n]+)/i);
-  const equipmentMatch = rawOutput.match(/(?:Equipment: *)([^;\n]+)/i);
+  const healthAndStatusMatch = rawOutput.match(/(?:Biometric Reading: *)([^;\n]+)/i);
+  const equipmentMatch = rawOutput.match(/(?:Current Equipment and Vehicle: *)([^;\n]+)/i);
   const abilitiesMatch = rawOutput.match(/(?:Abilities and Power level: *)([^;\n]+)/i);
   const funFactMatch = rawOutput.match(/(?:Fun Fact: *)([^;\n]+)/i);
 

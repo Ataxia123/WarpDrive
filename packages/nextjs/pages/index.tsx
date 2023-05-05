@@ -145,6 +145,7 @@ export default function Home() {
     const spaceshipHum = await audioController?.loadSound("/audio/spaceship-hum.wav");
     const holographicDisplay = await audioController?.loadSound("/audio/holographic-display.wav");
     const warpSpeed = await audioController?.loadSound("/audio/warp-speed.wav");
+
     if (spaceshipOn) {
       audioController?.playSound(spaceshipOn, true); // Pass 'true' as the second argument to enable looping
     }
@@ -196,6 +197,31 @@ export default function Home() {
     }
   }
 
+  function generateMetadata() {
+    const metadata: Metadata = {
+      srcUrl: srcUrl || "",
+      Level: level,
+      Power1: power1,
+      Power2: power2,
+      Power3: power3,
+      Power4: power4,
+      Alignment1: alignment1,
+      Alignment2: alignment2,
+      Side: side,
+      interplanetaryStatusReport: interplanetaryStatusReport,
+      selectedDescription: selectedDescription,
+      nijiFlag: nijiFlag,
+      vFlag: vFlag,
+      healthAndStatus: scannerOutput?.healthAndStatus,
+      abilities: scannerOutput?.abilities,
+      funFact: scannerOutput?.funFact,
+      equipment: scannerOutput?.equipment,
+      alienMessage: alienMessage,
+    };
+    updateState("metadata", metadata);
+    console.log("metadata", metadata);
+  }
+
   //session storage
 
   const setTravels = useAppStore(state => state.setTravels);
@@ -218,38 +244,9 @@ export default function Home() {
     return travelResult;
   }
 
-  function createTravelMetadata() {
-    const metadata = {
-      srcUrl,
-      Level: level,
-      Power1: power1,
-      Power2: power2,
-      Power3: power3,
-      Power4: power4,
-      Alignment1: alignment1,
-      Alignment2: alignment2,
-      Side: side,
-      interplanetaryStatusReport,
-      selectedDescription,
-      nijiFlag,
-      vFlag,
-      healthAndStatus: scannerOutput?.healthAndStatus,
-      abilities: scannerOutput?.abilities,
-      equipment: scannerOutput?.equipment,
-      funFact: scannerOutput?.funFact,
-      alienMessage,
-    } as Metadata;
-    updateState("metadata", metadata);
-  }
-
-  useEffect(() => {
-    if (selectedTokenId) {
-      createTravelMetadata();
-    }
-  }, [selectedTokenId]);
-
   function updateAllData() {
     // Update travels state
+    generateMetadata();
     setMetadata(metadata);
     const newTravelResult = createTravelResult(metadata);
     setTravels(newTravelResult);
@@ -260,8 +257,6 @@ export default function Home() {
 
   useEffect(() => {
     updateState("prevTravelStatus", travelStatus);
-    useAppStore.setState({ metadata: metadata });
-    setMetadata(metadata);
   }, [travelStatus]);
 
   useEffect(() => {
@@ -269,7 +264,7 @@ export default function Home() {
       updateAllData();
       console.log(travels);
     }
-  }, [travelStatus, prevTravelStatus, travels]);
+  }, [travelStatus]);
 
   const handleActiveSate = (imageUrl: string, selectedDescription: string, interplanetaryStatusReport: string) => {
     setAppState(prevState => ({
@@ -316,48 +311,6 @@ export default function Home() {
   }, [imageUrl]);
 
   useEffect(() => {
-    const metadata: Metadata = {
-      srcUrl: srcUrl || "",
-      Level: level,
-      Power1: power1,
-      Power2: power2,
-      Power3: power3,
-      Power4: power4,
-      Alignment1: alignment1,
-      Alignment2: alignment2,
-      Side: side,
-      interplanetaryStatusReport: interplanetaryStatusReport,
-      selectedDescription: selectedDescription,
-      nijiFlag: nijiFlag,
-      vFlag: vFlag,
-      healthAndStatus: scannerOutput?.healthAndStatus,
-      abilities: scannerOutput?.abilities,
-      funFact: scannerOutput?.funFact,
-      equipment: scannerOutput?.equipment,
-      alienMessage: alienMessage,
-    };
-    useAppStore.setState({ metadata: metadata });
-    updateState("metadata", metadata);
-    console.log("metadata", metadata);
-  }, [
-    interplanetaryStatusReport,
-    selectedDescription,
-    scannerOutput,
-    alienMessage,
-    srcUrl,
-    level,
-    power1,
-    power2,
-    power3,
-    power4,
-    alignment1,
-    alignment2,
-    side,
-    nijiFlag,
-    vFlag,
-  ]);
-
-  useEffect(() => {
     const fetchStatusReport = async () => {
       try {
         if (travelStatus === "AcquiringTarget") {
@@ -376,7 +329,7 @@ export default function Home() {
     console.log("travel status", travelStatus);
 
     fetchStatusReport();
-  }, [travelStatus, metadata]);
+  }, [travelStatus]);
 
   const updateState = (key: string, value: any) => {
     setAppState(prevState => ({ ...prevState, [key]: value }));
@@ -501,7 +454,7 @@ export default function Home() {
 
       fetchInterplanetaryStatusReport();
     }
-  }, [travelStatus, alienMessage, metadata, scannerOutput, modifiedPrompt]);
+  }, [travelStatus]);
 
   const handleDescribeClick = async () => {
     console.log(
@@ -797,6 +750,7 @@ export default function Home() {
 
   const handleImageSrcReceived = (imageSrc: string) => {
     updateState("srcUrl", imageSrc);
+    generateMetadata();
 
     console.log(srcUrl);
     // Handle the imageSrc here, e.g., update the state or call another function
