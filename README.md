@@ -17,7 +17,7 @@ cd WarpDrive
 yarn install
 ```
 
-create a .local.env file and add MIDJOURNEY_API_KEY (Currently using thenextleg.io) and a BASE_URL (for local testing use ngrok temp url)
+create a .env.local file and add MIDJOURNEY_API_KEY (Currently using thenextleg.io) and a BASE_URL (for local testing use ngrok temp url)
 
 On a terminal, start your NextJS app:
 
