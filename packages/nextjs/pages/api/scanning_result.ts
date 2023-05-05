@@ -30,6 +30,21 @@ type Metadata = {
   nijiFlag: boolean;
   vFlag: boolean;
 };
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  if (req.method === "POST") {
+    const { metadata } = req.body;
+    console.log(metadata);
+    try {
+      const scannerOutput = await generateScannerOutput(metadata);
+
+      res.status(200).json({ scannerOutput });
+    } catch (error) {
+      res.status(500).json({ error: "Error generating scanner output." });
+    }
+  } else {
+    res.status(405).json({ error: "Method not allowed." });
+  }
+};
 
 async function generateScannerOutput(metadata: Metadata) {
   const messages: ChatCompletionRequestMessage[] = [
@@ -75,19 +90,3 @@ async function generateScannerOutput(metadata: Metadata) {
     rawOutput,
   };
 }
-
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
-    const { metadata } = req.body;
-    console.log(metadata);
-    try {
-      const scannerOutput = await generateScannerOutput(metadata);
-
-      res.status(200).json({ scannerOutput });
-    } catch (error) {
-      res.status(500).json({ error: "Error generating scanner output." });
-    }
-  } else {
-    res.status(405).json({ error: "Method not allowed." });
-  }
-};
