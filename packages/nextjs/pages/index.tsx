@@ -269,7 +269,7 @@ export default function Home() {
       updateAllData();
       console.log(travels);
     }
-  }, [travelStatus, prevTravelStatus, travels, updateAllData]);
+  }, [travelStatus, prevTravelStatus, travels]);
 
   const handleActiveSate = (imageUrl: string, selectedDescription: string, interplanetaryStatusReport: string) => {
     setAppState(prevState => ({
