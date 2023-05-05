@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useAppStore, useImageStore } from "../services/store/store";
+import ChatWithCaptain from "./chatWithCaptain";
 import { fabric } from "fabric";
 
 // Dummy data for demonstration purposes
 
 type Metadata = {
-  srcUrl: string | null;
+  srcUrl: string;
   Level: string;
   Power1: string;
   Power2: string;
@@ -18,6 +19,12 @@ type Metadata = {
   selectedDescription: string;
   nijiFlag: boolean;
   vFlag: boolean;
+  equipment: string;
+  healthAndStatus: string;
+  abilities: string;
+  funFact: string;
+
+  alienMessage: string;
 };
 interface StoreState {
   interplanetaryStatusReports: string[];
@@ -26,6 +33,7 @@ interface StoreState {
 }
 
 interface LogViewerProps {
+  metadata: Metadata;
   alienMessage: string;
   playHolographicDisplay: () => void;
   storeState: StoreState;
@@ -33,6 +41,7 @@ interface LogViewerProps {
   handleActiveState: (imageUrl: string, selectedDescription: string, interplanetaryStatusReport: string) => void;
 }
 const LogViewer: React.FC<LogViewerProps> = ({
+  metadata,
   storeState,
   handleActiveState,
   playHolographicDisplay,
@@ -84,7 +93,6 @@ const LogViewer: React.FC<LogViewerProps> = ({
   const {
     backgroundImageUrl,
     displayImageUrl,
-    metadata,
     setMetadata,
     travels,
     setTravels,
@@ -94,7 +102,6 @@ const LogViewer: React.FC<LogViewerProps> = ({
   } = useAppStore(state => ({
     backgroundImageUrl: state.backgroundImageUrl,
     displayImageUrl: state.displayImageUrl,
-    metadata: state.metadata,
     setMetadata: state.setMetadata,
     travels: state.travels,
     setTravels: state.setTravels,
@@ -142,8 +149,8 @@ const LogViewer: React.FC<LogViewerProps> = ({
       case 2:
         return (
           <div>
-            <h3>API Responses:</h3>
-            {travels.length > 0 ? <p>{travel.apiResponses}</p> : <>NO TRAVELS</>}
+            <h3>CHAT WITH CAPTAIN:</h3>
+            <ChatWithCaptain metadata={metadata} />
           </div>
         );
       case 3:

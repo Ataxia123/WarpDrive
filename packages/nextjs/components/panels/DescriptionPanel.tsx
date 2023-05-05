@@ -8,6 +8,7 @@ interface StoreState {
 }
 
 interface DescriptionPanelProps {
+  metadata: Metadata;
   alienMessage: string;
   playHolographicDisplay: () => void;
   handleClearAppState: () => void;
@@ -25,8 +26,30 @@ interface DescriptionPanelProps {
   interplanetaryStatusReport: string;
   handleSubmit: (type: "character" | "background") => Promise<void>;
 }
+type Metadata = {
+  srcUrl: string;
+  Level: string;
+  Power1: string;
+  Power2: string;
+  Power3: string;
+  Power4: string;
+  Alignment1: string;
+  Alignment2: string;
+  Side: string;
+  interplanetaryStatusReport: string;
+  selectedDescription: string;
+  nijiFlag: boolean;
+  vFlag: boolean;
+  equipment: string;
+  healthAndStatus: string;
+  abilities: string;
+  funFact: string;
+
+  alienMessage: string;
+};
 
 export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
+  metadata,
   alienMessage,
   playHolographicDisplay,
   handleClearAppState,
@@ -182,6 +205,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                     storeState={storeState}
                     handleActiveState={handleActiveState}
                     handleClearAppState={handleClearAppState}
+                    metadata={metadata}
                   />
                 </div>
               </div>

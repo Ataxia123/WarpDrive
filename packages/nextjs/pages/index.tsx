@@ -792,6 +792,7 @@ export default function Home() {
               travelStatus={travelStatus}
             />
             <DescriptionPanel
+              metadata={metadata}
               alienMessage={alienMessage}
               playHolographicDisplay={playHolographicDisplay}
               handleClearAppState={handleClearAppState}
