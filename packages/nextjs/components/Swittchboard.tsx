@@ -27,6 +27,11 @@ interface SwitchboardProps {
     vFlag: boolean,
     side: string | "",
     interplanetaryStatusReport: string | "",
+    abilities: string | "",
+    funFact: string | "",
+    equipment: string | "",
+    healthAndStatus: string | "",
+    alienMessage: string | "",
   ) => string;
 
   promptData: {
@@ -41,6 +46,11 @@ interface SwitchboardProps {
     Side: string;
     interplanetaryStatusReport: string;
     selectedDescription: string;
+    abilities: string | "";
+    funFact: string | "";
+    equipment: string | "";
+    healthAndStatus: string | "";
+    alienMessage: string;
   };
   selectedAttributes: string[];
 }
@@ -97,6 +107,11 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
       selectedDescription,
       Side,
       interplanetaryStatusReport,
+      abilities,
+      funFact,
+      equipment,
+      healthAndStatus,
+      alienMessage,
     } = promptData;
 
     const selectedData = {
@@ -111,6 +126,11 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
       selectedDescription,
       Side,
       interplanetaryStatusReport,
+      abilities,
+      funFact,
+      equipment,
+      healthAndStatus,
+      alienMessage,
     };
     const filteredData: Partial<typeof selectedData> = {};
 
@@ -138,6 +158,11 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
       vFlag,
       filteredData.Side || "",
       filteredData.interplanetaryStatusReport || "", // Pass the interplanetary status report here
+      filteredData.abilities || "", // Pass the abilities here
+      filteredData.funFact || "", // Pass the fun fact here
+      filteredData.equipment || "", // Pass the equipment here
+      filteredData.healthAndStatus || "", // Pass the health and status here
+      filteredData.alienMessage || "", // Pass the alien message here
     );
 
     setModifiedPrompt(modifiedPrompt);
@@ -274,7 +299,17 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
                     </div>
                     {attributes.map(attribute => {
                       const displayName =
-                        attribute === "interplanetaryStatusReport"
+                        attribute === "alienMessage"
+                          ? "Alien Message"
+                          : attribute === "funFact"
+                          ? "FunFact"
+                          : attribute === "healthAndStatus"
+                          ? "Status"
+                          : attribute === "abilities"
+                          ? "Abilities"
+                          : attribute === "equipment"
+                          ? "Equipment"
+                          : attribute === "interplanetaryStatusReport"
                           ? "Report"
                           : attribute === "selectedDescription"
                           ? "Scan"

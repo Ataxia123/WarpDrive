@@ -25,23 +25,81 @@ type Metadata = {
   selectedDescription: string;
   nijiFlag: boolean;
   vFlag: boolean;
-  scannerOutput: string[];
-};
+  equipment: string;
+  healthAndStatus: string;
+  abilities: string;
+  funFact: string;
 
+  alienMessage: string;
+};
+type ProgressResponseType = {
+  progress: number | "incomplete";
+  response: {
+    createdAt?: string;
+    buttons?: string[];
+    imageUrl?: string;
+    buttonMessageId?: string;
+    originatingMessageId?: string;
+    content?: string;
+    ref?: string;
+    responseAt?: string;
+  };
+};
 type StoreState = {
   interplanetaryStatusReports: string[];
   scanningResults: string[][];
   imagesStored: string[];
 };
+type Sounds = {
+  spaceshipHum?: AudioBuffer | null;
+  spaceshipOn?: AudioBuffer | null;
+  holographicDisplay?: AudioBuffer | null;
+  warpSpeed?: AudioBuffer | null;
+};
 
 export default function Home() {
-  type Sounds = {
-    spaceshipHum?: AudioBuffer | null;
-    spaceshipOn?: AudioBuffer | null;
-    holographicDisplay?: AudioBuffer | null;
-    warpSpeed?: AudioBuffer | null;
-  };
-
+  const [appState, setAppState] = useState({
+    alienMessage: "",
+    scannerOutput: {
+      equipment: "",
+      healthAndStatus: "",
+      abilities: "",
+      funFact: "",
+    },
+    loading: false,
+    loadingProgress: 0,
+    originatingMessageId: "",
+    error: "",
+    response: "",
+    imageUrl: "",
+    waitingForWebhook: false,
+    description: [],
+    selectedDescriptionIndex: 0,
+    selectedTokenId: undefined,
+    srcUrl: undefined,
+    level: "",
+    power1: "",
+    power2: "",
+    power3: "",
+    power4: "",
+    alignment1: "",
+    alignment2: "",
+    side: "",
+    buttonMessageId: "",
+    backgroundImageUrl: "assets/background.png",
+    tempUrl: "",
+    nijiFlag: false,
+    vFlag: false,
+    travelStatus: "NoTarget",
+    prevTravelStatus: "",
+    interplanetaryStatusReport: "",
+    selectedDescription: "",
+    modifiedPrompt: "ALLIANCE OF THE INFINITE UNIVERSE",
+    warping: false,
+    scanning: false,
+    preExtraText: "",
+    AfterExtraText: "",
+  });
   const [sounds, setSounds] = useState<Sounds>({});
   const [audioController, setAudioController] = useState<AudioController | null>(null);
   const [soundsLoaded, setSoundsLoaded] = useState<boolean>(false);
@@ -101,43 +159,6 @@ export default function Home() {
     }
   }
 
-  const [appState, setAppState] = useState({
-    alienMessage: "",
-    scannerOutput: [],
-    loading: false,
-    loadingProgress: 0,
-    originatingMessageId: "",
-    error: "",
-    response: "",
-    imageUrl: "",
-    waitingForWebhook: false,
-    description: [],
-    selectedDescriptionIndex: 0,
-    selectedTokenId: undefined,
-    srcUrl: undefined,
-    level: "",
-    power1: "",
-    power2: "",
-    power3: "",
-    power4: "",
-    alignment1: "",
-    alignment2: "",
-    side: "",
-    buttonMessageId: "",
-    backgroundImageUrl: "assets/background.png",
-    tempUrl: "",
-    nijiFlag: false,
-    vFlag: false,
-    travelStatus: "NoTarget",
-    prevTravelStatus: "",
-    interplanetaryStatusReport: "",
-    selectedDescription: "",
-    modifiedPrompt: "ALLIANCE OF THE INFINITE UNIVERSE",
-    warping: false,
-    scanning: false,
-    preExtraText: "",
-    AfterExtraText: "",
-  });
   //session storage
 
   const {
@@ -213,7 +234,11 @@ export default function Home() {
       selectedDescription,
       nijiFlag,
       vFlag,
-      scannerOutput,
+      healthAndStatus: scannerOutput?.healthAndStatus,
+      abilities: scannerOutput?.abilities,
+      equipment: scannerOutput?.equipment,
+      funFact: scannerOutput?.funFact,
+      alienMessage,
     };
   }
 
@@ -296,7 +321,11 @@ export default function Home() {
     selectedDescription: selectedDescription,
     nijiFlag: nijiFlag,
     vFlag: vFlag,
-    scannerOutput: scannerOutput,
+    healthAndStatus: scannerOutput?.healthAndStatus,
+    abilities: scannerOutput?.abilities,
+    funFact: scannerOutput?.funFact,
+    equipment: scannerOutput?.equipment,
+    alienMessage: alienMessage,
   };
 
   useEffect(() => {
@@ -308,7 +337,6 @@ export default function Home() {
             metadata: metadata,
           });
           console.log("modified prompt gpt");
-          updateState("interplanetaryStatusReport", response.data.scannerOutput.healthAndStatus);
           updateState("scannerOutput", response.data.scannerOutput);
           console.log("scannerOutput", response.data.scannerOutput);
         }
@@ -385,8 +413,7 @@ export default function Home() {
   useEffect;
   function generatePrompt(
     type: "character" | "background",
-
-    srcUrl: string | undefined = "",
+    srcUrl: string | "",
     level: string,
     power1: string,
     power2: string,
@@ -398,7 +425,12 @@ export default function Home() {
     nijiFlag: boolean,
     vFlag: boolean,
     side: string | "",
-    interplanetaryStatusReport: string,
+    interplanetaryStatusReport: string | "",
+    abilities: string | "",
+    funFact: string | "",
+    equipment: string | "",
+    healthAndStatus: string | "",
+    alienMessage: string | "",
   ): string {
     const niji = nijiFlag ? "--niji 5" : "";
     const v = vFlag ? "--v 5" : "";
@@ -406,9 +438,9 @@ export default function Home() {
     const randomPlanet =
       "https://discovery.sndimg.com/content/dam/images/discovery/fullset/2022/9/alien%20planet%20GettyImages-913058614.jpg.rend.hgtvcom.406.406.suffix/1664497398007.jpeg";
     if (type === "background")
-      return `${randomPlanet} ${keyword} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${selectedDescription} ${interplanetaryStatusReport} ${niji} ${v} viewed from space`.trim();
+      return `${randomPlanet} ${keyword} ${alienMessage} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${interplanetaryStatusReport} ${niji} ${v} viewed from space`.trim();
 
-    return `${srcUrl} ${keyword} ${level} ${power1} ${power2} ${power3} ${power4} ${alignment1} ${alignment2} ${side} ${selectedDescription} ${interplanetaryStatusReport} ${niji} ${v}`.trim();
+    return `${srcUrl} ${healthAndStatus} ${level} ${power1} ${power2} ${power3} ${power4} ${healthAndStatus} ${equipment} ${abilities} ${funFact} ${alignment1} ${alignment2} ${side} ${selectedDescription} ${interplanetaryStatusReport} ${niji} ${v}`.trim();
   }
 
   useEffect(() => {
@@ -432,8 +464,6 @@ export default function Home() {
             });
             console.log("modified prompt gpt");
             updateState("interplanetaryStatusReport", response.data.report);
-            updateState("scannerOutput", response.data.scannerOutput);
-            console.log("interplanetaryStatusReport", response.data.report);
           }
         } catch (error) {
           console.error("Error fetching interplanetary status report:", error);
@@ -505,20 +535,6 @@ export default function Home() {
     updateState("waitingForWebhook", false);
   };
 
-  type ProgressResponseType = {
-    progress: number | "incomplete";
-    response: {
-      createdAt?: string;
-      buttons?: string[];
-      imageUrl?: string;
-      buttonMessageId?: string;
-      originatingMessageId?: string;
-      content?: string;
-      ref?: string;
-      responseAt?: string;
-    };
-  };
-
   async function fetchProgress(
     messageId: string,
     expireMins = 2,
@@ -554,7 +570,7 @@ export default function Home() {
   const submitPrompt = async (type: "character" | "background") => {
     let prompt = generatePrompt(
       type,
-      srcUrl,
+      srcUrl ? srcUrl : "",
       level,
       power1,
       power2,
@@ -567,6 +583,11 @@ export default function Home() {
       vFlag,
       side,
       interplanetaryStatusReport,
+      scannerOutput.abilities,
+      scannerOutput.equipment,
+      scannerOutput.funFact,
+      scannerOutput.healthAndStatus,
+      alienMessage,
     );
 
     if (waitingForWebhook) {

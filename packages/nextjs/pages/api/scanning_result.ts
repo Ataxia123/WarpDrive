@@ -35,15 +35,19 @@ async function generateScannerOutput(metadata: Metadata) {
   const messages: ChatCompletionRequestMessage[] = [
     {
       role: ChatCompletionRequestMessageRoleEnum.System,
-      content: `You are an AI capable of generating scanner output for a character. Generate scanner output for the character in the following format: "Current Health and Status: {health_and_status}; Current Equipment: {equipment}; Abilities and Power level: {abilities_level}; Fun Fact: {fun_fact}"`,
+      content: `You are an AI capable of generating scanner output for the following member of the Alliance of the Infinite Universe:${metadata.Level} ${metadata.Power1} ${metadata.Power2} ${metadata.Power3}. Generate scanner output based on the metadata available for the character in the following format: "Biometric Reading: {health_condition}; Current Equipment and Vehicle: {equipment}; Abilities and Power level: {abilities_level}; Fun Fact: {fun_fact}"`,
     },
     {
       role: ChatCompletionRequestMessageRoleEnum.User,
-      content: `Metadata: ${JSON.stringify(metadata)}`,
+      content: `Metata: ${JSON.stringify(metadata.Level)}${JSON.stringify(metadata.Power1)}${JSON.stringify(
+        metadata.Power2,
+      )}${JSON.stringify(metadata.Power3)}${JSON.stringify(metadata.Power4)}${JSON.stringify(
+        metadata.Alignment1,
+      )}${JSON.stringify(metadata.Alignment2)}${JSON.stringify(metadata.Side)},`,
     },
     {
       role: ChatCompletionRequestMessageRoleEnum.User,
-      content: `SCANNING INFORMATION RECIEVED. GENERATING SCANNER OUTPUT FOR CHARACTER. ACQUIRING MISSION STATUS REPORT FOR. ${metadata.Level} ${metadata.Power1} ${metadata.Power2} ${metadata.Power3}`,
+      content: `SCANNING INFORMATION RECIEVED. GENERATING SCANNER OUTPUT FOR ${metadata.Level}${metadata.Power1}${metadata.Power2}${metadata.Power3} of the AIU. `,
     },
   ];
 

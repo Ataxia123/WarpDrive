@@ -15,6 +15,12 @@ type Metadata = {
   selectedDescription: string;
   nijiFlag: boolean;
   vFlag: boolean;
+  equipment: string;
+  healthAndStatus: string;
+  abilities: string;
+  funFact: string;
+
+  alienMessage: string;
 };
 
 interface PromptPanelProps {
@@ -52,6 +58,11 @@ interface PromptPanelProps {
     vFlag: boolean,
     side: string | "",
     interplanetaryStatusReport: string | "",
+    abilities: string | "",
+    funFact: string | "",
+    equipment: string | "",
+    healthAndStatus: string | "",
+    alienMessage: string | "",
   ) => string;
 }
 
@@ -82,6 +93,11 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
     "Alignment1",
     "Alignment2",
     "Side",
+    "abilities",
+    "funFact",
+    "equipment",
+    "healthAndStatus",
+    "alienMessage",
   ];
   const [isFocused, setIsFocused] = useState(false);
   const [selectedAttributes, setSelectedAttributes] = useState<string[]>([]);

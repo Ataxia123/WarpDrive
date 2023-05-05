@@ -22,7 +22,12 @@ type Metadata = {
   selectedDescription: string;
   nijiFlag: boolean;
   vFlag: boolean;
-  scannerOutput: string[];
+  equipment: string;
+  healthAndStatus: string;
+  abilities: string;
+  funFact: string;
+
+  alienMessage: string;
 };
 interface ReadAIUProps {
   parsedMetadata: Metadata;
@@ -91,7 +96,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   const [imageSrc, setImageSrc] = useState<string>();
   const [mouseTrigger, setMouseTrigger] = useState<boolean>(false);
   const [engaged, setEngaged] = useState<boolean>(false);
-  const [scanOutputIndex, setScanOutputIndex] = useState<number>(0);
+  const [scanOutputIndex, setScanOutputIndex] = useState<number>(1);
   const [scannerOptions, setScannerOptions] = useState<string[]>([
     "abilities",
     "healthAndStatus",
@@ -123,6 +128,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   };
 
   const handleNext = () => {
+    console.log("im clicked");
     if (scanOutputIndex < scannerOptions.length - 1) {
       setScanOutputIndex(scanOutputIndex + 1);
     }
@@ -785,7 +791,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                             ) : (
                               <>
                                 {" "}
-                                {interplanetaryStatusReport !== "" ? (
+                                {interplanetaryStatusReport === "" ? (
                                   <>
                                     {" "}
                                     |------ENGAGE SCANNER------|
@@ -805,11 +811,28 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                                       }}
                                       className="spaceship-display-screen"
                                     >
+                                      {" "}
+                                      <br />
                                       TRANSMISSION FROM:
                                       <br />
                                       <br />
                                       {parsedMetadata?.Level} {parsedMetadata?.Power1} {parsedMetadata?.Power2}
                                     </span>{" "}
+                                    <br />
+                                    <span
+                                      className="spaceship-display-screen description-text"
+                                      style={{
+                                        position: "relative",
+                                        top: "2.5rem",
+                                        marginLeft: "-5%",
+                                        left: "-7%",
+                                        marginRight: "10rem",
+                                        animation: "none",
+                                        color: "white",
+                                      }}
+                                    >
+                                      {parsedMetadata.interplanetaryStatusReport}
+                                    </span>
                                   </>
                                 )}
                               </>
@@ -835,8 +858,6 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                       alignItems: "center",
                       display: "flexbox",
                       flexDirection: "column",
-
-                      zIndex: 10000000000000010000000000000000000000000000000000000000000000,
 
                       top: "0.3rem",
                       padding: "1rem",
@@ -913,24 +934,10 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                     flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
-                    pointerEvents: "none",
+                    pointerEvents: "auto",
                   }}
                 >
                   {" "}
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "2%",
-                      left: "27%",
-                      fontSize: "1.2rem",
-                      pointerEvents: "auto",
-                      zIndex: 10000000,
-                    }}
-                  >
-                    {" "}
-                    <span onClick={() => handlePrevious}> {`<<`} </span> ||
-                    <span onClick={() => handleNext}> {`>>`} </span>
-                  </div>
                   <div
                     style={{
                       marginTop: "7%",
@@ -959,6 +966,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                         lineHeight: "0.8rem",
                       }}
                     >
+                      {" "}
                       SCANNER
                       <br />
                       OUTPUT: <br />
@@ -985,8 +993,43 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
                         color: "white",
                       }}
                     >
-                      <span className="hex-prompt">{scannerOptions[scanOutputIndex]}:</span> <br />
-                      {scannerOutput[scannerOptions[scanOutputIndex]]}
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "15%",
+                          fontSize: "0.9rem",
+                          pointerEvents: "auto",
+                        }}
+                      >
+                        <button onClick={() => handlePrevious()}> {`<<`} </button> ||
+                        <button
+                          onClick={() => {
+                            handleNext();
+                            console.log("I'm CLicked");
+                          }}
+                        >
+                          {" "}
+                          {`>>`}{" "}
+                        </button>
+                      </div>
+                      <span
+                        style={{
+                          position: "relative",
+                        }}
+                        className="hex-prompt"
+                      >
+                        {scannerOptions[scanOutputIndex]}:
+                      </span>{" "}
+                      <br />
+                      <span
+                        style={{
+                          top: "0.7rem",
+                          position: "relative",
+                        }}
+                        className="hex-prompt"
+                      >
+                        {scannerOutput[scannerOptions[scanOutputIndex]]}
+                      </span>
                     </span>
                   </div>{" "}
                 </div>

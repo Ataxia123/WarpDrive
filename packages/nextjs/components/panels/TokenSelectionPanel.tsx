@@ -15,12 +15,22 @@ type Metadata = {
   selectedDescription: string;
   nijiFlag: boolean;
   vFlag: boolean;
-  scannerOutput: string[];
+  equipment: string;
+  healthAndStatus: string;
+  abilities: string;
+  funFact: string;
+
+  alienMessage: string;
 };
 interface TokenSelectionPanelProps {
   warping: boolean;
   parsedMetadata: Metadata;
-  scannerOutput: string[];
+  scannerOutput: {
+    abilities: string;
+    equipment: string;
+    healthAndStatus: string;
+    funFact: string;
+  };
   playSpaceshipOn: () => void;
   handleScanning: (scanning: boolean) => void;
   scanning: boolean;
