@@ -259,7 +259,7 @@ export default function Home() {
       updateAllData();
       console.log(travels);
     }
-  }, [travelStatus]);
+  }, [travelStatus, prevTravelStatus, travels, updateAllData]);
 
   const handleActiveSate = (imageUrl: string, selectedDescription: string, interplanetaryStatusReport: string) => {
     setAppState(prevState => ({
@@ -345,7 +345,7 @@ export default function Home() {
     console.log("travel status", travelStatus);
 
     fetchStatusReport();
-  }, [travelStatus]);
+  }, [travelStatus, metadata]);
 
   const updateState = (key: string, value: any) => {
     setAppState(prevState => ({ ...prevState, [key]: value }));
@@ -470,7 +470,7 @@ export default function Home() {
 
       fetchInterplanetaryStatusReport();
     }
-  }, [travelStatus]);
+  }, [travelStatus, alienMessage, metadata, scannerOutput, modifiedPrompt]);
 
   const handleDescribeClick = async () => {
     console.log(

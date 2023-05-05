@@ -1,10 +1,7 @@
-import { FunctionComponent, useCallback, useEffect, useState } from "react";
-import AudioController from "../components/AudioController";
-import { BigNumber, Contract, ethers } from "ethers";
-import { wrap } from "module";
+import { FunctionComponent, useEffect, useState } from "react";
+import { BigNumber, ethers } from "ethers";
 import { useAccount, useProvider } from "wagmi";
-import { Balance, BlockieAvatar } from "~~/components/scaffold-eth";
-import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
+import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth/useScaffoldEventHistory";
 
