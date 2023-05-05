@@ -16,7 +16,7 @@ interface Choice {
   finish_reason: string;
 }
 type Metadata = {
-  srcUrl: string | undefined;
+  srcUrl: string | null;
   Level: string;
   Power1: string;
   Power2: string;
@@ -29,6 +29,12 @@ type Metadata = {
   selectedDescription: string;
   nijiFlag: boolean;
   vFlag: boolean;
+  equipment: string;
+  healthAndStatus: string;
+  abilities: string;
+  funFact: string;
+
+  alienMessage: string;
 };
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {

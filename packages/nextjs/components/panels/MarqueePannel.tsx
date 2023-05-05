@@ -18,7 +18,7 @@ interface PromptPanelProps {
   interplanetaryStatusReport: string;
   buttonMessageId: string | "";
   imageUrl: string;
-  srcUrl: string | undefined;
+  srcUrl: string | null;
   loading: boolean;
   metadata: Metadata;
   onSubmitPrompt: (type: "character" | "background") => Promise<void>;

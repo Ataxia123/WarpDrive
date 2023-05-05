@@ -15,7 +15,7 @@ interface DashboardProps {
   travelStatus: string;
   dynamicImageUrl: string;
   imageUrl: string;
-  srcUrl: string | undefined;
+  srcUrl: string | null;
   onSubmitPrompt: (type: "character" | "background") => Promise<void>;
   onSubmit: (type: "character" | "background") => Promise<void>;
   handleButtonClick: (button: string, type: "character" | "background") => void;

@@ -10,7 +10,7 @@ import create from "zustand";
  */
 
 type Metadata = {
-  srcUrl: string | undefined;
+  srcUrl: string | null;
   Level: string;
   Power1: string;
   Power2: string;

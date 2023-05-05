@@ -2,7 +2,7 @@ import React from "react";
 
 interface AcquiringTargetProps {
   travelStatus: string;
-  selectedTokenId: string | undefined;
+  selectedTokenId: string | null;
   loading: boolean;
 }
 

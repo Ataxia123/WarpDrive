@@ -5,7 +5,7 @@ import { fabric } from "fabric";
 // Dummy data for demonstration purposes
 
 type Metadata = {
-  srcUrl: string | "";
+  srcUrl: string | null;
   Level: string;
   Power1: string;
   Power2: string;

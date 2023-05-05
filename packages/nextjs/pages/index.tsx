@@ -12,7 +12,7 @@ import axios from "axios";
 import GraphemeSplitter from "grapheme-splitter";
 
 type Metadata = {
-  srcUrl: string | undefined;
+  srcUrl: string;
   Level: string;
   Power1: string;
   Power2: string;
@@ -76,8 +76,8 @@ export default function Home() {
     waitingForWebhook: false,
     description: [],
     selectedDescriptionIndex: 0,
-    selectedTokenId: undefined,
-    srcUrl: undefined,
+    selectedTokenId: "",
+    srcUrl: "",
     level: "",
     power1: "",
     power2: "",
@@ -135,11 +135,27 @@ export default function Home() {
     modifiedPrompt,
     warping,
     scanning,
-    metadata,
   } = appState;
+  //session storage
+  const [storeState, setStoreState] = useState<StoreState>({
+    interplanetaryStatusReports: [],
+    scanningResults: [],
+    imagesStored: [],
+  });
+  const setTravels = useAppStore(state => state.setTravels);
+  const setBackgroundImageUrl = useAppStore(state => state.setBackgroundImageUrl);
+  const setDisplayImageUrl = useAppStore(state => state.setdisplayImageUrl);
+  const handleApiResponse = useAppStore(state => state.handleApiResponse);
+  const setMetadata = useAppStore(state => state.setMetadata);
+  const travels = useAppStore(state => state.travels);
   const [sounds, setSounds] = useState<Sounds>({});
   const [audioController, setAudioController] = useState<AudioController | null>(null);
   const [soundsLoaded, setSoundsLoaded] = useState<boolean>(false);
+
+  const updateState = (key: string, value: any) => {
+    setAppState(prevState => ({ ...prevState, [key]: value }));
+  };
+
   const loadSounds = useCallback(async () => {
     const spaceshipOn = await audioController?.loadSound("/audio/spaceship-on.wav");
     const spaceshipHum = await audioController?.loadSound("/audio/spaceship-hum.wav");
@@ -158,7 +174,7 @@ export default function Home() {
 
     setSoundsLoaded(true);
   }, [audioController, soundsLoaded]);
-
+  // AUDIO SETUP
   useEffect(() => {
     setAudioController(new AudioController());
   }, []);
@@ -173,6 +189,7 @@ export default function Home() {
       audioController?.playSound(sounds.spaceshipOn, true);
     }
   }, [sounds.spaceshipOn]);
+  // SOUND EFFECTS
   function playSpaceshipHum() {
     if (sounds.spaceshipHum) {
       audioController?.playSound(sounds.spaceshipHum);
@@ -197,40 +214,6 @@ export default function Home() {
     }
   }
 
-  function generateMetadata() {
-    const metadata: Metadata = {
-      srcUrl: srcUrl || "",
-      Level: level,
-      Power1: power1,
-      Power2: power2,
-      Power3: power3,
-      Power4: power4,
-      Alignment1: alignment1,
-      Alignment2: alignment2,
-      Side: side,
-      interplanetaryStatusReport: interplanetaryStatusReport,
-      selectedDescription: selectedDescription,
-      nijiFlag: nijiFlag,
-      vFlag: vFlag,
-      healthAndStatus: scannerOutput?.healthAndStatus,
-      abilities: scannerOutput?.abilities,
-      funFact: scannerOutput?.funFact,
-      equipment: scannerOutput?.equipment,
-      alienMessage: alienMessage,
-    };
-    updateState("metadata", metadata);
-    console.log("metadata", metadata);
-  }
-
-  //session storage
-
-  const setTravels = useAppStore(state => state.setTravels);
-  const setBackgroundImageUrl = useAppStore(state => state.setBackgroundImageUrl);
-  const setDisplayImageUrl = useAppStore(state => state.setdisplayImageUrl);
-  const handleApiResponse = useAppStore(state => state.handleApiResponse);
-  const setMetadata = useAppStore(state => state.setMetadata);
-  const travels = useAppStore(state => state.travels);
-
   function createTravelResult(metadata: Metadata) {
     // Collect all the required information for the travel result
     const travelResult = {
@@ -244,28 +227,6 @@ export default function Home() {
     return travelResult;
   }
 
-  function updateAllData() {
-    // Update travels state
-    generateMetadata();
-    setMetadata(metadata);
-    const newTravelResult = createTravelResult(metadata);
-    setTravels(newTravelResult);
-
-    // Update apiResponses and errors state
-    handleApiResponse(response, error);
-  }
-
-  useEffect(() => {
-    updateState("prevTravelStatus", travelStatus);
-  }, [travelStatus]);
-
-  useEffect(() => {
-    if (travelStatus === "NoTarget" && prevTravelStatus === "TargetAcquired") {
-      updateAllData();
-      console.log(travels);
-    }
-  }, [travelStatus]);
-
   const handleActiveSate = (imageUrl: string, selectedDescription: string, interplanetaryStatusReport: string) => {
     setAppState(prevState => ({
       ...prevState,
@@ -275,12 +236,6 @@ export default function Home() {
     }));
   };
 
-  const [storeState, setStoreState] = useState<StoreState>({
-    interplanetaryStatusReports: [],
-    scanningResults: [],
-    imagesStored: [],
-  });
-
   const handleClearAppState = () => {
     setStoreState({
       interplanetaryStatusReports: [],
@@ -288,7 +243,58 @@ export default function Home() {
       imagesStored: [],
     });
   };
+  // METADATA HANDLER
+  const metadata: Metadata = {
+    srcUrl: srcUrl,
+    Level: level,
+    Power1: power1,
+    Power2: power2,
+    Power3: power3,
+    Power4: power4,
+    Alignment1: alignment1,
+    Alignment2: alignment2,
+    Side: side,
+    interplanetaryStatusReport: interplanetaryStatusReport,
+    selectedDescription: selectedDescription,
+    nijiFlag: nijiFlag,
+    vFlag: vFlag,
+    healthAndStatus: scannerOutput?.healthAndStatus,
+    abilities: scannerOutput?.abilities,
+    funFact: scannerOutput?.funFact,
+    equipment: scannerOutput?.equipment,
+    alienMessage: alienMessage,
+  };
 
+  useEffect(() => {
+    function generateMetadata() {
+      if (srcUrl === "") {
+        console.log("generateMetadata() imageUrl is empty");
+        return;
+      }
+      fetchScanningReport();
+      setMetadata(metadata);
+      console.log("metadata GEnerated", metadata);
+      console.log("SCANNING RESULT SENT TO BACKEND", { scannerOutput });
+      updateState("scannerOutput", scannerOutput);
+    }
+    generateMetadata();
+  }, [srcUrl]);
+  // TRAVEL HANDLER
+
+  useEffect(() => {
+    updateState("prevTravelStatus", travelStatus);
+    console.log("prevTravelStatus", prevTravelStatus);
+    if (travelStatus === "NoTarget" && selectedTokenId !== "") {
+      console.log(" generateMetadata() SCANNER OUTPUT;", scannerOutput);
+    }
+    if (travelStatus === "TargetAcquired") {
+      fetchInterplanetaryStatusReport();
+      createTravelResult(metadata);
+      console.log("fetchInterplanetaryStatusReport", metadata);
+    }
+  }, [travelStatus, srcUrl]);
+
+  // handler for describing images
   useEffect(() => {
     setStoreState(prevState => ({
       ...prevState,
@@ -310,57 +316,52 @@ export default function Home() {
     }));
   }, [imageUrl]);
 
-  useEffect(() => {
-    const fetchStatusReport = async () => {
-      try {
-        if (travelStatus === "AcquiringTarget") {
-          console.log(metadata);
-          const response = await axios.post("/api/scanning_result", {
-            metadata: metadata,
-          });
-          console.log("modified prompt gpt");
-          updateState("scannerOutput", response.data.scannerOutput);
-          console.log("scannerOutput", response.data.scannerOutput);
-        }
-      } catch (error) {
-        console.error("Error fetching interplanetary status report:", error);
-      }
-    };
-    console.log("travel status", travelStatus);
+  // handle recieving data from chlidren
 
-    fetchStatusReport();
-  }, [travelStatus]);
+  const handleImageSrcReceived = (imageSrc: string) => {
+    updateState("srcUrl", imageSrc);
 
-  const updateState = (key: string, value: any) => {
-    setAppState(prevState => ({ ...prevState, [key]: value }));
+    console.log(srcUrl);
+    // Handle the imageSrc here, e.g., update the state or call another function
   };
+  const handleModifedPrompt = (modifiedPrompt: string) => {
+    updateState("modifiedPrompt", modifiedPrompt);
 
-  const handleMetadataReceived = (metadata: any) => {
-    console.log("Metadata received in the parent component:", metadata);
-
-    // Extract the attributes from the metadata
-    const attributes = metadata.attributes.reduce((acc: any, attr: any) => {
-      acc[attr.trait_type] = attr.value;
-      return acc;
-    }, {});
-
-    // Update the state variables
-    updateState("level", attributes.Level);
-    updateState("power1", attributes["Power 1"]);
-    updateState("power2", attributes["Power 2"]);
-    updateState("power3", attributes["Power 3"]); // Assuming there is a Power 3 attribute in the metadata
-    updateState("power4", attributes["Power 4"]); // Assuming there is a Power 4 attribute in the metadata
-    updateState("alignment1", attributes["Alignment 1"]);
-    updateState("alignment2", attributes["Alignment 2"]);
-    updateState("side", attributes.Side);
+    console.log(" updateAllData(); foor modifiedPrompt");
   };
-
-  const handleEngaged = (engaged: boolean) => {
-    if (engaged === true) {
-      console.log("WARP DRIVE IS ENGAGED", { warping, engaged });
+  const handleSelectedTokenIdRecieved = (selectedTokenId: string) => {
+    updateState("selectedTokenId", selectedTokenId);
+  };
+  const handleTokenIdsReceived = (tokenIds: string[]) => {
+    // Handle the token IDs here, e.g., update the state or call another function
+  };
+  const fetchInterplanetaryStatusReport = async () => {
+    try {
+      const response = await axios.post("/api/generate_report", {
+        scannerOutput: scannerOutput,
+        metadata: metadata,
+        alienMessage: alienMessage,
+      });
+      console.log("interplanetaryStatusReport", response.data.report);
+      updateState("interplanetaryStatusReport", response.data.report);
+    } catch (error) {
+      console.error("Error fetching interplanetary status report:", error);
     }
   };
 
+  const fetchScanningReport = async () => {
+    try {
+      console.log(metadata);
+      const response = await axios.post("/api/scanning_result", {
+        metadata: metadata,
+      });
+      console.log("modified prompt gpt", metadata);
+      updateState("scannerOutput", response.data.scannerOutput);
+      console.log("scannerOutput", response.data.scannerOutput);
+    } catch (error) {
+      console.error("Error fetching interplanetary status report:", error);
+    }
+  };
   const handleScanning = (scanning: boolean) => {
     updateState("scanning", scanning);
     console.log("SCANNING", { scanning });
@@ -385,16 +386,42 @@ export default function Home() {
         }
       };
       console.log("travel status", travelStatus);
-
       fetchStatusReport();
     }
+    fetchInterplanetaryStatusReport();
+    console.log("alienMessage", alienMessage, "interplanetaryStatusReport", interplanetaryStatusReport);
 
     return console.log("Tried to Upscale new background but", { travelStatus, scanning });
   };
 
+  const handleMetadataReceived = (metadata: any) => {
+    console.log("Metadata received in the parent component:", metadata);
+    // Extract the attributes from the metadata
+    const attributes = metadata.attributes.reduce((acc: any, attr: any) => {
+      acc[attr.trait_type] = attr.value;
+      return acc;
+    }, {});
+
+    // Update the state variables
+    updateState("level", attributes.Level);
+    updateState("power1", attributes["Power 1"]);
+    updateState("power2", attributes["Power 2"]);
+    updateState("power3", attributes["Power 3"]); // Assuming there is a Power 3 attribute in the metadata
+    updateState("power4", attributes["Power 4"]); // Assuming there is a Power 4 attribute in the metadata
+    updateState("alignment1", attributes["Alignment 1"]);
+    updateState("alignment2", attributes["Alignment 2"]);
+    updateState("side", attributes.Side);
+  };
+
+  const handleEngaged = (engaged: boolean) => {
+    if (engaged === true) {
+      console.log("WARP DRIVE IS ENGAGED", { warping, engaged });
+    }
+  };
+
   function generatePrompt(
     type: "character" | "background",
-    srcUrl: string | "",
+    srcUrl: string | null,
     level: string,
     power1: string,
     power2: string,
@@ -423,38 +450,6 @@ export default function Home() {
 
     return `${srcUrl} ${healthAndStatus} ${level} ${power1} ${power2} ${power3} ${power4} ${healthAndStatus} ${equipment} ${abilities} ${funFact} ${alignment1} ${alignment2} ${side} ${selectedDescription} ${interplanetaryStatusReport} ${niji} ${v}`.trim();
   }
-
-  useEffect(() => {
-    // Step 2: Call your new API route to generate the report
-    if (travelStatus === "TargetAcquired") {
-      const fetchInterplanetaryStatusReport = async () => {
-        try {
-          if (modifiedPrompt !== "ALLIANCE OF THE INFINITE UNIVERSE") {
-            const response = await axios.post("/api/generate_report", {
-              scannerOutput: scannerOutput,
-              metadata: metadata,
-              alienMessage: alienMessage,
-            });
-            console.log("normal prompt gpt");
-            updateState("interplanetaryStatusReport", response.data.report);
-          } else {
-            const response = await axios.post("/api/generate_report", {
-              scannerOutput: scannerOutput,
-              metadata: metadata,
-              alienMessage: alienMessage,
-            });
-            console.log("modified prompt gpt");
-            updateState("interplanetaryStatusReport", response.data.report);
-          }
-        } catch (error) {
-          console.error("Error fetching interplanetary status report:", error);
-        }
-      };
-      console.log("travel status", travelStatus);
-
-      fetchInterplanetaryStatusReport();
-    }
-  }, [travelStatus]);
 
   const handleDescribeClick = async () => {
     console.log(
@@ -743,26 +738,6 @@ export default function Home() {
     setDisplayImageUrl(imageUrl, type);
     updateState("loadingProgress", 0);
     // handleDescribeClick();
-  };
-  // handler for describing images
-
-  // make an array out of the metadata attributes
-
-  const handleImageSrcReceived = (imageSrc: string) => {
-    updateState("srcUrl", imageSrc);
-    generateMetadata();
-
-    console.log(srcUrl);
-    // Handle the imageSrc here, e.g., update the state or call another function
-  };
-  const handleModifedPrompt = (modifiedPrompt: string) => {
-    updateState("modifiedPrompt", modifiedPrompt);
-  };
-  const handleSelectedTokenIdRecieved = (selectedTokenId: string) => {
-    updateState("selectedTokenId", selectedTokenId);
-  };
-  const handleTokenIdsReceived = (tokenIds: string[]) => {
-    // Handle the token IDs here, e.g., update the state or call another function
   };
 
   return (

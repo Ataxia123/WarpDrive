@@ -16,23 +16,6 @@ interface Choice {
   finish_reason: string;
 }
 
-type Metadata = {
-  srcUrl: string | undefined;
-  Level: string;
-  Power1: string;
-  Power2: string;
-  Power3: string;
-  Power4: string;
-  Alignment1: string;
-  Alignment2: string;
-  Side: string;
-  interplanetaryStatusReport: string;
-  selectedDescription: string;
-  nijiFlag: boolean;
-  vFlag: boolean;
-  scannerOutput: string[];
-};
-
 async function generateAlienLanguage(englishMessage: string, metadata: any) {
   const messages: ChatCompletionRequestMessage[] = [
     {

@@ -16,7 +16,7 @@ interface Choice {
 }
 
 type Metadata = {
-  srcUrl: string | undefined;
+  srcUrl: string | null;
   Level: string;
   Power1: string;
   Power2: string;
@@ -29,7 +29,12 @@ type Metadata = {
   selectedDescription: string;
   nijiFlag: boolean;
   vFlag: boolean;
-  scannerOutput: string[];
+  equipment: string;
+  healthAndStatus: string;
+  abilities: string;
+  funFact: string;
+
+  alienMessage: string;
 };
 //
 async function generateInterplanetaryStatusReport(scannerOutput: object, metadata: Metadata, alienMessage: string) {

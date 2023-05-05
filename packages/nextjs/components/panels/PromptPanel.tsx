@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Switchboard from "../Swittchboard";
 
 type Metadata = {
-  srcUrl: string | undefined;
+  srcUrl: string;
   Level: string;
   Power1: string;
   Power2: string;
@@ -35,7 +35,7 @@ interface PromptPanelProps {
   interplanetaryStatusReport: string;
   buttonMessageId: string | "";
   imageUrl: string;
-  srcUrl: string | "";
+  srcUrl: string;
   loading: boolean;
   metadata: Metadata;
   onSubmitPrompt: (type: "character" | "background") => Promise<void>;
@@ -45,7 +45,7 @@ interface PromptPanelProps {
   generatePrompt: (
     type: "character" | "background",
 
-    srcUrl: string | "",
+    srcUrl: string,
     level: string,
     power1: string,
     power2: string,
@@ -83,8 +83,6 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
   const attributes = [
     "srcUrl",
 
-    "interplanetaryStatusReport",
-    "selectedDescription",
     "Level",
     "Power1",
     "Power2",
@@ -123,7 +121,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
 
   return (
     <div className={`prompt-panel${isFocused ? "" : "-closed"}`} onClick={handleClick}>
-      <div className={`spaceship-display-screen${isFocused! ? "" : "-off"}`}>
+      <div className={`spaceship-display-screen${isFocused ? "-off" : ""}`}>
         <div className="spaceship-display-screen animated-floating">
           <div className="display-border">
             <h1 className="description-text">

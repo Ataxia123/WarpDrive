@@ -6,7 +6,7 @@ import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth/useScaffoldEventHistory";
 
 type Metadata = {
-  srcUrl: string | undefined;
+  srcUrl: string | null;
   Level: string;
   Power1: string;
   Power2: string;
@@ -93,7 +93,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   const [imageSrc, setImageSrc] = useState<string>();
   const [mouseTrigger, setMouseTrigger] = useState<boolean>(false);
   const [engaged, setEngaged] = useState<boolean>(false);
-  const [scanOutputIndex, setScanOutputIndex] = useState<number>(1);
+  const [scanOutputIndex, setScanOutputIndex] = useState<number>(0);
   const [scannerOptions, setScannerOptions] = useState<string[]>([
     "abilities",
     "healthAndStatus",

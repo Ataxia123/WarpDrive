@@ -20,7 +20,7 @@ interface DescriptionPanelProps {
   description: string[];
 
   onDescriptionIndexChange: (index: number) => void;
-  selectedTokenId: string | undefined;
+  selectedTokenId: string | null;
   handleDescribeClick: () => void;
   interplanetaryStatusReport: string;
   handleSubmit: (type: "character" | "background") => Promise<void>;

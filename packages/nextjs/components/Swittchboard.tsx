@@ -1,5 +1,26 @@
 import React, { useEffect, useState } from "react";
 
+type Metadata = {
+  srcUrl: string;
+  Level: string;
+  Power1: string;
+  Power2: string;
+  Power3: string;
+  Power4: string;
+  Alignment1: string;
+  Alignment2: string;
+  Side: string;
+  interplanetaryStatusReport: string;
+  selectedDescription: string;
+  nijiFlag: boolean;
+  vFlag: boolean;
+  equipment: string;
+  healthAndStatus: string;
+  abilities: string;
+  funFact: string;
+
+  alienMessage: string;
+};
 interface SwitchboardProps {
   playHolographicDisplay: () => void;
   imageUrl: string;
@@ -14,7 +35,7 @@ interface SwitchboardProps {
   generatePrompt: (
     type: "character" | "background",
 
-    srcUrl: string | "",
+    srcUrl: string,
     level: string,
     power1: string,
     power2: string,
@@ -34,24 +55,7 @@ interface SwitchboardProps {
     alienMessage: string | "",
   ) => string;
 
-  promptData: {
-    srcUrl: string | undefined;
-    Level: string;
-    Power1: string;
-    Power2: string;
-    Power3: string;
-    Power4: string;
-    Alignment1: string;
-    Alignment2: string;
-    Side: string;
-    interplanetaryStatusReport: string;
-    selectedDescription: string;
-    abilities: string | "";
-    funFact: string | "";
-    equipment: string | "";
-    healthAndStatus: string | "";
-    alienMessage: string;
-  };
+  promptData: Metadata;
   selectedAttributes: string[];
 }
 
@@ -109,6 +113,7 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
       interplanetaryStatusReport,
       abilities,
       funFact,
+
       equipment,
       healthAndStatus,
       alienMessage,
@@ -129,6 +134,7 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
       abilities,
       funFact,
       equipment,
+
       healthAndStatus,
       alienMessage,
     };

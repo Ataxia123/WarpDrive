@@ -15,6 +15,9 @@ if (
   }/node_modules/canvas/build/Release:${process.env.LD_LIBRARY_PATH || ''}`;
 }
 const nextConfig = {
+  experimental: {
+    appDir: false,
+  },
   reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: process.env.NEXT_PUBLIC_IGNORE_BUILD_ERROR === "true",
@@ -22,6 +25,7 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: process.env.NEXT_PUBLIC_IGNORE_BUILD_ERROR === "true",
   },
+
   
 };
 
