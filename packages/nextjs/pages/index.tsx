@@ -59,6 +59,7 @@ type Sounds = {
 
 export default function Home() {
   const [appState, setAppState] = useState({
+    metadata: {} as Metadata,
     alienMessage: "",
     scannerOutput: {
       equipment: "",
@@ -100,6 +101,42 @@ export default function Home() {
     preExtraText: "",
     AfterExtraText: "",
   });
+  const {
+    alienMessage,
+    scannerOutput,
+    loadingProgress,
+    loading,
+    prevTravelStatus,
+    error,
+    response,
+    imageUrl,
+    waitingForWebhook,
+    description,
+    selectedDescriptionIndex,
+    selectedTokenId,
+    srcUrl,
+    level,
+    power1,
+    power2,
+    power3,
+    power4,
+    alignment1,
+    alignment2,
+    side,
+    buttonMessageId,
+    backgroundImageUrl,
+    originatingMessageId,
+    tempUrl,
+    nijiFlag,
+    vFlag,
+    travelStatus,
+    interplanetaryStatusReport,
+    selectedDescription,
+    modifiedPrompt,
+    warping,
+    scanning,
+    metadata,
+  } = appState;
   const [sounds, setSounds] = useState<Sounds>({});
   const [audioController, setAudioController] = useState<AudioController | null>(null);
   const [soundsLoaded, setSoundsLoaded] = useState<boolean>(false);
@@ -161,42 +198,6 @@ export default function Home() {
 
   //session storage
 
-  const {
-    alienMessage,
-    scannerOutput,
-    loadingProgress,
-    loading,
-    prevTravelStatus,
-    error,
-    response,
-    imageUrl,
-    waitingForWebhook,
-    description,
-    selectedDescriptionIndex,
-    selectedTokenId,
-    srcUrl,
-    level,
-    power1,
-    power2,
-    power3,
-    power4,
-    alignment1,
-    alignment2,
-    side,
-    buttonMessageId,
-    backgroundImageUrl,
-    originatingMessageId,
-    tempUrl,
-    nijiFlag,
-    vFlag,
-    travelStatus,
-    interplanetaryStatusReport,
-    selectedDescription,
-    modifiedPrompt,
-    warping,
-    scanning,
-  } = appState;
-
   const setTravels = useAppStore(state => state.setTravels);
   const setBackgroundImageUrl = useAppStore(state => state.setBackgroundImageUrl);
   const setDisplayImageUrl = useAppStore(state => state.setdisplayImageUrl);
@@ -217,8 +218,8 @@ export default function Home() {
     return travelResult;
   }
 
-  function createTravelMetadata(): Metadata {
-    return {
+  function createTravelMetadata() {
+    const metadata = {
       srcUrl,
       Level: level,
       Power1: power1,
@@ -237,12 +238,19 @@ export default function Home() {
       equipment: scannerOutput?.equipment,
       funFact: scannerOutput?.funFact,
       alienMessage,
-    };
+    } as Metadata;
+    updateState("metadata", metadata);
   }
+
+  useEffect(() => {
+    if (selectedTokenId) {
+      createTravelMetadata();
+    }
+  }, [selectedTokenId]);
 
   function updateAllData() {
     // Update travels state
-    const metadata = createTravelMetadata();
+    setMetadata(metadata);
     const newTravelResult = createTravelResult(metadata);
     setTravels(newTravelResult);
 
@@ -252,6 +260,8 @@ export default function Home() {
 
   useEffect(() => {
     updateState("prevTravelStatus", travelStatus);
+    useAppStore.setState({ metadata: metadata });
+    setMetadata(metadata);
   }, [travelStatus]);
 
   useEffect(() => {
@@ -305,26 +315,29 @@ export default function Home() {
     }));
   }, [imageUrl]);
 
-  const metadata: Metadata = {
-    srcUrl: srcUrl || "",
-    Level: level,
-    Power1: power1,
-    Power2: power2,
-    Power3: power3,
-    Power4: power4,
-    Alignment1: alignment1,
-    Alignment2: alignment2,
-    Side: side,
-    interplanetaryStatusReport: interplanetaryStatusReport,
-    selectedDescription: selectedDescription,
-    nijiFlag: nijiFlag,
-    vFlag: vFlag,
-    healthAndStatus: scannerOutput?.healthAndStatus,
-    abilities: scannerOutput?.abilities,
-    funFact: scannerOutput?.funFact,
-    equipment: scannerOutput?.equipment,
-    alienMessage: alienMessage,
-  };
+  useEffect(() => {
+    const metadata: Metadata = {
+      srcUrl: srcUrl || "",
+      Level: level,
+      Power1: power1,
+      Power2: power2,
+      Power3: power3,
+      Power4: power4,
+      Alignment1: alignment1,
+      Alignment2: alignment2,
+      Side: side,
+      interplanetaryStatusReport: interplanetaryStatusReport,
+      selectedDescription: selectedDescription,
+      nijiFlag: nijiFlag,
+      vFlag: vFlag,
+      healthAndStatus: scannerOutput?.healthAndStatus,
+      abilities: scannerOutput?.abilities,
+      funFact: scannerOutput?.funFact,
+      equipment: scannerOutput?.equipment,
+      alienMessage: alienMessage,
+    };
+    useAppStore.setState({ metadata: metadata });
+  }, []);
 
   useEffect(() => {
     const fetchStatusReport = async () => {

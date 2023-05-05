@@ -10,7 +10,7 @@ import create from "zustand";
  */
 
 type Metadata = {
-  srcUrl: string | "";
+  srcUrl: string | undefined;
   Level: string;
   Power1: string;
   Power2: string;
@@ -23,6 +23,12 @@ type Metadata = {
   selectedDescription: string;
   nijiFlag: boolean;
   vFlag: boolean;
+  equipment: string;
+  healthAndStatus: string;
+  abilities: string;
+  funFact: string;
+
+  alienMessage: string;
 };
 
 type TAppStore = {
@@ -78,6 +84,11 @@ export const useAppStore = create<TAppStore>(set => ({
     selectedDescription: "",
     nijiFlag: false,
     vFlag: false,
+    equipment: "",
+    healthAndStatus: "",
+    abilities: "",
+    funFact: "",
+    alienMessage: "",
   },
   setMetadata: (metadata: Partial<Metadata>) => set(state => ({ metadata: { ...state.metadata, ...metadata } })),
   travels: [],
