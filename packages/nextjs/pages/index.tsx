@@ -337,7 +337,9 @@ export default function Home() {
       alienMessage: alienMessage,
     };
     useAppStore.setState({ metadata: metadata });
-  }, []);
+    updateState("metadata", metadata);
+    console.log("metadata", metadata);
+  }, [interplanetaryStatusReport, selectedDescription, scannerOutput, alienMessage]);
 
   useEffect(() => {
     const fetchStatusReport = async () => {
