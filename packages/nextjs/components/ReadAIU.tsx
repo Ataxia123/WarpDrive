@@ -202,11 +202,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
     playSpaceshipOn();
     onSelectedTokenIdRecieved(e.target.value); // Add this line
   };
-  useEffect(() => {
-    if (modifiedPrompt) {
-      setEngaged(true);
-    }
-  }, [modifiedPrompt]);
+
   //the important function
   const handleButton = () => {
     playHolographicDisplay();

@@ -53,10 +53,6 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
     setFocused(!focused);
   };
 
-  useEffect(() => {
-    setWaitingForDescription(scanning);
-  }, [scanning]);
-
   const handleScanClick = () => {
     playHolographicDisplay();
     handleScanning(true);
@@ -70,11 +66,6 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
     handleSubmit("background");
     setToggle(!toggle);
   };
-
-  useEffect(() => {
-    if (travelStatus === "TargetAcquired" && description.length > 0) {
-    }
-  }, [travelStatus, interplanetaryStatusReport]);
 
   return (
     <div

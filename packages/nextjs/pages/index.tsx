@@ -195,8 +195,6 @@ export default function Home() {
     modifiedPrompt,
     warping,
     scanning,
-    preExtraText,
-    AfterExtraText,
   } = appState;
 
   const setTravels = useAppStore(state => state.setTravels);
@@ -410,7 +408,6 @@ export default function Home() {
     return console.log("Tried to Upscale new background but", { travelStatus, scanning });
   };
 
-  useEffect;
   function generatePrompt(
     type: "character" | "background",
     srcUrl: string | "",
