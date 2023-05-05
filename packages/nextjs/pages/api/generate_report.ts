@@ -31,7 +31,7 @@ type Metadata = {
   vFlag: boolean;
   scannerOutput: string[];
 };
-
+//
 async function generateInterplanetaryStatusReport(scannerOutput: object, metadata: Metadata, alienMessage: string) {
   const messages: ChatCompletionRequestMessage[] = [
     {
