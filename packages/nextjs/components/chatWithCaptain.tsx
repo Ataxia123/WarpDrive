@@ -41,7 +41,7 @@ const ChatWithCaptain: React.FC<ChatWithCaptainProps> = ({ metadata }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ scanResults, metadata, userMessage }),
+        body: JSON.stringify({ metadata, userMessage }),
       });
 
       const data = await response.json();
@@ -53,18 +53,29 @@ const ChatWithCaptain: React.FC<ChatWithCaptainProps> = ({ metadata }) => {
   };
 
   return (
-    <div className="chat-container">
-      <div className="chat-log">
-        {chatLog.map((message, index) => (
-          <div key={index} className={index % 2 === 0 ? "user-message" : "captain-message"}>
-            {message}
-          </div>
-        ))}
+    <div className="spaceship-display-screen " style={{ padding: "1.5rem", marginLeft: "-2.5%" }}>
+      <div className="chat-container ">
+        <div className="chat-log">
+          {chatLog.map((message, index) => (
+            <div key={index} className={index % 2 === 0 ? "user-message" : "captain-message"}>
+              {message}
+            </div>
+          ))}
+
+          <input
+            type="text"
+            className="prompt-input description-text spaceship-display-screen"
+            value={userMessage}
+            onChange={handleUserMessageChange}
+            placeholder="Type your message..."
+          />
+        </div>
       </div>
-      <div className="input-container">
-        <input type="text" value={userMessage} onChange={handleUserMessageChange} placeholder="Type your message..." />
-        <button onClick={handleSendMessage}>Send</button>
-      </div>
+      <button className="spaceship-button" onClick={handleSendMessage}>
+        <span className="" style={{ color: "white" }}>
+          Send
+        </span>
+      </button>
     </div>
   );
 };

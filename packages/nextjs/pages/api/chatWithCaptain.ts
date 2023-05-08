@@ -15,14 +15,37 @@ interface Choice {
   index: number;
   finish_reason: string;
 }
+type Metadata = {
+  srcUrl: string | null;
+  Level: string;
+  Power1: string;
+  Power2: string;
+  Power3: string;
+  Power4: string;
+  Alignment1: string;
+  Alignment2: string;
+  Side: string;
+  interplanetaryStatusReport: string;
+  selectedDescription: string;
+  nijiFlag: boolean;
+  vFlag: boolean;
+  equipment: string;
+  healthAndStatus: string;
+  abilities: string;
+  funFact: string;
 
-async function chatWithCaptain(scanResults: string, metadata: object, userMessage: string) {
+  alienMessage: string;
+};
+
+async function chatWithCaptain(metadata: Metadata, userMessage: string) {
   const messages: ChatCompletionRequestMessage[] = [
     {
       role: ChatCompletionRequestMessageRoleEnum.System,
-      content: `You are the captain of a spaceship in the alliance of the infinite universe. Your ship has just received the following scan results: ${scanResults}. You have the following metadata: ${JSON.stringify(
+      content: `You are playing the role of ${metadata.Level}${metadata.Power1}${metadata.Power2}${
+        metadata.Power3
+      }, member of the Alliance of the Infinite Universe(AIU). You are currently in the middle of a mission and have broadcasted the following scan metadata: ${JSON.stringify(
         metadata,
-      )}. You are now engaged in a conversation with the ship's operator.`,
+      )}. You are now engaged in a conversation with the Alliance operator who answered your broadcast.`,
     },
     {
       role: ChatCompletionRequestMessageRoleEnum.User,
@@ -43,9 +66,9 @@ async function chatWithCaptain(scanResults: string, metadata: object, userMessag
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const { scanResults, metadata, userMessage } = req.body;
+    const { metadata, userMessage } = req.body;
     try {
-      const captainResponse = await chatWithCaptain(scanResults, metadata, userMessage);
+      const captainResponse = await chatWithCaptain(metadata, userMessage);
 
       res.status(200).json({ captainResponse });
     } catch (error) {

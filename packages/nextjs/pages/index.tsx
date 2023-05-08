@@ -125,8 +125,6 @@ export default function Home() {
     side,
     buttonMessageId,
     backgroundImageUrl,
-    originatingMessageId,
-    tempUrl,
     nijiFlag,
     vFlag,
     travelStatus,
@@ -163,8 +161,10 @@ export default function Home() {
     const warpSpeed = await audioController?.loadSound("/audio/warp-speed.wav");
 
     if (spaceshipOn) {
-      audioController?.playSound(spaceshipOn, true); // Pass 'true' as the second argument to enable looping
+      audioController?.playSound(spaceshipOn, true, 0.02);
+      // Pass 'true' as the second argument to enable looping
     }
+
     setSounds({
       spaceshipOn,
       spaceshipHum,
@@ -186,31 +186,32 @@ export default function Home() {
   }, [audioController, soundsLoaded, loadSounds]);
   useEffect(() => {
     if (sounds.spaceshipOn) {
-      audioController?.playSound(sounds.spaceshipOn, true);
+      audioController?.playSound(sounds.spaceshipOn, true, 0.02);
+      audioController?.playSound(sounds.spaceshipOn, true, 0.02);
     }
   }, [sounds.spaceshipOn]);
   // SOUND EFFECTS
   function playSpaceshipHum() {
     if (sounds.spaceshipHum) {
-      audioController?.playSound(sounds.spaceshipHum);
+      audioController?.playSound(sounds.spaceshipHum, false, 0.6);
     }
   }
 
   function playSpaceshipOn() {
     if (sounds.spaceshipOn) {
-      audioController?.playSound(sounds.spaceshipOn, true);
+      audioController?.playSound(sounds.spaceshipOn, true, 0.02);
     }
   }
 
   function playHolographicDisplay() {
     if (sounds.holographicDisplay) {
-      audioController?.playSound(sounds.holographicDisplay);
+      audioController?.playSound(sounds.holographicDisplay, false, 1);
     }
   }
 
   function playWarpSpeed() {
     if (sounds.warpSpeed) {
-      audioController?.playSound(sounds.warpSpeed);
+      audioController?.playSound(sounds.warpSpeed, false, 1.1);
     }
   }
 
@@ -244,6 +245,9 @@ export default function Home() {
     });
   };
   // METADATA HANDLER
+
+  const { abilities, funFact, equipment, healthAndStatus } = scannerOutput || {};
+
   const metadata: Metadata = {
     srcUrl: srcUrl,
     Level: level,
@@ -258,17 +262,17 @@ export default function Home() {
     selectedDescription: selectedDescription,
     nijiFlag: nijiFlag,
     vFlag: vFlag,
-    healthAndStatus: scannerOutput?.healthAndStatus,
-    abilities: scannerOutput?.abilities,
-    funFact: scannerOutput?.funFact,
-    equipment: scannerOutput?.equipment,
+    healthAndStatus: healthAndStatus,
+    abilities: abilities,
+    funFact: funFact,
+    equipment: equipment,
     alienMessage: alienMessage,
   };
 
   useEffect(() => {
     function generateMetadata() {
-      if (srcUrl === "") {
-        console.log("generateMetadata() imageUrl is empty");
+      if (metadata.Level === "" && travelStatus !== "NoTarget") {
+        console.log("generateMetadata() imageUrl is empty/DestinationSet_GotoNOATarget");
         return;
       }
       fetchScanningReport();
@@ -278,21 +282,47 @@ export default function Home() {
       updateState("scannerOutput", scannerOutput);
     }
     generateMetadata();
-  }, [srcUrl]);
+  }, [metadata.srcUrl]);
   // TRAVEL HANDLER
+  const fetchInterplanetaryStatusReport = async () => {
+    try {
+      const response = await axios.post("/api/generate_report", {
+        scannerOutput: scannerOutput,
+        metadata: metadata,
+        alienMessage: alienMessage,
+      });
+      console.log("interplanetaryStatusReport", response.data.report);
+      updateState("interplanetaryStatusReport", response.data.report);
+    } catch (error) {
+      console.error("Error fetching interplanetary status report:", error);
+    }
+  };
+  const fetchTargetPlanet = async () => {
+    try {
+      console.log(metadata);
+      const response = await axios.post("/api/alienEncoder", {
+        englishMessage: JSON.stringify(scannerOutput),
+        metadata: metadata,
+      });
+      console.log("modified prompt gpt");
+      updateState("alienMessage", response.data.alienMessage);
+
+      console.log("alienMessage", response.data.alienMessage);
+    } catch (error) {
+      console.error("Error fetching interplanetary status report:", error);
+    }
+    console.log("fetchTargetPlanet", metadata);
+  };
 
   useEffect(() => {
     updateState("prevTravelStatus", travelStatus);
     console.log("prevTravelStatus", prevTravelStatus);
-    if (travelStatus === "NoTarget" && selectedTokenId !== "") {
-      console.log(" generateMetadata() SCANNER OUTPUT;", scannerOutput);
+    if (travelStatus === "NoTarget" && prevTravelStatus === "TargetAcquired") {
+      // setTravels: (newTravel: any) => set(state => ({ travels: [...state.travels, newTravel] })),
+      setTravels(createTravelResult(metadata));
+      console.log("GENERATED TRAVEL OUTPUT:", travels[1]);
     }
-    if (travelStatus === "TargetAcquired") {
-      fetchInterplanetaryStatusReport();
-      createTravelResult(metadata);
-      console.log("fetchInterplanetaryStatusReport", metadata);
-    }
-  }, [travelStatus, srcUrl]);
+  }, [travelStatus]);
 
   // handler for describing images
   useEffect(() => {
@@ -335,19 +365,6 @@ export default function Home() {
   const handleTokenIdsReceived = (tokenIds: string[]) => {
     // Handle the token IDs here, e.g., update the state or call another function
   };
-  const fetchInterplanetaryStatusReport = async () => {
-    try {
-      const response = await axios.post("/api/generate_report", {
-        scannerOutput: scannerOutput,
-        metadata: metadata,
-        alienMessage: alienMessage,
-      });
-      console.log("interplanetaryStatusReport", response.data.report);
-      updateState("interplanetaryStatusReport", response.data.report);
-    } catch (error) {
-      console.error("Error fetching interplanetary status report:", error);
-    }
-  };
 
   const fetchScanningReport = async () => {
     try {
@@ -365,30 +382,6 @@ export default function Home() {
   const handleScanning = (scanning: boolean) => {
     updateState("scanning", scanning);
     console.log("SCANNING", { scanning });
-    if (travelStatus == "AcquiringTarget" && scanning === false) {
-      handleButtonClick("U1", "background");
-    } else if (travelStatus == "AcquiringTarget" && scanning === true) {
-      const fetchStatusReport = async () => {
-        try {
-          if (travelStatus === "AcquiringTarget") {
-            console.log(metadata);
-            const response = await axios.post("/api/alienEncoder", {
-              englishMessage: JSON.stringify(scannerOutput),
-              metadata: metadata,
-            });
-            console.log("modified prompt gpt");
-            updateState("alienMessage", response.data.alienMessage);
-
-            console.log("alienMessage", response.data.alienMessage);
-          }
-        } catch (error) {
-          console.error("Error fetching interplanetary status report:", error);
-        }
-      };
-      console.log("travel status", travelStatus);
-      fetchStatusReport();
-    }
-    fetchInterplanetaryStatusReport();
     console.log("alienMessage", alienMessage, "interplanetaryStatusReport", interplanetaryStatusReport);
 
     return console.log("Tried to Upscale new background but", { travelStatus, scanning });
@@ -508,6 +501,7 @@ export default function Home() {
 
       updateState("loading", false);
     }
+    fetchTargetPlanet();
     updateState("waitingForWebhook", false);
   };
 
@@ -544,6 +538,7 @@ export default function Home() {
 
   // handler for Generating images
   const submitPrompt = async (type: "character" | "background") => {
+    fetchInterplanetaryStatusReport();
     let prompt = generatePrompt(
       type,
       srcUrl ? srcUrl : "",
@@ -638,21 +633,21 @@ export default function Home() {
       updateState("error", e.message);
       updateState("warping", false);
       updateState("travelStatus", "NoTarget");
+      updateState("scanning", false);
     }
     if (type === "character") {
       updateState("warping", false);
       updateState("travelStatus", "NoTarget");
-    } else {
-      console.log("buttonMessageId", buttonMessageId);
+      updateState("loadingProgress", "COMPLETE");
+    } else if (travelStatus === "AcquiringTarget") {
+      updateState("loadingProgress", "TRAVELING");
     }
-
     updateState("waitingForWebhook", false);
-    updateState("loadingProgress", 0);
   };
 
   // handler for upscaling images
   const handleButtonClick = async (button: string, type: "character" | "background") => {
-    console.log("button", button, type);
+    console.log("handleButtonClickhandleButtonClickhandleButtonClick", button, type);
     if (waitingForWebhook) {
       console.log("Already waiting for webhook, please wait for response.");
       return;
@@ -718,11 +713,11 @@ export default function Home() {
 
       if (type === "character") {
         updateState("imageUrl", imageUrl);
-        updateState("warping", false);
-      } else {
+      } else if (type === "background") {
         updateState("backgroundImageUrl", imageUrl);
+        updateState("imageUrl", imageUrl);
       }
-      updateState("warping", false);
+
       updateState("travelStatus", "NoTarget");
 
       console.log("Button Command Response:", buttonCommandResponse);
@@ -731,7 +726,11 @@ export default function Home() {
       updateState("error", e.message);
       updateState("warping", false);
       updateState("travelStatus", "NoTarget");
+      updateState("scanning", false);
+      updateState("waitingForWebhook", false);
     }
+    updateState("warping", false);
+    updateState("scanning", false);
     updateState("waitingForWebhook", false);
     updateState("travelStatus", "NoTarget");
     setBackgroundImageUrl(imageUrl, type);

@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
-
-// Import the CSS styles
+import React, { useEffect, useRef, useState } from "react";
 
 interface SpaceshipInterfaceProps {
   travelStatus: string;
@@ -8,11 +6,13 @@ interface SpaceshipInterfaceProps {
 
 const SpaceshipInterface: React.FC<SpaceshipInterfaceProps> = ({ travelStatus }) => {
   const [videoPlaying, setVideoPlaying] = useState(false);
-  const videoId = "MVPTGNGiI-4"; // Fix the videoId
+  const videoId = "MVPTGNGiI-4";
+  const playerRef = useRef<YT.Player | null>(null);
 
   const toggleVideo = () => {
     setVideoPlaying(!videoPlaying);
   };
+
   const divStyle: React.CSSProperties = {
     pointerEvents: videoPlaying ? "auto" : "none",
     opacity: videoPlaying ? 0.8 : 0.2,
@@ -30,9 +30,56 @@ const SpaceshipInterface: React.FC<SpaceshipInterfaceProps> = ({ travelStatus })
       setVideoPlaying(true);
     }
   }, [travelStatus]);
+  const iframeSrc = `https://www.youtube.com/embed/${videoId}?autoplay=${
+    videoPlaying ? "1" : "0"
+  }&mute=0&enablejsapi=1`;
+  useEffect(() => {
+    const loadYoutubeAPI = () => {
+      const script = document.createElement("script");
+      script.src = "https://www.youtube.com/iframe_api";
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        (window as any).YT.ready(() => {
+          console.log("YouTube API ready");
+        });
+      };
+      document.body.appendChild(script);
+    };
 
-  const iframeSrc = `https://www.youtube.com/embed/${videoId}?autoplay=${videoPlaying ? "1" : "0"}&mute=0`;
+    loadYoutubeAPI();
+  }, []);
 
+  useEffect(() => {
+    const onPlayerReady = (event: YT.PlayerEvent) => {
+      event.target.setVolume(20);
+    };
+
+    const onPlayerStateChange = (event: YT.OnStateChangeEvent) => {
+      if (event.data === YT.PlayerState.PLAYING && !videoPlaying) {
+        setVideoPlaying(true);
+      } else if (event.data === YT.PlayerState.PAUSED && videoPlaying) {
+        setVideoPlaying(false);
+      }
+    };
+
+    const createPlayer = () => {
+      const newPlayer = new YT.Player("ytplayer", {
+        videoId,
+        events: {
+          onReady: onPlayerReady,
+          onStateChange: onPlayerStateChange,
+        },
+      });
+      playerRef.current = newPlayer;
+    };
+
+    if ((window as any).YT) {
+      createPlayer();
+    } else {
+      (window as any).onYouTubeIframeAPIReady = createPlayer;
+    }
+  }, []);
   return (
     <>
       <div style={divStyle} className="spaceship-display-screen" onClick={toggleVideo}>

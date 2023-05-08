@@ -56,7 +56,11 @@ async function generateScannerOutput(metadata: Metadata) {
   const messages: ChatCompletionRequestMessage[] = [
     {
       role: ChatCompletionRequestMessageRoleEnum.System,
-      content: `You are an AI capable of generating scanner output for the following member of the Alliance of the Infinite Universe:${metadata.Level} ${metadata.Power1} ${metadata.Power2} ${metadata.Power3}. Generate scanner output based on the metadata available for the character in the following format: "Biometric Reading: {health_condition}; Current Equipment and Vehicle: {equipment}; Abilities and Power level: {abilities_level}; Fun Fact: {fun_fact}"`,
+      content: `You are an AI capable of generating scanner output for the following member of the Alliance of the Infinite Universe:${
+        metadata.Level
+      }${" "}${metadata.Power1} ${" "}${metadata.Power2}${" "}${
+        metadata.Power3
+      }. Generate scanner output based on the metadata available for the character in the following format: "Biometric Reading: {health_condition}; Current Equipment and Vehicle: {equipment}; Abilities and Power level: {abilities_level}; Fun Fact: {fun_fact}"`,
     },
     {
       role: ChatCompletionRequestMessageRoleEnum.User,
@@ -68,7 +72,9 @@ async function generateScannerOutput(metadata: Metadata) {
     },
     {
       role: ChatCompletionRequestMessageRoleEnum.User,
-      content: `SCANNING INFORMATION RECIEVED. GENERATING SCANNER OUTPUT FOR ${metadata.Level}${metadata.Power1}${metadata.Power2}${metadata.Power3} of the AIU. `,
+      content: `SCANNING INFORMATION RECIEVED. GENERATING SCANNER OUTPUT FOR ${metadata.Level}${" "}${
+        metadata.Power1
+      }${" "}${metadata.Power2}${" "}${metadata.Power3} of the AIU. `,
     },
   ];
 

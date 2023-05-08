@@ -41,17 +41,21 @@ async function generateInterplanetaryStatusReport(scannerOutput: object, metadat
   const messages: ChatCompletionRequestMessage[] = [
     {
       role: ChatCompletionRequestMessageRoleEnum.System,
-      content: `"You are the targetting computer of a ship in the Alliance of the Infinite Universe. You have just recieved a transmission from  ${
-        metadata.Level
-      } ${metadata.Power1} ${metadata.Power2} ${
-        metadata.Power3
-      }. You have scanned their current Situation ${JSON.stringify(
-        scannerOutput,
-      )} and need decode the incoming InterplanetaryMissionReport. THe mission report should be a story vignette detailing the latest adventure of the Target in question. "`,
+      content: `"You are ${metadata.Level}_${metadata.Power1}_${metadata.Power2}. Your attributes are: Side ${
+        metadata.Side
+      }, Alignment ${metadata.Alignment1}_${
+        metadata.Alignment2
+      }, and you are a member of the Alliance of the Infinite Universe. 
+        sending a report through the targetting computer of a ship in the Alliance. you are in the midst of your latest assignment and are sending a status report asking for assistance.
+        Interpret the current Situation Scan ${JSON.stringify(metadata.healthAndStatus)}${JSON.stringify(
+        metadata.abilities,
+      )}${JSON.stringify(metadata.equipment)}${JSON.stringify(
+        metadata.funFact,
+      )} and produce incoming InterplanetaryMissionReport. The mission report must set the context and introduce the characters for this mission. The mission"`,
     },
     {
       role: ChatCompletionRequestMessageRoleEnum.User,
-      content: `"Scanning Results Recieved ${alienMessage}. Awaiting Interplanetary Status Report."`,
+      content: `"Location Scan Results Recieved: ${alienMessage}. Awaiting Interplanetary Status Report from ${metadata.Level}${metadata.Power1}${metadata.Power2}${metadata.Alignment1}${metadata.Alignment2}${metadata.Side}."`,
     },
   ];
 

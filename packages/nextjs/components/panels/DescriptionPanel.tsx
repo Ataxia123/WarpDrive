@@ -78,7 +78,7 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
 
   const handleScanClick = () => {
     playHolographicDisplay();
-    handleScanning(true);
+
     setToggle(!toggle);
     handleDescribeClick();
   };
@@ -260,84 +260,61 @@ export const DescriptionPanel: React.FC<DescriptionPanelProps> = ({
                         flexDirection: "column",
                       }}
                     >
+                      {!toggle && (
+                        <button
+                          className={
+                            "py-2 px-4 rounded font-bold  hover:bg-green-700 description-text spaceship-text screen-border"
+                          }
+                          style={{
+                            border: "15px solid black",
+                            width: "50%",
+                            height: "100%",
+                            margin: "0.2rem",
+                            marginTop: "-1.6rem",
+                            fontSize: "1.8rem",
+                            fontWeight: "bold",
+                          }}
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleScanClick();
+                          }}
+                        >
+                          {}
+                          SCAN
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  {toggle && description && (
+                    <div className="spaceship-display-screen">
                       <button
-                        className={
-                          "py-2 px-4 rounded font-bold  hover:bg-green-700 description-text spaceship-text screen-border"
-                        }
+                        className={`screen-border`}
                         style={{
                           border: "15px solid black",
                           width: "50%",
                           height: "100%",
                           margin: "0.2rem",
                           marginTop: "-1.6rem",
-                          fontSize: "1.8rem",
-                          fontWeight: "bold",
                         }}
                         onClick={e => {
                           e.stopPropagation();
-
-                          handleScanClick();
+                          handleButtonClick();
                         }}
                       >
-                        {}
-                        SCAN
+                        <span
+                          className="spaceship-button"
+                          style={{
+                            color: "white",
+                            fontFamily: "Orbitron",
+                            fontSize: ".8rem",
+                            height: "100%",
+                          }}
+                        >
+                          {" "}
+                          SET COORDINATES
+                        </span>{" "}
                       </button>
                     </div>
-                  )}
-                  {toggle && (
-                    <button
-                      className={`spaceship-button screen-border`}
-                      style={{
-                        position: "relative",
-                        height: "110%",
-                        width: "50%",
-                        marginBottom: "1.2rem",
-                        padding: "0.2rem",
-                        margin: "0.2rem",
-                        marginTop: "1.4rem",
-                        bottom: "53%",
-                      }}
-                      onClick={e => {
-                        e.stopPropagation();
-                        handleButtonClick();
-                      }}
-                    >
-                      <div
-                        className="spaceship-button-container spaceship-button-text spaceship-display-screen"
-                        style={{
-                          margin: "0rem",
-                          position: "absolute",
-                          top: "12%",
-                          left: "0%",
-                          width: "100%",
-                          height: "100%",
-                          paddingBottom: "-30%",
-                          marginBottom: "-30%",
-                          scale: "1.2",
-                        }}
-                      >
-                        {travelStatus === "TargetAcquired" ? (
-                          <p
-                            className={"spaceship-button-text"}
-                            style={{ color: "white", scale: "0.8", position: "relative" }}
-                          >
-                            COORDINATES SET
-                          </p>
-                        ) : (
-                          <div
-                            className={"spaceship-button-text"}
-                            style={{
-                              pointerEvents: "none",
-                              color: "white",
-                              scale: "0.9",
-                              height: "120%",
-                            }}
-                          >
-                            SET COORDINATES
-                          </div>
-                        )}
-                      </div>
-                    </button>
                   )}
                   <div
                     className="spaceship-display-screen"

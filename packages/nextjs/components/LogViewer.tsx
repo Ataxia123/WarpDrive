@@ -53,7 +53,7 @@ const LogViewer: React.FC<LogViewerProps> = ({
     const { imageUrl, setImageUrl } = useImageStore();
 
     const [currentTravelIndex, setCurrentTravelIndex] = useState(0);
-    const [currentSection, setCurrentSection] = useState(0);
+    const [currentSection, setCurrentSection] = useState(2);
     const handlePrevious = () => {
       if (currentTravelIndex > 0) {
         setCurrentTravelIndex(currentTravelIndex - 1);
@@ -149,7 +149,10 @@ const LogViewer: React.FC<LogViewerProps> = ({
       case 2:
         return (
           <div>
-            <h3>CHAT WITH CAPTAIN:</h3>
+            <h3>
+              CONNECTED WITH :<br />
+              {metadata.Level} {metadata.Power1} {metadata.Power2}:
+            </h3>
             <ChatWithCaptain metadata={metadata} />
           </div>
         );
@@ -373,9 +376,9 @@ const LogViewer: React.FC<LogViewerProps> = ({
         {alienMessage}
         <br /> <br />
         <span>
-          || <button onClick={() => setCurrentTravelSection(1)}>Reports</button>||
-          <button onClick={() => setCurrentTravelSection(2)}>Scanning Results</button>||
-          <button onClick={() => setCurrentTravelSection(3)}>Images</button>||
+          || <button onClick={() => setCurrentTravelSection(2)}>CHAT</button>||
+          <button onClick={() => setCurrentTravelSection(1)}>REPORTS</button>||
+          <button onClick={() => setCurrentTravelSection(3)}>IMAGES</button>||
         </span>
       </div>
       <div>{displayContent()}</div>

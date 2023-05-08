@@ -119,12 +119,14 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   };
 
   const handlePrevious = () => {
+    playHolographicDisplay();
     if (scanOutputIndex > 0) {
       setScanOutputIndex(scanOutputIndex - 1);
     }
   };
 
   const handleNext = () => {
+    playHolographicDisplay();
     console.log("im clicked");
     if (scanOutputIndex < scannerOptions.length - 1) {
       setScanOutputIndex(scanOutputIndex + 1);
@@ -195,6 +197,7 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
   }, [tokenURI]);
 
   const handleTokenIdChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    playHolographicDisplay();
     setSelectedTokenId(e.target.value);
     playSpaceshipOn();
     onSelectedTokenIdRecieved(e.target.value); // Add this line
@@ -218,6 +221,8 @@ export const ReadAIU: FunctionComponent<ReadAIUProps> = ({
       playWarpSpeed();
       try {
         setTimeout(() => {
+          handleButtonClick("U1", "background");
+          console.log("clicked");
           handleScanning(false);
         }, 2100);
       } catch (error) {
