@@ -1,8 +1,70 @@
 
 # WARP 🚀🌌🔍🎨🌠🤖🔄 DRIVE
 
-![](https://i.imgur.com/yK8VEk0.jpg)
+# WarpDrive  - Changelog
 
+All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Features
+
+- MUD (Multi-User-Dungeon) experience: 
+  - Allow players to react to each other's adventures by helping or opposing them 
+  - Create event resolver server that listens to travel logs and returns resolutions
+  - Implement pinecone storage to turn travel logs into vector entries
+  - Connect existing gpt implementation to pinecone DB
+
+- GPTAPI/Tutorial/Onboarding
+  - Improve gpt api setup so that it is aware of the application operation procedures, and guide the user through it
+  - implement routes to allow gpt model to utilize ship functions
+
+### BugFixes/QoL 
+
+- Improve scanning route so that users understand better whats happening
+- Fix tokenId handling
+- Error handling
+- handle slow MJ responses
+- Load balancing for API keys
+
+## [1.0.1] - YYYY-MM-DD
+
+### Added
+
+- Reworked GPT api implementation
+  - Turned single API route into 3 routes:
+    - FetchScanningResults: Gets back extra information about the NFT: health, equipment, abilities and fun facts
+    - AlienPlanet: gives information about target destination such as coordinates and historical facts
+    - Interplanetary Status Report: reworked to produce a story in progress considering all other outputs
+    - **Chat With Captain**: Now keeps track of metadata available and provides a chat modal that can be used to interact with the character.
+
+### Changed
+
+- UI
+  - Reworked HUD display to show more relevant information
+        - Interplanetary report now center and scrollable
+        - metadata displayed with more clarity
+        - Added extra data result navigator with buttons
+
+- AUDIO
+  - Remixed audio to have a more pleasant experience: Lower background sound and Synthwave.
+
+### Fixed
+
+- Reworked scanning API calls to provide a better experience overall.
+- Scanning should now handle main image description after initial scan
+
+## [1.0.0]
+
+### WarpDrive MVP release
+
+- Dynamic spaceship UI
+- Read Metadata from AI-Universe NFT collection
+- Midjourney/TheNextLeg api implementation imagine/describe/buttons
+- Initial ChatGPT implementation with Mission reports
+- Generate travel logs and tweet out image to share on social media
+
+![](https://i.imgur.com/yK8VEk0.jpg)
 
 ## Setup
 
