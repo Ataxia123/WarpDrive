@@ -5,29 +5,7 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-### Features
-
-- MUD (Multi-User-Dungeon) experience: 
-  - Allow players to react to each other's adventures by helping or opposing them 
-  - Create event resolver server that listens to travel logs and returns resolutions
-  - Implement pinecone storage to turn travel logs into vector entries
-  - Connect existing gpt implementation to pinecone DB
-
-- GPTAPI/Tutorial/Onboarding
-  - Improve gpt api setup so that it is aware of the application operation procedures, and guide the user through it
-  - implement routes to allow gpt model to utilize ship functions
-
-### BugFixes/QoL 
-
-- Improve scanning route so that users understand better whats happening
-- Fix tokenId handling
-- Error handling
-- handle slow MJ responses
-- Load balancing for API keys
-
-## [1.0.1] - YYYY-MM-DD
+## [1.0.1] - 2023-5-08
 
 ### Added
 
@@ -63,6 +41,29 @@ All notable changes to this project will be documented in this file. The format 
 - Midjourney/TheNextLeg api implementation imagine/describe/buttons
 - Initial ChatGPT implementation with Mission reports
 - Generate travel logs and tweet out image to share on social media
+
+## [WIP-Future-Releases]
+
+### Features
+
+- MUD (Multi-User-Dungeon) experience: 
+  - Allow players to react to each other's adventures by helping or opposing them 
+  - Create event resolver server that listens to travel logs and returns resolutions
+  - Implement pinecone storage to turn travel logs into vector entries
+  - Connect existing gpt implementation to pinecone DB
+
+- GPTAPI/Tutorial/Onboarding
+  - Improve gpt api setup so that it is aware of the application operation procedures, and guide the user through it
+  - implement routes to allow gpt model to utilize ship functions
+
+### BugFixes/QoL 
+
+- Improve scanning route so that users understand better whats happening
+- Fix tokenId handling
+- Error handling
+- handle slow MJ responses
+- Load balancing for API keys
+
 
 ![](https://i.imgur.com/yK8VEk0.jpg)
 
