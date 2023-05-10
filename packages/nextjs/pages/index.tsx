@@ -217,6 +217,10 @@ export default function Home() {
 
   function createTravelResult(metadata: Metadata) {
     // Collect all the required information for the travel result
+    setMetadata(metadata);
+    handleApiResponse(error, response);
+    setDisplayImageUrl(imageUrl, "character");
+    setBackgroundImageUrl(backgroundImageUrl, "background");
     const travelResult = {
       metadata: metadata,
       backgroundImageUrl: backgroundImageUrl,
@@ -284,6 +288,7 @@ export default function Home() {
     generateMetadata();
   }, [metadata.srcUrl]);
   // TRAVEL HANDLER
+
   const fetchInterplanetaryStatusReport = async () => {
     try {
       const response = await axios.post("/api/generate_report", {
@@ -297,6 +302,7 @@ export default function Home() {
       console.error("Error fetching interplanetary status report:", error);
     }
   };
+
   const fetchTargetPlanet = async () => {
     try {
       console.log(metadata);
@@ -309,7 +315,7 @@ export default function Home() {
 
       console.log("alienMessage", response.data.alienMessage);
     } catch (error) {
-      console.error("Error fetching interplanetary status report:", error);
+      console.error("Error fetching target planet:", error);
     }
     console.log("fetchTargetPlanet", metadata);
   };
@@ -376,7 +382,7 @@ export default function Home() {
       updateState("scannerOutput", response.data.scannerOutput);
       console.log("scannerOutput", response.data.scannerOutput);
     } catch (error) {
-      console.error("Error fetching interplanetary status report:", error);
+      console.error("Error fetching scanning report:", error);
     }
   };
   const handleScanning = (scanning: boolean) => {

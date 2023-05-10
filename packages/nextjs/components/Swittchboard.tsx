@@ -22,6 +22,7 @@ type Metadata = {
   alienMessage: string;
 };
 interface SwitchboardProps {
+  description: string;
   playHolographicDisplay: () => void;
   imageUrl: string;
   scanning: boolean;
@@ -60,6 +61,7 @@ interface SwitchboardProps {
 }
 
 export const Switchboard: React.FC<SwitchboardProps> = ({
+  description,
   playHolographicDisplay,
   imageUrl,
   scanning,
@@ -305,7 +307,9 @@ export const Switchboard: React.FC<SwitchboardProps> = ({
                     </div>
                     {attributes.map(attribute => {
                       const displayName =
-                        attribute === "alienMessage"
+                        attribute === "selectedDescription"
+                          ? "DESCRIPTION"
+                          : attribute === "alienMessage"
                           ? "Alien Message"
                           : attribute === "funFact"
                           ? "FunFact"

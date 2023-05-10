@@ -67,6 +67,7 @@ interface PromptPanelProps {
 }
 
 export const PromptPanel: React.FC<PromptPanelProps> = ({
+  description,
   playHolographicDisplay,
   handleEngaged,
   travelStatus,
@@ -96,6 +97,8 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
     "equipment",
     "healthAndStatus",
     "alienMessage",
+    "interplanetaryStatusReport",
+    "selectedDescription",
   ];
   const [isFocused, setIsFocused] = useState(false);
   const [selectedAttributes, setSelectedAttributes] = useState<string[]>([]);
@@ -157,6 +160,7 @@ export const PromptPanel: React.FC<PromptPanelProps> = ({
       <>
         <>
           <Switchboard
+            description={description}
             playHolographicDisplay={playHolographicDisplay}
             imageUrl={imageUrl}
             scanning={scanning}
