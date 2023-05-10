@@ -31,7 +31,7 @@ async function generateAlienLanguage(englishMessage: string, metadata: any) {
   const response = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages,
-    temperature: 0.06,
+    temperature: 1,
     max_tokens: 150,
   });
 

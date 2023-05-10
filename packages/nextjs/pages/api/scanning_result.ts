@@ -81,7 +81,7 @@ async function generateScannerOutput(metadata: Metadata) {
   const response = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages,
-    temperature: 0.1,
+    temperature: 1,
     max_tokens: 300,
   });
   const openaiResponse = response.data as { choices: Choice[] };
