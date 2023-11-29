@@ -1,42 +1,32 @@
 // /pages/api/generateAlienLanguage.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
+import type { Metadata } from "~~/types/appTypes";
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_AUTH_TOKEN,
 });
-const openai = new OpenAIApi(configuration);
 
-interface Choice {
-  message: {
-    role: string;
-    content: string;
-  };
-  index: number;
-  finish_reason: string;
-}
-
-async function generateAlienLanguage(englishMessage: string, metadata: any) {
-  const messages: ChatCompletionRequestMessage[] = [
+async function generateAlienLanguage(englishMessage: string, metadata: Metadata) {
+  const messages: any[] = [
     {
-      role: ChatCompletionRequestMessageRoleEnum.System,
+      role: "system",
       content: `"You are the targetting computer of a ship in the Alliance of the Infinite Universe. You have just recieved a transmission from  ${metadata.Level} ${metadata.Power1} ${metadata.Power2} ${metadata.Power3}. and need to triangulate the following information: Coordinates, Sistem and Planet name, An enviromental analysis and a historical fact about the location in question. Use the Message information to come up with the report using your creativity."`,
     },
     {
-      role: ChatCompletionRequestMessageRoleEnum.User,
+      role: "user",
       content: `"Scanning Results Recieved ${metadata}${englishMessage}. Scan target location."`,
     },
   ];
 
-  const response = await openai.createChatCompletion({
+  const stream = await openai.chat.completions.create({
     model: "gpt-4-1106-preview",
-    messages,
-    temperature: 1,
-    max_tokens: 120050,
+    messages: messages,
   });
 
-  const openaiResponse = response.data as { choices: Choice[] };
-  return openaiResponse.choices[0].message.content.trim();
+  const rawOutput = stream.choices[0].message.content;
+  const openAIResponse = rawOutput?.trim();
+  return openAIResponse;
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {

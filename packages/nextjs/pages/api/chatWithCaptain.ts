@@ -1,46 +1,15 @@
-// /pages/api/chatWithCaptain.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
+import type { Metadata } from "~~/types/appTypes";
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_AUTH_TOKEN,
 });
-const openai = new OpenAIApi(configuration);
-
-interface Choice {
-  message: {
-    role: string;
-    content: string;
-  };
-  index: number;
-  finish_reason: string;
-}
-type Metadata = {
-  srcUrl: string | null;
-  Level: string;
-  Power1: string;
-  Power2: string;
-  Power3: string;
-  Power4: string;
-  Alignment1: string;
-  Alignment2: string;
-  Side: string;
-  interplanetaryStatusReport: string;
-  selectedDescription: string;
-  nijiFlag: boolean;
-  vFlag: boolean;
-  equipment: string;
-  healthAndStatus: string;
-  abilities: string;
-  funFact: string;
-
-  alienMessage: string;
-};
 
 async function chatWithCaptain(metadata: Metadata, userMessage: string) {
-  const messages: ChatCompletionRequestMessage[] = [
+  const messages: any[] = [
     {
-      role: ChatCompletionRequestMessageRoleEnum.System,
+      role: "system",
       content: `You are playing the role of ${metadata.Level}${metadata.Power1}${metadata.Power2}${
         metadata.Power3
       }, member of the Alliance of the Infinite Universe(AIU). You are currently in the middle of a mission and have broadcasted the following scan metadata: ${JSON.stringify(
@@ -48,20 +17,19 @@ async function chatWithCaptain(metadata: Metadata, userMessage: string) {
       )}. You are now engaged in a conversation with the Alliance operator who answered your broadcast.`,
     },
     {
-      role: ChatCompletionRequestMessageRoleEnum.User,
+      role: "user",
       content: userMessage,
     },
   ];
 
-  const response = await openai.createChatCompletion({
+  const stream = await openai.chat.completions.create({
     model: "gpt-4-1106-preview",
-    messages,
-    temperature: 0.6,
-    max_tokens: 120000,
+    messages: messages,
   });
 
-  const openaiResponse = response.data as { choices: Choice[] };
-  return openaiResponse.choices[0].message.content.trim();
+  const rawOutput = stream.choices[0].message.content;
+  const openAIResponse = rawOutput?.trim();
+  return openAIResponse;
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {

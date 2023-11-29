@@ -2,7 +2,7 @@ import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const AUTH_TOKEN = process.env.MIDJOURNEY_AUTH_TOKEN;
-const endpoint = `https://api.thenextleg.io`;
+const endpoint = `https://api.thenextleg.io/v2`;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { text } = req.body;

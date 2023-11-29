@@ -28,7 +28,7 @@
     "marquee": "^0.2.1",
     "next": "13.4.0",
     "nextjs-progressbar": "^0.0.16",
-    "openai": "^3.2.1",
+    "openai": "^4.20.1",
     "react": "^18.2.0",
     "react-blockies": "^1.4.1",
     "react-copy-to-clipboard": "^5.1.0",

@@ -276,7 +276,7 @@ export default function Home() {
   useEffect(() => {
     function generateMetadata() {
       if (metadata.srcUrl === "" || travelStatus !== "NoTarget") {
-        console.log("generateMetadata() imageUrl is empty/DestinationSet_GotoNOATarget");
+        console.log("generateMetadata() imageUrl is empty");
         return;
       }
       fetchScanningReport();

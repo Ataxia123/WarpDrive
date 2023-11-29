@@ -1,46 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, Configuration, OpenAIApi } from "openai";
+import { OpenAI } from "openai";
+import type { Metadata } from "~~/types/appTypes";
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_AUTH_TOKEN,
 });
-const openai = new OpenAIApi(configuration);
 
-interface Choice {
-  message: {
-    role: string;
-    content: string;
-  };
-  index: number;
-  finish_reason: string;
-}
-
-type Metadata = {
-  srcUrl: string | null;
-  Level: string;
-  Power1: string;
-  Power2: string;
-  Power3: string;
-  Power4: string;
-  Alignment1: string;
-  Alignment2: string;
-  Side: string;
-  interplanetaryStatusReport: string;
-  selectedDescription: string;
-  nijiFlag: boolean;
-  vFlag: boolean;
-  equipment: string;
-  healthAndStatus: string;
-  abilities: string;
-  funFact: string;
-
-  alienMessage: string;
-};
-//
 async function generateInterplanetaryStatusReport(scannerOutput: object, metadata: Metadata, alienMessage: string) {
-  const messages: ChatCompletionRequestMessage[] = [
+  const messages: any[] = [
     {
-      role: ChatCompletionRequestMessageRoleEnum.System,
+      role: "system",
       content: `"You are ${metadata.Level}_${metadata.Power1}_${metadata.Power2}. Your attributes are: Side ${
         metadata.Side
       }, Alignment ${metadata.Alignment1}_${
@@ -54,20 +23,19 @@ async function generateInterplanetaryStatusReport(scannerOutput: object, metadat
       )} and produce incoming InterplanetaryMissionReport. The mission report must set the context and introduce the characters for this mission. The mission"`,
     },
     {
-      role: ChatCompletionRequestMessageRoleEnum.User,
+      role: "user",
       content: `"Location Scan Results Recieved: ${alienMessage}. Awaiting Interplanetary Status Report from ${metadata.Level}${metadata.Power1}${metadata.Power2}${metadata.Alignment1}${metadata.Alignment2}${metadata.Side}."`,
     },
   ];
 
-  const response = await openai.createChatCompletion({
+  const stream = await openai.chat.completions.create({
     model: "gpt-4-1106-preview",
-    messages,
-    temperature: 1,
-    max_tokens: 120500,
+    messages: messages,
   });
 
-  const openaiResponse = response.data as { choices: Choice[] };
-  return openaiResponse.choices[0].message.content.trim();
+  const rawOutput = stream.choices[0].message.content;
+
+  return rawOutput;
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
