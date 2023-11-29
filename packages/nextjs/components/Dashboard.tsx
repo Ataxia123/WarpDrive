@@ -3,6 +3,7 @@ import React from "react";
 import Background from "./Background";
 import { MarqueePanel } from "./panels/MarqueePannel";
 import { Header } from "~~/components/Header";
+import type { Metadata } from "~~/types/appTypes";
 
 interface DashboardProps {
   loadingProgress: number;
@@ -15,7 +16,7 @@ interface DashboardProps {
   travelStatus: string;
   dynamicImageUrl: string;
   imageUrl: string;
-  srcUrl: string | null;
+  srcUrl: string;
   onSubmitPrompt: (type: "character" | "background") => Promise<void>;
   onSubmit: (type: "character" | "background") => Promise<void>;
   handleButtonClick: (button: string, type: "character" | "background") => void;

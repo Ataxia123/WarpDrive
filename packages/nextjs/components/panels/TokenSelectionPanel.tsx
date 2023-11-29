@@ -1,27 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReadAIU from "../ReadAIU";
+import type { Metadata } from "~~/types/appTypes";
 
-type Metadata = {
-  srcUrl: string | null;
-  Level: string;
-  Power1: string;
-  Power2: string;
-  Power3: string;
-  Power4: string;
-  Alignment1: string;
-  Alignment2: string;
-  Side: string;
-  interplanetaryStatusReport: string;
-  selectedDescription: string;
-  nijiFlag: boolean;
-  vFlag: boolean;
-  equipment: string;
-  healthAndStatus: string;
-  abilities: string;
-  funFact: string;
-
-  alienMessage: string;
-};
 interface TokenSelectionPanelProps {
   warping: boolean;
   parsedMetadata: Metadata;

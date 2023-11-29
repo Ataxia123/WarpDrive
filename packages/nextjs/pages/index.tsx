@@ -10,52 +10,7 @@ import TokenSelectionPanel from "../components/panels/TokenSelectionPanel";
 import { useAppStore } from "../services/store/store";
 import axios from "axios";
 import GraphemeSplitter from "grapheme-splitter";
-
-type Metadata = {
-  srcUrl: string;
-  Level: string;
-  Power1: string;
-  Power2: string;
-  Power3: string;
-  Power4: string;
-  Alignment1: string;
-  Alignment2: string;
-  Side: string;
-  interplanetaryStatusReport: string;
-  selectedDescription: string;
-  nijiFlag: boolean;
-  vFlag: boolean;
-  equipment: string;
-  healthAndStatus: string;
-  abilities: string;
-  funFact: string;
-
-  alienMessage: string;
-};
-type ProgressResponseType = {
-  progress: number | "incomplete";
-  response: {
-    createdAt?: string;
-    buttons?: string[];
-    imageUrl?: string;
-    buttonMessageId?: string;
-    originatingMessageId?: string;
-    content?: string;
-    ref?: string;
-    responseAt?: string;
-  };
-};
-type StoreState = {
-  interplanetaryStatusReports: string[];
-  scanningResults: string[][];
-  imagesStored: string[];
-};
-type Sounds = {
-  spaceshipHum?: AudioBuffer | null;
-  spaceshipOn?: AudioBuffer | null;
-  holographicDisplay?: AudioBuffer | null;
-  warpSpeed?: AudioBuffer | null;
-};
+import type { Metadata, ProgressResponseType, Sounds, StoreState } from "~~/types/appTypes";
 
 export default function Home() {
   const [appState, setAppState] = useState({
@@ -153,6 +108,132 @@ export default function Home() {
   const updateState = (key: string, value: any) => {
     setAppState(prevState => ({ ...prevState, [key]: value }));
   };
+  // METADATA HANDLER
+  const TNL_API_KEY = process.env.MIDJOURNEY_AUTH_TOKEN || "";
+
+  const BASE_URL = "https://api.thenextleg.io/v2";
+  const AUTH_TOKEN = TNL_API_KEY;
+  const AUTH_HEADERS = {
+    Authorization: `Bearer ${AUTH_TOKEN}`,
+    "Content-Type": "application/json",
+  };
+
+  const { abilities, funFact, equipment, healthAndStatus } = scannerOutput || {};
+
+  const metadata: Metadata = {
+    srcUrl: srcUrl,
+    Level: level,
+    Power1: power1,
+    Power2: power2,
+    Power3: power3,
+    Power4: power4,
+    Alignment1: alignment1,
+    Alignment2: alignment2,
+    Side: side,
+    interplanetaryStatusReport: interplanetaryStatusReport,
+    selectedDescription: selectedDescription,
+    nijiFlag: nijiFlag,
+    vFlag: vFlag,
+    healthAndStatus: healthAndStatus,
+    abilities: abilities,
+    funFact: funFact,
+    equipment: equipment,
+    alienMessage: alienMessage,
+  };
+  /**
+   * A function to pause for a given amount of time
+   */
+  function sleep(milliseconds: number) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+  }
+
+  /**
+   * Continue polling a generation an image is completed, or fails.
+   * You can also use a webhook to get notified when the image is ready.
+   * It will contain the same response body as seen here.
+   */
+  const fetchToCompletion: any = async (messageId: string, retryCount: number, maxRetry = 20) => {
+    const imageRes = await fetch(`${BASE_URL}/message/${messageId}`, {
+      method: "GET",
+      headers: AUTH_HEADERS,
+    });
+
+    const imageResponseData = await imageRes.json();
+
+    if (imageResponseData.progress === 100) {
+      return imageResponseData;
+    }
+
+    if (imageResponseData.progress === "incomplete") {
+      throw new Error("Image generation failed");
+    }
+
+    if (retryCount > maxRetry) {
+      throw new Error("Max retries exceeded");
+    }
+
+    if (imageResponseData.progress) {
+      console.log("---------------------");
+      console.log(`Progress: ${imageResponseData.progress}%`);
+      console.log(`Progress Image Url: ${imageResponseData.progressImageUrl}`);
+      console.log("---------------------");
+    }
+
+    await sleep(5000);
+    return fetchToCompletion(messageId, retryCount + 1);
+  };
+
+  // we wrap it in a main function here so we can use async/await inside of it.
+
+  const imageHandler = async (text: string) => {
+    /**   * GENERATE THE IMAGE
+     */
+
+    const imageRes = await fetch(`${BASE_URL}/imagine`, {
+      method: "POST",
+      headers: AUTH_HEADERS,
+
+      body: JSON.stringify({ msg: text }),
+    });
+
+    const imageResponseData = await imageRes.json();
+    console.log("\n=====================");
+    console.log("IMAGE GENERATION MESSAGE DATA");
+    console.log(imageResponseData);
+    console.log("=====================");
+
+    const completedImageData = await fetchToCompletion(imageResponseData.messageId, 0);
+    updateState("buttonMessageId", completedImageData.messageId);
+    console.log("\n=====================");
+    console.log("COMPLETED IMAGE DATA");
+    console.log(completedImageData);
+    console.log("=====================");
+
+    /**
+     * INVOKE A VARIATION
+     */
+    const variationRes = await fetch(`${BASE_URL}/button`, {
+      method: "POST",
+      headers: AUTH_HEADERS,
+      body: JSON.stringify({
+        button: "V1",
+        buttonMessageId: completedImageData.response.buttonMessageId,
+      }),
+    });
+
+    const variationResponseData = await variationRes.json();
+    console.log("\n=====================");
+    console.log("IMAGE VARIATION MESSAGE DATA");
+    console.log(variationResponseData);
+    console.log("=====================");
+
+    const completedVariationData = await fetchToCompletion(variationResponseData.messageId, 0);
+
+    console.log("\n=====================");
+    console.log("COMPLETED VARIATION DATA");
+    console.log(completedVariationData);
+    console.log("=====================");
+  };
 
   const loadSounds = useCallback(async () => {
     const spaceshipOn = await audioController?.loadSound("/audio/spaceship-on.wav");
@@ -248,43 +329,20 @@ export default function Home() {
       imagesStored: [],
     });
   };
-  // METADATA HANDLER
 
-  const { abilities, funFact, equipment, healthAndStatus } = scannerOutput || {};
-
-  const metadata: Metadata = {
-    srcUrl: srcUrl,
-    Level: level,
-    Power1: power1,
-    Power2: power2,
-    Power3: power3,
-    Power4: power4,
-    Alignment1: alignment1,
-    Alignment2: alignment2,
-    Side: side,
-    interplanetaryStatusReport: interplanetaryStatusReport,
-    selectedDescription: selectedDescription,
-    nijiFlag: nijiFlag,
-    vFlag: vFlag,
-    healthAndStatus: healthAndStatus,
-    abilities: abilities,
-    funFact: funFact,
-    equipment: equipment,
-    alienMessage: alienMessage,
-  };
+  function generateMetadata() {
+    if (metadata.srcUrl === "" || travelStatus !== "NoTarget") {
+      console.log("generateMetadata() imageUrl is empty");
+      return;
+    }
+    fetchScanningReport();
+    setMetadata(metadata);
+    console.log("metadata Generated", metadata);
+    console.log("SCANNING RESULT SENT TO BACKEND", { scannerOutput });
+    updateState("scannerOutput", scannerOutput);
+  }
 
   useEffect(() => {
-    function generateMetadata() {
-      if (metadata.srcUrl === "" || travelStatus !== "NoTarget") {
-        console.log("generateMetadata() imageUrl is empty");
-        return;
-      }
-      fetchScanningReport();
-      setMetadata(metadata);
-      console.log("metadata GEnerated", metadata);
-      console.log("SCANNING RESULT SENT TO BACKEND", { scannerOutput });
-      updateState("scannerOutput", scannerOutput);
-    }
     generateMetadata();
   }, [metadata.srcUrl]);
   // TRAVEL HANDLER
@@ -466,28 +524,39 @@ export default function Home() {
     const url = scanning && backgroundImageUrl ? backgroundImageUrl : imageUrl ? imageUrl : srcUrl;
     console.log("url", url);
     try {
-      const r = await axios.post("/api/postDescription", { url: url });
+      const data = JSON.stringify({
+        url: url,
+        ref: "",
+        webhookOverride: "",
+      });
 
-      console.log("response", r.data);
-      updateState("response", JSON.stringify(r.data, null, 2));
-      console.log("messageID", r.data.messageId);
+      const config = {
+        method: "post",
+        url: "https://api.thenextleg.io/v2/describe",
+        headers: AUTH_HEADERS,
+        data: data,
+      };
+
+      await axios(config)
+        .then(async function (response) {
+          console.log("\n=====================");
+          console.log("IMAGE GENERATION MESSAGE DATA");
+          console.log(response);
+          console.log("=====================");
+
+          const completedImageData = await fetchToCompletion(response.data.messageId, 0);
+          updateState("description", JSON.stringify(completedImageData.data, null, 2));
+          console.log(JSON.stringify(completedImageData));
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
 
       // Start waiting for webhook
       console.log("Waiting for webhook to be received...");
 
       // Poll the server to fetch the description from the cache
-      let description;
-      while (!description) {
-        try {
-          const fetchResponse = await axios.get(`/api/fetchDescription?messageId=${r.data.messageId}`);
-          description = fetchResponse.data.description;
-        } catch (error: any) {
-          if (error.response.status !== 404) {
-            throw error;
-          }
-          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
-        }
-      }
+      //
 
       // Remove the first grapheme (emoji) from each string in the description array
       const splitter = new GraphemeSplitter();
@@ -580,59 +649,18 @@ export default function Home() {
     }
 
     try {
-      const r = await axios.post("/api/apiHandler", { text: prompt });
+      const r = await imageHandler(prompt);
 
-      console.log("response", r.data);
-      updateState("response", JSON.stringify(r.data, null, 2));
-      console.log("messageID", r.data.messageId);
-      const ogMessage = r.data.messageId;
+      console.log("response", r);
+      updateState("response", JSON.stringify(r, null, 2));
       // Poll the server to fetch the image URL from the cache
-      let imageUrl, ImagineCommandResponse, messageId;
       const taskComplete = false;
-      while (!taskComplete && !ImagineCommandResponse && ogMessage) {
-        try {
-          const progressData = await fetchProgress(ogMessage);
-          console.log(
-            "Progress:",
-            progressData.progress,
-            progressData.response.buttonMessageId,
-            progressData.response.originatingMessageId,
-          );
-          console.log(progressData);
 
-          // Check if the progress is 100 or the task is complete
-          if (progressData.progress === 100) {
-            ImagineCommandResponse = progressData;
-            imageUrl = progressData.response.imageUrl;
-            messageId = progressData.response.buttonMessageId;
-            updateState("buttonMessageId", messageId);
-            console.log(buttonMessageId);
-          } else if (progressData.progress === "incomplete") {
-            // Handle error case
-            console.error("Error: Task is incomplete");
-            break;
-          } else {
-            // Update loading state with progressData.progress
-            console.log("Progress:", progressData.progress, progressData.response.buttonMessageId);
-
-            updateState("loadingProgress", progressData.progress);
-
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
-          }
-        } catch (error: any) {
-          if (error.response.status !== 404) {
-            throw error;
-          }
-
-          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before polling again
-        }
-
-        // Set the appropriate state based on the type
-        if (type === "character") {
-          updateState("imageUrl", imageUrl);
-        } else {
-          updateState("tempUrl", imageUrl);
-        }
+      // Set the appropriate state based on the type
+      if (type === "character") {
+        updateState("imageUrl", imageUrl);
+      } else {
+        updateState("tempUrl", imageUrl);
       }
     } catch (e: any) {
       console.log(e);
@@ -758,7 +786,7 @@ export default function Home() {
             error={error}
             warping={warping}
             interplanetaryStatusReport={interplanetaryStatusReport}
-            imageUrl={imageUrl}
+            imageUrl={imageUrl || ""}
             srcUrl={srcUrl}
             onSubmitPrompt={submitPrompt}
             onSubmit={submitPrompt}

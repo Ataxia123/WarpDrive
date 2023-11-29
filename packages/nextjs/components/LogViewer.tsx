@@ -2,30 +2,10 @@ import React, { useState } from "react";
 import { useAppStore, useImageStore } from "../services/store/store";
 import ChatWithCaptain from "./chatWithCaptain";
 import { fabric } from "fabric";
+import type { Metadata } from "~~/types/appTypes";
 
 // Dummy data for demonstration purposes
 
-type Metadata = {
-  srcUrl: string;
-  Level: string;
-  Power1: string;
-  Power2: string;
-  Power3: string;
-  Power4: string;
-  Alignment1: string;
-  Alignment2: string;
-  Side: string;
-  interplanetaryStatusReport: string;
-  selectedDescription: string;
-  nijiFlag: boolean;
-  vFlag: boolean;
-  equipment: string;
-  healthAndStatus: string;
-  abilities: string;
-  funFact: string;
-
-  alienMessage: string;
-};
 interface StoreState {
   interplanetaryStatusReports: string[];
   scanningResults: string[][];
