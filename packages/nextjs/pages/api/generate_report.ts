@@ -6,7 +6,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_AUTH_TOKEN,
 });
 
-async function generateInterplanetaryStatusReport(scannerOutput: object, metadata: Metadata, alienMessage: string) {
+async function generateInterplanetaryStatusReport(metadata: Metadata, alienMessage: string) {
   const messages: any[] = [
     {
       role: "system",
@@ -35,14 +35,14 @@ async function generateInterplanetaryStatusReport(scannerOutput: object, metadat
 
   const rawOutput = stream.choices[0].message.content;
 
-  return rawOutput;
+  return rawOutput?.trim();
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const { selectedDescription, metadata, extraText } = req.body;
     try {
-      const report = await generateInterplanetaryStatusReport(selectedDescription, metadata, extraText);
+      const report = await generateInterplanetaryStatusReport(selectedDescription, metadata);
 
       res.status(200).json({ report });
     } catch (error) {
