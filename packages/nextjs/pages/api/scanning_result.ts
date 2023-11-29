@@ -79,10 +79,10 @@ async function generateScannerOutput(metadata: Metadata) {
   ];
 
   const response = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4-1106-preview",
     messages,
     temperature: 1,
-    max_tokens: 300,
+    max_tokens: 120000,
   });
   const openaiResponse = response.data as { choices: Choice[] };
   const rawOutput = openaiResponse.choices[0].message.content.trim();

@@ -60,10 +60,10 @@ async function generateInterplanetaryStatusReport(scannerOutput: object, metadat
   ];
 
   const response = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4-1106-preview",
     messages,
     temperature: 1,
-    max_tokens: 500,
+    max_tokens: 120500,
   });
 
   const openaiResponse = response.data as { choices: Choice[] };

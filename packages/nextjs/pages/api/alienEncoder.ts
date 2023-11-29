@@ -29,10 +29,10 @@ async function generateAlienLanguage(englishMessage: string, metadata: any) {
   ];
 
   const response = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4-1106-preview",
     messages,
     temperature: 1,
-    max_tokens: 150,
+    max_tokens: 120050,
   });
 
   const openaiResponse = response.data as { choices: Choice[] };

@@ -54,10 +54,10 @@ async function chatWithCaptain(metadata: Metadata, userMessage: string) {
   ];
 
   const response = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4-1106-preview",
     messages,
     temperature: 0.6,
-    max_tokens: 150,
+    max_tokens: 120000,
   });
 
   const openaiResponse = response.data as { choices: Choice[] };
