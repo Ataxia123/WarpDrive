@@ -121,7 +121,7 @@ export default function Home() {
   const { abilities, funFact, equipment, healthAndStatus } = scannerOutput || {};
 
   const metadata: Metadata = {
-    srcUrl: srcUrl,
+    srcUrl: imageUrl,
     Level: level,
     Power1: power1,
     Power2: power2,
@@ -616,7 +616,7 @@ export default function Home() {
     fetchInterplanetaryStatusReport();
     let prompt = generatePrompt(
       type,
-      srcUrl ? srcUrl : "",
+      srcUrl ? imageUrl : "",
       level,
       power1,
       power2,
@@ -652,7 +652,7 @@ export default function Home() {
       const r = await imageHandler(prompt);
 
       console.log("response", r);
-      updateState("response", JSON.stringify(r, null, 2));
+      updateState("response", JSON.stringify(r));
       // Poll the server to fetch the image URL from the cache
       const taskComplete = false;
 
